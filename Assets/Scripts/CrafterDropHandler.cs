@@ -58,7 +58,6 @@ public class CrafterDropHandler : MonoBehaviour, IDropHandler, ItemWindow {
     public void CrafDHListener(Battlestate _state) {
         if (_state == Battlestate.player_CRAFT) {
             Interactable = true;
-            print("crafter interactable? " + Interactable);
         }
 
         if (lastState == Battlestate.player_CRAFT) {

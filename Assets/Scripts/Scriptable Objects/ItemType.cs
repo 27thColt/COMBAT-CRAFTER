@@ -15,6 +15,7 @@ public class ItemType : ScriptableObject {
     public int ID = 0;
     public Sprite sprite;
     public bool isWeapon; // If the item is a 'weapon', then it won't be able to be used in the crafter, and will be used immediately to attack enemies ( 6/3/2019 8:15pm )
+    public int baseAtk; // The base attack damage that the weapon will do ( 4/24/2020 12:47am )
 
     /* Not sure about the efficiency of this function; 
      * Used only during loading the Inventory savedata because serializing an 'item' scriptable object will just return a reference ID.

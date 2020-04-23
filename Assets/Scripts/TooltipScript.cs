@@ -12,13 +12,16 @@ using System.Linq;
 
 public class TooltipScript : MonoBehaviour {
     [SerializeField]
-    private TextMeshProUGUI displayText = null;
+    private TextMeshProUGUI nameText = null;
 
     [SerializeField]
     private GameObject iconsGrid = null;
 
     [SerializeField]
     private GameObject iconPrefab = null;
+
+    [SerializeField]
+    private GameObject hpBar = null;
 
     void Awake() {
         // Focuses on enemy tooltips ( 4/23/2020 2:34pm )
@@ -43,16 +46,16 @@ public class TooltipScript : MonoBehaviour {
 
     #region Event Listeners
 
-    void ShowEnemyTooltip(EnemyType _enemy) {
+    void ShowEnemyTooltip(EnemyScript _enemy, EnemyType _enemyType) {
         iconsGrid.SetActive(true);
-        displayText.text = _enemy.enemyName + "<br><size=18>Vulnerabilties:</size>";
+        nameText.text = _enemyType.enemyName;
+        hpBar.GetComponent<Image>().fillAmount = (float)_enemy.currentHP / (float)_enemy.maxHP;
 
-
-        foreach (ItemType _item in _enemy.vulnerabilities) {
+        foreach (ItemType _item in _enemyType.vulnerabilities) {
             GameObject icon = Instantiate(iconPrefab, iconsGrid.transform);
 
-            if (EnemyInventory.instance.CheckInvFor(_enemy) != null) {
-                if (EnemyInventory.instance.CheckInvFor(_enemy).vulnerabilities.Contains(_item.ID)) {
+            if (EnemyInventory.instance.CheckInvFor(_enemyType) != null) {
+                if (EnemyInventory.instance.CheckInvFor(_enemyType).vulnerabilities.Contains(_item.ID)) {
                     icon.GetComponent<Image>().sprite = _item.sprite;
                 }
             }

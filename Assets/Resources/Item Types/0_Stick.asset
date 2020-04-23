@@ -16,3 +16,4 @@ MonoBehaviour:
   ID: 0
   sprite: {fileID: 21300000, guid: d19c4275165f8144484d7584921d7f77, type: 3}
   isWeapon: 0
+  baseAtk: 3

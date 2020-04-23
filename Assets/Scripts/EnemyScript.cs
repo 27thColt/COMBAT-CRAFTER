@@ -30,11 +30,15 @@ public class EnemyScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     };
 
     // event for when enemy has been hovered over (shows tooltip) ( 2/25/2020 9:49pm )
-    public delegate void enemyTooltip(EnemyType _enemy);
+    public delegate void enemyTooltip(EnemyScript _enemy, EnemyType _enemyType);
     public static event enemyTooltip OnEnemyHover;
 
     public delegate void exitHover();
     public static event exitHover OnEnemyExit;
+
+    private void Awake() {
+        BattleManager.OnDamagePerformed += DamageListener;
+    }
 
     public void SetEnemy(EnemyType _enemy) {
         enemy = _enemy;
@@ -43,17 +47,31 @@ public class EnemyScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         spriteRenderer.sprite = _enemy.sprite;
     }
 
+    public void TakeDamage(int _damage) {
+        currentHP -= _damage;
+    }
+
     // Will select an enemy WHEN it is enemy selection phase ( 2/29/2020 3:39pm )
     public void OnMouseDown() {
         if (currentState == Battlestate.player_ENEMYSELECTION) {
-            OnEnemySelected(enemy);
             _selected = true;
+
+            OnEnemySelected(enemy);
         }
+    }
+
+    public void DamageListener(int _damage) {
+        if (_selected) {
+            TakeDamage(_damage);
+            Debug.Log("Damage dealt: " + _damage + " | HP left: " + currentHP);
+        }
+
+        SetCurrentState(Battlestate.enemy_ATTACK);
     }
 
     #region OnPointerEnter & Exit
     public void OnPointerEnter(PointerEventData eventData) {
-        OnEnemyHover(enemy);
+        OnEnemyHover(GetComponent<EnemyScript>(), enemy);
     }
 
     public void OnPointerExit(PointerEventData eventData) {

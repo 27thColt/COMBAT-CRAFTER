@@ -48,7 +48,6 @@ public class InventoryDropHandler : MonoBehaviour, IDropHandler, ItemWindow {
     public void InvDHListener(Battlestate _state) {
         if (_state == Battlestate.player_CRAFT) {
             Interactable = true;
-            print("inventory interactable? " + Interactable);
         }
 
         if (lastState == Battlestate.player_CRAFT) {
