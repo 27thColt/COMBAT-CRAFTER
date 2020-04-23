@@ -15,7 +15,7 @@ public class InventoryDropHandler : MonoBehaviour, IDropHandler, ItemWindow {
     public GameObject Pool { get; set; }
 
     void Awake() {
-        OnBattlestateChanged += InvDropHandListener;
+        OnBattlestateChanged += InvDHListener;
     }
 
     void Start() {
@@ -45,7 +45,7 @@ public class InventoryDropHandler : MonoBehaviour, IDropHandler, ItemWindow {
     #region Event Listeners
 
     // Fires when the gamestate has been changed ( 12/27/2019 1:14pm )
-    public void InvDropHandListener(Battlestate _state) {
+    public void InvDHListener(Battlestate _state) {
         if (_state == Battlestate.player_CRAFT) {
             Interactable = true;
             print("inventory interactable? " + Interactable);

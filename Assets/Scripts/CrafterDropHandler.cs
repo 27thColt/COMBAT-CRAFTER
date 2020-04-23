@@ -19,7 +19,7 @@ public class CrafterDropHandler : MonoBehaviour, IDropHandler, ItemWindow {
 
 
     void Awake() {
-        OnBattlestateChanged += CrafDropHandListener;
+        OnBattlestateChanged += CrafDHListener;
     }
 
 
@@ -54,8 +54,8 @@ public class CrafterDropHandler : MonoBehaviour, IDropHandler, ItemWindow {
 
     #region Event Listeners
 
-    // Fires when the gamestate has been changed ( 12/27/2019 1:14pm )
-    public void CrafDropHandListener(Battlestate _state) {
+    // Fires when the battlestate has been changed ( 12/27/2019 1:14pm )
+    public void CrafDHListener(Battlestate _state) {
         if (_state == Battlestate.player_CRAFT) {
             Interactable = true;
             print("crafter interactable? " + Interactable);
