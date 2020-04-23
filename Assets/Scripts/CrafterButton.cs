@@ -11,7 +11,8 @@ using UnityEngine.UI;
 public class CrafterButton : MonoBehaviour {
     private Button _button;
 
-    public Image resultSprite;
+    [SerializeField]
+    private Image resultSprite = null;
 
     
 
@@ -34,7 +35,7 @@ public class CrafterButton : MonoBehaviour {
 
     #region Event Listeners
 
-    public void UpdateResultButton(Item _item = null, Item _second = null) {
+    public void UpdateResultButton(ItemType _item = null, ItemType _second = null) {
         if (_item != null) {
             _button.interactable = true;
 

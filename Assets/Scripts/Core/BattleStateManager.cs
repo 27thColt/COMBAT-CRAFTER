@@ -2,24 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// The list of Battlestate that the game may choose from ( 10/24/2019 7:51pm )
-// I just realzied I could've moved this out of the GSM class wtf I'm an idiot ( 12/27/2019 2:23pm )
-[SerializeField]
-public enum Battlestate {
-    none,                   // 0
-    game_LOADWAVE,          // 1
-    player_CRAFT,           // 2
-    player_ENEMYSELECTION,  // 3
-    game_CALCULATE,         // 4
-    enemy_ATTACK            // 5
-}
-
 /* 12/27/2019 3:46pm - BattleStateClass (static class)
  * Not sure if this is right implementation so bear with me
  * 
  * Contains the last and current battlestate, as well as a function and event for when it is changed 
- */ 
-public static class BattleStateClass {
+ */
+public static class BattleStateManager {
     public static Battlestate lastState;
     public static Battlestate currentState;
 
@@ -31,6 +19,8 @@ public static class BattleStateClass {
         lastState = currentState;
         currentState = _state;
 
+        Debug.Log("LAST STATE: " + lastState + " | CURRENT STATE: " + currentState);
+
         OnBattlestateChanged?.Invoke(_state); // This is new so yeah-- "Null Conditional Operator ?." ( 12/28/2019 5:59pm )
 
         /* More on this operator. Given a function a?.x, the function will return a non-null value if a also returns a non-null value,
@@ -41,8 +31,20 @@ public static class BattleStateClass {
          * Meaning, OnBattlestateChanged will only fire if it is not equal to a null value (meaning there are event listeners present)
          *  
          *  ( 12/28/2019 6:06pm )
-         */ 
+         */
     }
+}
+
+// The list of Battlestate that the game may choose from ( 10/24/2019 7:51pm )
+// I just realzied I could've moved this out of the GSM class wtf I'm an idiot ( 12/27/2019 2:23pm )
+[SerializeField]
+public enum Battlestate {
+    none,                   // 0
+    game_LOADWAVE,          // 1
+    player_CRAFT,           // 2
+    player_ENEMYSELECTION,  // 3
+    game_CALCULATE,         // 4
+    enemy_ATTACK            // 5
 }
 
 /* DEPRECATED SHIT:

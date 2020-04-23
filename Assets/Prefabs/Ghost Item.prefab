@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 4257111579264029903, guid: 0f61f67c1960b91418d73ad1c3154e70,
         type: 3}
       propertyPath: m_Name
-      value: Ghost Item Variant
+      value: Ghost Item
       objectReference: {fileID: 0}
     - target: {fileID: 4257111579264029903, guid: 0f61f67c1960b91418d73ad1c3154e70,
         type: 3}

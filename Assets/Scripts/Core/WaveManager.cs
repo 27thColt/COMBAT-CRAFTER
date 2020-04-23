@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static BattleStateClass;
+using static BattleStateManager;
 
 /* 10/24/2019 9:57pm - Wave Manager
  * Handles everything to do with enemy wave logic and all that
@@ -17,9 +17,11 @@ public class WaveManager : MonoBehaviour {
     public int currentWave;
     public EnemyWave loadedWave; // loadedWave is the enemy wave itself of ID currentWave ( 10/28/2019 2:06pm )
 
+    [SerializeField]
+    private GameObject enemyPrefab = null; // Dragged&Dropped into WaveManager gameobject ( 12/26/2019 11:13pm )
 
-    public GameObject enemyPrefab; // Dragged&Dropped into WaveManager gameobject ( 12/26/2019 11:13pm )
-    public GameObject[] spawnpoints; // Like with the previous, Dragged&Dropped also ( 12/27/2019 10:48am )\
+    [SerializeField]
+    private GameObject[] spawnpoints = null; // Like with the previous, Dragged&Dropped also ( 12/27/2019 10:48am )\
 
     // NOTE: Maximum number of spawnpoints should be 5, thus 5 enemies should only appear at any given moment ( 12/27/2019 10:52am )
 
@@ -41,7 +43,7 @@ public class WaveManager : MonoBehaviour {
     #region Functions
 
     // Creates/Displays an enemy in the world ( 12/26/2019 11:15pm )
-    public void AddEnemy(Enemy _enemy, GameObject _parent) {
+    public void AddEnemy(EnemyType _enemy, GameObject _parent) {
         Debug.Log("Adding " + _enemy.enemyName + " to game world");
 
         GameObject enemyObj = Instantiate(enemyPrefab, _parent.transform);
@@ -84,7 +86,6 @@ public class WaveManager : MonoBehaviour {
     // Fires when the gamestate has been changed ( 12/27/2019 1:14pm )
     public void WaveManagerListener(Battlestate _state) {
         if (_state == Battlestate.game_LOADWAVE) {
-            print("State set to Wave Loading");
             loadedWave = waveList[currentWave];
             EnemyInventory.instance.LoadEnemyDefs();
 

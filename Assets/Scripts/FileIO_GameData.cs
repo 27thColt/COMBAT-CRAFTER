@@ -20,9 +20,9 @@ public static class FileIO_GameData {
     private static readonly string _PATH = Application.dataPath + "/Save Data";
 
     // Loads savedata to the game; will return the inventory list ( 2/25/2020 5:36pm )
-    public static List<Item> LoadInventory() {
+    public static List<ItemType> LoadInventory() {
         if (File.Exists(_PATH + "/inventory.json")) {
-            List <Item> _outputList = new List<Item>();
+            List <ItemType> _outputList = new List<ItemType>();
 
             InventorySave _inventorySaveData = JsonUtility.FromJson<InventorySave>(File.ReadAllText(_PATH + "/inventory.json"));
 
@@ -30,7 +30,7 @@ public static class FileIO_GameData {
             for (int i = 0; i < _inventorySaveData.inventory.Length; i++) {
 
                 // Conversion from item ID to item ( 2/29/2020 3:09pm )
-                _outputList.Add(Item.ReturnItemFromID(_inventorySaveData.inventory[i]));
+                _outputList.Add(ItemType.ReturnItemFromID(_inventorySaveData.inventory[i]));
             }
 
             return _outputList;
@@ -40,7 +40,7 @@ public static class FileIO_GameData {
     }
 
     // Saves inventory; called through inventory class ( 4/21/2020 3:00pm )
-    public static void SaveInventory(List<Item> _inventory) {
+    public static void SaveInventory(List<ItemType> _inventory) {
         InventorySave _inventorySaveData = new InventorySave(_inventory);
 
         string _json = JsonUtility.ToJson(_inventorySaveData);
@@ -56,10 +56,10 @@ public static class FileIO_GameData {
         public int[] inventory;
 
         // constructor basically stores all the item's IDS onto a separate list and then converts to array ( 2/29/2020 3:08pm )
-        public InventorySave(List<Item> _inventoryList) {
+        public InventorySave(List<ItemType> _inventoryList) {
             List<int> _idList = new List<int>();
 
-            foreach (Item _item in _inventoryList) {
+            foreach (ItemType _item in _inventoryList) {
                 _idList.Add(_item.ID);
             }
 
