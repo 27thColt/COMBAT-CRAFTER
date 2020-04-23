@@ -32,7 +32,7 @@ public class EnemyInventory : MonoBehaviour {
 
     // Adds an enemy to the inventory, doesn't do anything if it already exists ( 4/21/2020 5:10pm )
     public void AddEnemyDef(Enemy _enemy) {
-        if (enemyInventory.Count != 0 && CheckInvFor(_enemy))
+        if (enemyInventory.Count != 0 && CheckInvFor(_enemy) != null)
             return;
 
 
@@ -51,14 +51,12 @@ public class EnemyInventory : MonoBehaviour {
 
     // Adds enemy vulnerability to an existing enemy, adds the enemy if it does not exist yet ( 4/21/2020 5:11pm )
     public void AddEnemyVul(Enemy _enemy, Item _item) {
-        for (int i = 0; i <= enemyInventory.Count; i++) {
-            if (enemyInventory[i].enemyID == _enemy.ID) {
-                Debug.Log("Adding " + _item.itemName + " to " + _enemy.enemyName + " definition");
-                enemyInventory[i].vulnerabilities.Add(_item.ID);
+        if (CheckInvFor(_enemy) != null) {
+            Debug.Log("Adding " + _item.itemName + " to " + _enemy.enemyName + " definition");
+            CheckInvFor(_enemy).vulnerabilities.Add(_item.ID);
 
-                FileIO_GameData.SaveEnemyInv(enemyInventory);
-                return;
-            }
+            FileIO_GameData.SaveEnemyInv(enemyInventory);
+            return;
         }
 
         Debug.Log("Adding " + _item.itemName + " to " + _enemy.enemyName + " definition");
@@ -68,20 +66,20 @@ public class EnemyInventory : MonoBehaviour {
         FileIO_GameData.SaveEnemyInv(enemyInventory);
     }
 
-    public bool CheckInvFor(Enemy _enemy) {
+    public EnemyDefinition CheckInvFor(Enemy _enemy) {
         for (int i = 0; i < enemyInventory.Count; i++) {
             if (enemyInventory[i].enemyID == _enemy.ID) {
-                return true;
+                return enemyInventory[i];
             }
         }
 
-        return false;
+        return null;
     }
 
 }
 
 // Enemy Definitions are added to the inventory-- each one contains the current known vulnerabilities ( 4/21/2020 2:58pm )
-public struct EnemyDefinition {
+public class EnemyDefinition {
     public int enemyID;
     public List<int> vulnerabilities;
 }
