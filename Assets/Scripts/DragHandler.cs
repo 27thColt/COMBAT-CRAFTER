@@ -22,13 +22,13 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     private GameObject _inventoryPool;
     private GameObject _inventoryPoolScript; // Holds InventoryPool script; not actually the inventory pool parent. Confusing right? ( 10/30/2019 4:42am)
 
-    private GameObject _startingPool; // Where the item was first in (either inventory or crafter) ( 5/31/2019 2:36pm )
+    private GameObject _startingPool = null; // Where the item was first in (either inventory or crafter) ( 5/31/2019 2:36pm )
 
     #endregion
 
     public static GameObject draggedObject;
 
-    public delegate void itemEndDrag(string _tag, Item _item);
+    public delegate void itemEndDrag(string _tag, ItemType _item);
     public static event itemEndDrag OnItemEndDrag;
 
     /* 5/31/2019 10:52am - I might get confused in the future by this so imma just put this here
@@ -40,9 +40,6 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     private void Start() {
         _itemDraggerObject = GameObject.FindGameObjectWithTag("ItemDraggerObject");
-
-        _inventoryPool = GameObject.FindGameObjectWithTag("InventoryPool");
-        _inventoryPoolScript = GameObject.FindGameObjectWithTag("InventoryPanel");
     }
 
     #region IDragHandler
@@ -51,7 +48,8 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         _startingPool = transform.parent.gameObject;
 
         // Will not do anything if the inventory pool is not interactrable ( 10/30/2019 1:45pm )
-        if (_startingPool == _inventoryPool && !_inventoryPoolScript.GetComponent<InventoryDropHandler>().interactable)
+        ItemWindow _itemPool = _startingPool.GetComponentInParent(typeof(ItemWindow)) as ItemWindow;
+        if (_itemPool.Interactable == false)
             return;
 
         //Debug.Log("ON BEGIN DRAG"); // Oh my god these are fucking annoying,, appearing in the console log ( 12/26/2019 10:23pm )
@@ -93,8 +91,14 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     #endregion
 
     #region Functions
-    public static Item GetDraggedItem() {
-        return draggedObject.GetComponent<ItemDisplay>().item;
+    public static ItemType GetDraggedItem() {
+        try {
+            return draggedObject.GetComponent<ItemDisplay>().item;
+        } catch {
+            Debug.Log("ItemWindow is Currently Uninteractable");
+            return null;
+        }
+        
     }
 
     #endregion

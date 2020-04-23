@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static BattleStateManager;
 
 /* 5/31/2019 3:56pm - Crafting Pool Script
  * The 'collider' which detects when items have been dropped back again into the inventory
@@ -10,12 +11,20 @@ using UnityEngine.UI;
  * 
  * ^^ Copied that from the Inventory Pool Script, neat eh?
  */
-public class CrafterDropHandler : MonoBehaviour, IDropHandler {
-    private GameObject _pool;
+public class CrafterDropHandler : MonoBehaviour, IDropHandler, ItemWindow {
     private Crafter _crafter;
 
+    public bool Interactable { get; set; } = false;
+    public GameObject Pool { get; set; }
+
+
+    void Awake() {
+        OnBattlestateChanged += CrafDropHandListener;
+    }
+
+
     public void Start() {
-        _pool = GetComponentInChildren<GridLayoutGroup>().gameObject; // Assumes that the grid is the only one in the children that has this component ( 5/31/2019 3:32pm )
+        Pool = GetComponentInChildren<GridLayoutGroup>().gameObject; // Assumes that the grid is the only one in the children that has this component ( 5/31/2019 3:32pm )
         _crafter = Crafter.instance;
     }
 
@@ -29,16 +38,36 @@ public class CrafterDropHandler : MonoBehaviour, IDropHandler {
         if (DragHandler.draggedObject == null || _crafter.itemAmt >= 2)
             return;
 
-        DragHandler.draggedObject.transform.SetParent(_pool.transform);
+        DragHandler.draggedObject.transform.SetParent(Pool.transform);
 
         // Ensures item amount does not exceed limit ( 5/31/2019 4:10pm )
         if (_crafter.itemAmt >= 0 && _crafter.itemAmt <= 2)
             _crafter.itemAmt++;
 
         // Add the actual item to the crafting slot ( 6/3/2019 6:32pm )
-        Item item = DragHandler.GetDraggedItem();
+        ItemType item = DragHandler.GetDraggedItem();
         _crafter.AddItem(item);
         _crafter.UpdateCraftingUI();
+    }
+
+    #endregion
+
+    #region Event Listeners
+
+    // Fires when the gamestate has been changed ( 12/27/2019 1:14pm )
+    public void CrafDropHandListener(Battlestate _state) {
+        if (_state == Battlestate.player_CRAFT) {
+            Interactable = true;
+            print("crafter interactable? " + Interactable);
+        }
+
+        if (lastState == Battlestate.player_CRAFT) {
+
+            //print(_state);
+            //print("inventory will NOT be interactable");
+
+            Interactable = false;
+        }
     }
 
     #endregion
