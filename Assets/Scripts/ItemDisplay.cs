@@ -12,11 +12,11 @@ using TMPro;
  */ 
 public class ItemDisplay : MonoBehaviour {
 
-    public Item item; // Determines the item, duh ( 5/30/2019 8:09pm )
+    public ItemType item; // Determines the item, duh ( 5/30/2019 8:09pm )
     public TextMeshProUGUI textMesh; // TextMesh Pro game object in the child ( 5/30/2019 8:51pm )
     public Image displayImage; // Image game object in the child ( 5/30/2019 8:57pm )
 
-    public void SetItem(Item _item) {
+    public void SetItem(ItemType _item) {
         item = _item;
         textMesh.text = _item.itemName;
         displayImage.sprite = _item.sprite;

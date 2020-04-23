@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
-using static BattleStateClass;
+using static BattleStateManager;
 
 /* 12/26/2019 10:48pm - Enemy Display
  * Attached onto the enemy prefab. Takes information from the item scriptable object to be used in the UI.
@@ -15,28 +15,31 @@ using static BattleStateClass;
  */
 public class EnemyScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
-    public Enemy enemy;
+    public EnemyType enemy;
     //public TextMeshProUGUI textMesh;
     public SpriteRenderer spriteRenderer;
+
+    public int maxHP, currentHP;
 
     private bool _selected = false;
 
     // event for when an enemy has been selected ( 12/27/2019 11:38am )
-    public delegate void enemySelect(Enemy _enemy);
+    public delegate void enemySelect(EnemyType _enemy);
     public static event enemySelect OnEnemySelected = delegate {
         print("Enemy has been selected!");
     };
 
     // event for when enemy has been hovered over (shows tooltip) ( 2/25/2020 9:49pm )
-    public delegate void enemyTooltip(Enemy _enemy);
+    public delegate void enemyTooltip(EnemyType _enemy);
     public static event enemyTooltip OnEnemyHover;
 
     public delegate void exitHover();
     public static event exitHover OnEnemyExit;
 
-    public void SetEnemy(Enemy _enemy) {
+    public void SetEnemy(EnemyType _enemy) {
         enemy = _enemy;
-        //textMesh.text = _enemy.enemyName;
+        maxHP = _enemy.baseHP;
+        currentHP = _enemy.baseHP;
         spriteRenderer.sprite = _enemy.sprite;
     }
 

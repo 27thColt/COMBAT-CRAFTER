@@ -2,33 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static BattleStateClass;
+using static BattleStateManager;
 
 /* 5/31/2019 3:52pm - Crafter Script
  * Manages crafting system
  */
 public class Crafter : MonoBehaviour {
-    private Item _resultItem;
-    private Item _resultSecond;
+    private ItemType _resultItem;
+    private ItemType _resultSecond;
 
     // Drag&Dropped values ( 12/28/2019 10:38pm )
-    public GameObject craftingSlot1;
-    public GameObject craftingSlot2;
+    [SerializeField]
+    private GameObject craftingSlot1 = null;
+
+    [SerializeField]
+    private GameObject craftingSlot2 = null;
 
     public Recipe[] recipeList;
-    public List<Recipe> knownRecipes; // List of recipes known to the player ( 12/28/2019 10:38pm )
+    //public List<Recipe> knownRecipes; // List of recipes known to the player ( 12/28/2019 10:38pm )
 
     public int itemAmt;
 
-    public List<Item> craftingSlots = new List<Item>();
+    private List<ItemType> craftingSlots = new List<ItemType>();
     
     #region Events
 
-    public delegate void crafterPoolUpdate(Item _item = null, Item _second = null);
+    public delegate void crafterPoolUpdate(ItemType _item = null, ItemType _second = null);
     public static event crafterPoolUpdate OnResultUpdate;
 
     // Event for when an item has been crafted ( 12/27/2019 11:49am )
-    public delegate void ItemCraft(Item _item);
+    public delegate void ItemCraft(ItemType _item);
     public static event ItemCraft OnItemCrafted;
 
     #endregion
@@ -122,16 +125,16 @@ public class Crafter : MonoBehaviour {
         }
     } */
 
-    public void AddItem(Item _item) {
+    public void AddItem(ItemType _item) {
         craftingSlots.Add(_item);
     }
 
-    public void RemoveItem(Item _item) {
+    public void RemoveItem(ItemType _item) {
         craftingSlots.Remove(_item);
     }
 
     // Checks if two items match a recipe from the recipe list ( 6/3/2019 10:04pm )
-    public Recipe CheckRecipe(Item _item1, Item _item2) {
+    public Recipe CheckRecipe(ItemType _item1, ItemType _item2) {
         for (int i = 0; i < recipeList.Length; i++) {
             if ((_item1 == recipeList[i].material1 && _item2 == recipeList[i].material2) || (_item2 == recipeList[i].material1 && _item1 == recipeList[i].material2))
                 return recipeList[i];
@@ -158,7 +161,7 @@ public class Crafter : MonoBehaviour {
     #region Event Listeners
 
     // Will set the result item whenever it is updated ( 12/27/2019 12:49pm )
-    public void UpdateResultItem(Item _item = null, Item _second = null) {
+    public void UpdateResultItem(ItemType _item = null, ItemType _second = null) {
         if (_item != null) {
             _resultItem = _item;
 
@@ -173,7 +176,7 @@ public class Crafter : MonoBehaviour {
     }
 
     // Event listener which will fire once an item has been taken out of crafter, OnEndDrag() in DragHandler ( 12/28/2019 10:04pm )
-    public void RemoveItemFromCrafter(string _tag, Item _item) {
+    public void RemoveItemFromCrafter(string _tag, ItemType _item) {
         // This function used to be in DragHandler, but I just moved it to here to allow itemAmt to be privatized and for better modularization ( 12/28/2019 10:11pm )
 
         // Item removing process if the item was taken out of the crafter ( 6/3/2019 6:45pm )

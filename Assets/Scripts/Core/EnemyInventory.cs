@@ -31,7 +31,7 @@ public class EnemyInventory : MonoBehaviour {
     }
 
     // Adds an enemy to the inventory, doesn't do anything if it already exists ( 4/21/2020 5:10pm )
-    public void AddEnemyDef(Enemy _enemy) {
+    public void AddEnemyDef(EnemyType _enemy) {
         if (enemyInventory.Count != 0 && CheckInvFor(_enemy) != null)
             return;
 
@@ -50,7 +50,7 @@ public class EnemyInventory : MonoBehaviour {
     }
 
     // Adds enemy vulnerability to an existing enemy, adds the enemy if it does not exist yet ( 4/21/2020 5:11pm )
-    public void AddEnemyVul(Enemy _enemy, Item _item) {
+    public void AddEnemyVul(EnemyType _enemy, ItemType _item) {
         if (CheckInvFor(_enemy) != null) {
             Debug.Log("Adding " + _item.itemName + " to " + _enemy.enemyName + " definition");
             CheckInvFor(_enemy).vulnerabilities.Add(_item.ID);
@@ -66,7 +66,7 @@ public class EnemyInventory : MonoBehaviour {
         FileIO_GameData.SaveEnemyInv(enemyInventory);
     }
 
-    public EnemyDefinition CheckInvFor(Enemy _enemy) {
+    public EnemyDefinition CheckInvFor(EnemyType _enemy) {
         for (int i = 0; i < enemyInventory.Count; i++) {
             if (enemyInventory[i].enemyID == _enemy.ID) {
                 return enemyInventory[i];

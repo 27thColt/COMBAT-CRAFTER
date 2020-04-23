@@ -11,9 +11,14 @@ using System.Linq;
  */
 
 public class TooltipScript : MonoBehaviour {
-    public TextMeshProUGUI displayText;
-    public GameObject iconsGrid;
-    public GameObject iconPrefab;
+    [SerializeField]
+    private TextMeshProUGUI displayText = null;
+
+    [SerializeField]
+    private GameObject iconsGrid = null;
+
+    [SerializeField]
+    private GameObject iconPrefab = null;
 
     void Awake() {
         // Focuses on enemy tooltips ( 4/23/2020 2:34pm )
@@ -38,12 +43,12 @@ public class TooltipScript : MonoBehaviour {
 
     #region Event Listeners
 
-    void ShowEnemyTooltip(Enemy _enemy) {
+    void ShowEnemyTooltip(EnemyType _enemy) {
         iconsGrid.SetActive(true);
         displayText.text = _enemy.enemyName + "<br><size=18>Vulnerabilties:</size>";
 
 
-        foreach (Item _item in _enemy.vulnerabilities) {
+        foreach (ItemType _item in _enemy.vulnerabilities) {
             GameObject icon = Instantiate(iconPrefab, iconsGrid.transform);
 
             if (EnemyInventory.instance.CheckInvFor(_enemy) != null) {

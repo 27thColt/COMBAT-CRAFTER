@@ -11,5 +11,5 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EnemyWave", menuName = "Enemy Wave", order = 3)]
 public class EnemyWave : ScriptableObject {
     public int waveID;
-    public Enemy[] enemies;
+    public EnemyType[] enemies;
 }

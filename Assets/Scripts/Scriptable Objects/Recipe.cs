@@ -8,12 +8,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Recipe", menuName = "Recipe", order = 1)]
 [System.Serializable]
 public class Recipe : ScriptableObject {
-    public Item material1;
-    public Item material2;
+    public ItemType material1;
+    public ItemType material2;
 
-    public Item result;
+    public ItemType result;
 
     // Some recipes will result a second item, typically the first will be a "weapon", while secondaries are not ( 6/3/2019 8:20pm )
-    public Item resultSecondary; 
+    public ItemType resultSecondary; 
     
 }
