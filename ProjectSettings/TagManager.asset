@@ -6,12 +6,9 @@ TagManager:
   tags:
   - ItemDraggerObject
   - Pool
-  - InventoryPool
-  - CraftingPool
-  - InventoryPanel
-  - CraftingPanel
   - GhostItem
   - Enemy
+  - TooltipCanvas
   layers:
   - Default
   - TransparentFX
