@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static BattleStateManager;
+using static BattleState;
 
 /* 5/31/2019 3:56pm - Crafting Pool Script
  * The 'collider' which detects when items have been dropped back again into the inventory
@@ -55,12 +55,12 @@ public class CrafterDropHandler : MonoBehaviour, IDropHandler, ItemWindow {
     #region Event Listeners
 
     // Fires when the battlestate has been changed ( 12/27/2019 1:14pm )
-    public void CrafDHListener(Battlestate _state) {
-        if (_state == Battlestate.player_CRAFT) {
+    public void CrafDHListener(Bstate _state) {
+        if (_state == Bstate.player_CRAFT) {
             Interactable = true;
         }
 
-        if (lastState == Battlestate.player_CRAFT) {
+        if (lastState == Bstate.player_CRAFT) {
 
             //print(_state);
             //print("inventory will NOT be interactable");

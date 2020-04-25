@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static BattleStateManager;
+using static BattleState;
 
 /* 5/31/2019 3:52pm - Crafter Script
  * Manages crafting system
@@ -152,7 +152,7 @@ public class Crafter : MonoBehaviour {
             Inventory.instance.RemoveAllGhostItems();
         }
 
-        SetCurrentState(Battlestate.player_ENEMYSELECTION);
+        SetCurrentState(Bstate.player_ENEMYSELECTION);
 
     }
 

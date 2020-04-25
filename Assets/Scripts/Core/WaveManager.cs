@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static BattleStateManager;
+using static BattleState;
 
 /* 10/24/2019 9:57pm - Wave Manager
  * Handles everything to do with enemy wave logic and all that
@@ -37,7 +37,7 @@ public class WaveManager : MonoBehaviour {
         waveList = SortWaveList(waveList);
         currentWave = 0;
 
-        SetCurrentState(Battlestate.game_LOADWAVE);
+        SetCurrentState(Bstate.game_LOADWAVE);
     }
 
     #region Functions
@@ -84,14 +84,14 @@ public class WaveManager : MonoBehaviour {
     #region Event Listeners
 
     // Fires when the gamestate has been changed ( 12/27/2019 1:14pm )
-    public void WaveManagerListener(Battlestate _state) {
-        if (_state == Battlestate.game_LOADWAVE) {
+    public void WaveManagerListener(Bstate _state) {
+        if (_state == Bstate.game_LOADWAVE) {
             loadedWave = waveList[currentWave];
             EnemyInventory.instance.LoadEnemyDefs();
 
             AddAllEnemiesInWave(waveList[currentWave]);
 
-            SetCurrentState(Battlestate.player_CRAFT);
+            SetCurrentState(Bstate.player_CRAFT);
         }
     }
 
