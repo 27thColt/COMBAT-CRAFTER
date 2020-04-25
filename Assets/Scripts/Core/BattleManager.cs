@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static BattleStateManager;
+using static BattleState;
 
 /* 12/27/2019 12:47pm - Battle Manager
  * Handles game batle logic and all that shit
@@ -48,7 +48,6 @@ public class BattleManager : MonoBehaviour {
         }
 
         _outputDamage = (int)Math.Round(4.5 * _item.baseAtk * vulModifer);
-        Debug.Log(_outputDamage);
 
         return _outputDamage;
     }
@@ -66,12 +65,12 @@ public class BattleManager : MonoBehaviour {
     public void UpdateDefendingEnemy(EnemyType _enemy) {
         defendingEnemy = _enemy;
 
-        SetCurrentState(Battlestate.game_CALCULATE);
+        SetCurrentState(Bstate.game_CALCULATE);
     }
 
     // Fires when the gamestate has been changed ( 12/27/2019 1:14pm )
-    public void BattleManagerListener(Battlestate _state) {
-        if (_state == Battlestate.game_CALCULATE) {
+    public void BattleManagerListener(Bstate _state) {
+        if (_state == Bstate.game_CALCULATE) {
             if (CheckVulnerabilities(defendingEnemy, attackingItem)) {
                 // Add vulnerability to enemy inventory ( 4/24/2020 1:03am )
                 EnemyInventory.instance.AddEnemyVul(defendingEnemy, attackingItem);
