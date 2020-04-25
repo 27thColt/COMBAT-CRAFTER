@@ -15,7 +15,7 @@ using UnityEditor;
  * 
  * Deals more than just UI,, deals with all the logic related to the enemy gameobject itself ( 12/27/2019 1:21pm )
  */
-public class EnemyScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
     public EnemyType enemyType;
     //public TextMeshProUGUI textMesh;
@@ -110,8 +110,8 @@ public class EnemyScript : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         _mouseOver = true;
 
         if (_autoTooltip) {
-            _tooltip = Tooltip.CreateTooltip(GetComponent<EnemyScript>());
-            _tooltip.GetComponent<EnemyTooltip>().SetTooltip(GetComponent<EnemyScript>());
+            _tooltip = Tooltip.CreateTooltip(GetComponent<EnemyObject>());
+            _tooltip.GetComponent<EnemyTooltip>().SetTooltip(GetComponent<EnemyObject>());
         }
     }
 

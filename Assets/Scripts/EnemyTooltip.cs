@@ -23,7 +23,7 @@ public class EnemyTooltip : MonoBehaviour {
     [SerializeField]
     private GameObject hpBar = null;
 
-    private EnemyScript _currentEnemy;
+    private EnemyObject _currentEnemy;
 
     // Will determine if the tooltip follows the mouse or not ( 4/24/2020 5:23pm )
     private bool _followMouse = true;
@@ -46,7 +46,7 @@ public class EnemyTooltip : MonoBehaviour {
     // Main Show and Hide functions ( 4/24/2020 5:33pm )
 
     #region Functions
-    public void SetTooltip(EnemyScript _enemy) {
+    public void SetTooltip(EnemyObject _enemy) {
         _currentEnemy = _enemy;
 
 

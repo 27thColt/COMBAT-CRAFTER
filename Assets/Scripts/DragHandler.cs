@@ -93,7 +93,7 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     #region Functions
     public static ItemType GetDraggedItem() {
         try {
-            return draggedObject.GetComponent<ItemDisplay>().item;
+            return draggedObject.GetComponent<ItemObject>().item;
         } catch {
             Debug.Log("ItemWindow is Currently Uninteractable");
             return null;

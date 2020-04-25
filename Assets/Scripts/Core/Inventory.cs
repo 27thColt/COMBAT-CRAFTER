@@ -66,7 +66,7 @@ public class Inventory : MonoBehaviour {
         itemInv.Add(_item);
 
         GameObject itemObj = Instantiate(itemPrefab, inventoryGrid);
-        itemObj.GetComponent<ItemDisplay>().SetItem(_item);
+        itemObj.GetComponent<ItemObject>().SetItem(_item);
 
         FileIO_GameData.SaveInventory(itemInv);
     }
@@ -74,7 +74,7 @@ public class Inventory : MonoBehaviour {
     // Creation of ghost items. Not actually interactable. ( 6/12/2019 1:05pm )
     public GameObject CreateGhostItem(ItemType _item) {
         GameObject itemObj = Instantiate(ghostItem, inventoryGrid);
-        itemObj.GetComponent<ItemDisplay>().SetItem(_item);
+        itemObj.GetComponent<ItemObject>().SetItem(_item);
 
         return itemObj;
     }

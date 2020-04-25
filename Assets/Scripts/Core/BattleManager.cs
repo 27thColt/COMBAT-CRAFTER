@@ -21,7 +21,7 @@ public class BattleManager : MonoBehaviour {
 
     void Awake() {
         Crafter.OnItemCrafted += UpdateAttackingItem;
-        EnemyScript.OnEnemySelected += UpdateDefendingEnemy;
+        EnemyObject.OnEnemySelected += UpdateDefendingEnemy;
         OnBattlestateChanged += BattleManagerListener;
     }
 

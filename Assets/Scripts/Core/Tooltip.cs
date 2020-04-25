@@ -14,7 +14,7 @@ public static class Tooltip {
     public static GameObject CreateTooltip(Component _component) {
         GameObject _object;
 
-        if (_component is EnemyScript) {
+        if (_component is EnemyObject) {
             _object = Object.Instantiate(Resources.Load("Prefabs/Enemy Tooltip Panel") as GameObject);
         } else {
             _object = Object.Instantiate(new GameObject());

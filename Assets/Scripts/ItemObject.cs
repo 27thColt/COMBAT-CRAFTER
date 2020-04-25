@@ -10,7 +10,7 @@ using TMPro;
  * 
  * Gammer - Jaws 2016 is a nice song, actually Gammer is just plain awesome
  */ 
-public class ItemDisplay : MonoBehaviour {
+public class ItemObject : MonoBehaviour {
 
     public ItemType item; // Determines the item, duh ( 5/30/2019 8:09pm )
     public TextMeshProUGUI textMesh; // TextMesh Pro game object in the child ( 5/30/2019 8:51pm )

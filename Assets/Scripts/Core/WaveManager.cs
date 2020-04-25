@@ -47,7 +47,7 @@ public class WaveManager : MonoBehaviour {
         Debug.Log("Adding " + _enemy.enemyName + " to game world");
 
         GameObject enemyObj = Instantiate(enemyPrefab, _parent.transform);
-        enemyObj.GetComponent<EnemyScript>().SetEnemy(_enemy);
+        enemyObj.GetComponent<EnemyObject>().SetEnemy(_enemy);
     }
 
     // Creates/Displays all of the enemies of a specific wave in the game world ( 12/26/2019 11:25pm )
