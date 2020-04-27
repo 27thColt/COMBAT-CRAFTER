@@ -52,10 +52,12 @@ public class EnemyInventory : MonoBehaviour {
     // Adds enemy vulnerability to an existing enemy, adds the enemy if it does not exist yet ( 4/21/2020 5:11pm )
     public void AddEnemyVul(EnemyType _enemy, ItemType _item) {
         if (CheckInvFor(_enemy) != null) {
-            Debug.Log("Adding " + _item.itemName + " to " + _enemy.enemyName + " definition");
-            CheckInvFor(_enemy).vulnerabilities.Add(_item.ID);
+            if (!CheckInvFor(_enemy).vulnerabilities.Contains(_item.ID)) {
+                Debug.Log("Adding " + _item.itemName + " to " + _enemy.enemyName + " definition");
+                CheckInvFor(_enemy).vulnerabilities.Add(_item.ID);
 
-            FileIO_GameData.SaveEnemyInv(enemyInventory);
+                FileIO_GameData.SaveEnemyInv(enemyInventory);
+            }
             return;
         }
 
@@ -64,6 +66,7 @@ public class EnemyInventory : MonoBehaviour {
         AddEnemyVul(_enemy, _item);
 
         FileIO_GameData.SaveEnemyInv(enemyInventory);
+        return;
     }
 
     public EnemyDefinition CheckInvFor(EnemyType _enemy) {
