@@ -15,13 +15,45 @@ using UnityEditor;
  * 
  * Deals more than just UI,, deals with all the logic related to the enemy gameobject itself ( 12/27/2019 1:21pm )
  */
-public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IHealthPoints {
+
+    #region IHealthPoints
+    public int MaxHP { get; set; }
+
+    public int CurrentHP { get; set; }
+
+    // This is a coroutine so that the HP can update in real time, and not just automatically ( 4/24/2020 5:25 pm)
+    public IEnumerator TakeDamage(int _full, int _damage) {
+        yield return new WaitForSeconds(0.4f);
+
+        while (CurrentHP > _full - _damage) {
+            CurrentHP -= 1;
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield return new WaitForSeconds(0.4f);
+
+        _autoTooltip = true;
+        _tooltip.GetComponent<EnemyTooltip>().SetMouseFollow(true);
+
+        if (!_mouseOver) {
+            Tooltip.DeleteTooltip(_tooltip);
+            _tooltip = null;
+        }
+
+        Debug.Log("Damage dealt: " + _damage + " | HP left: " + CurrentHP);
+
+        SetCurrentState(Bstate.enemy_ATTACK);
+    }
+
+
+    #endregion
 
     public EnemyType enemyType;
-    //public TextMeshProUGUI textMesh;
-    public SpriteRenderer spriteRenderer;
 
-    public int maxHP, currentHP;
+    [SerializeField]
+    private SpriteRenderer spriteRenderer = null;
 
     private bool _selected = false;
 
@@ -42,40 +74,13 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     #endregion
 
     private void Awake() {
-        BattleManager.OnDamagePerformed += DamageListener;
+        BattleManager.OnDamageCalculated += DamageListener;
     }
-
-    #region Coroutines
-
-    // This is a coroutine so that the HP can update in real time, and not just automatically ( 4/24/2020 5:25 pm)
-    private IEnumerator TakeDamage(int _full, int _damage) {
-        yield return new WaitForSeconds(0.4f); 
-
-        while (currentHP > _full - _damage) {
-            currentHP -= 1;
-
-            yield return new WaitForEndOfFrame();
-        }
-
-        yield return new WaitForSeconds(0.4f);
-
-        _autoTooltip = true;
-        _tooltip.GetComponent<EnemyTooltip>().SetMouseFollow(true);
-
-        if (!_mouseOver) {
-            Tooltip.DeleteTooltip(_tooltip);
-            _tooltip = null;
-        }
-
-        Debug.Log("Damage dealt: " + _damage + " | HP left: " + currentHP);
-    }
-
-    #endregion
 
     public void SetEnemy(EnemyType _enemy) {
         enemyType = _enemy;
-        maxHP = _enemy.baseHP;
-        currentHP = _enemy.baseHP;
+        MaxHP = _enemy.baseHP;
+        CurrentHP = MaxHP;
         spriteRenderer.sprite = _enemy.sprite;
     }
 
@@ -93,7 +98,7 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (_selected) {
             SetCurrentState(Bstate.playerattack_ANIMATE);
 
-            StartCoroutine(TakeDamage(currentHP, _damage));
+            StartCoroutine(TakeDamage(CurrentHP, _damage));
 
             // Disables the tooltip from following the mouse ( 4/26/2020 1:28am )
             _tooltip.GetComponent<EnemyTooltip>().SetMouseFollow(false);
