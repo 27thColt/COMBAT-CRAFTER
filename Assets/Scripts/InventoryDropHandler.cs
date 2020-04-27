@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static BattleState;
-
+using TMPro;
 
 /* 5/31/2019 1:37pm - Inventory Pool Script
  * The 'collider' which detects when items have been dropped back again into the inventory
@@ -20,6 +20,7 @@ public class InventoryDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
 
     void Awake() {
         OnBattlestateChanged += InvDHListener;
+        CrafterDropHandler.onClearCrafter += ReturnToInventory;
     }
 
     void Start() {
@@ -60,6 +61,12 @@ public class InventoryDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
             //print("inventory will NOT be interactable");
 
             Interactable = false;
+        }
+    }
+
+    private void ReturnToInventory(List<GameObject> _items) {
+        foreach (GameObject _item in _items) {
+            _item.transform.SetParent(Pool.transform);
         }
     }
 

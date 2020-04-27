@@ -44,6 +44,7 @@ public class Crafter : MonoBehaviour {
         instance = this;
         OnResultUpdate += UpdateResultItem;
         DragHandler.OnItemEndDrag += RemoveItemFromCrafter;
+        BattleState.OnBattlestateChanged += CrfStateListener;
     }
 
     #endregion
@@ -130,8 +131,18 @@ public class Crafter : MonoBehaviour {
     }
 
     public void RemoveItem(ItemType _item) {
-        craftingSlots.Remove(_item);
+        if (_item != null) {
+            if (itemAmt >= 1 && itemAmt <= 2) {
+                itemAmt--;
+
+                craftingSlots.Remove(_item);
+                UpdateCraftingUI();
+            }
+        }
+        
     }
+
+
 
     // Checks if two items match a recipe from the recipe list ( 6/3/2019 10:04pm )
     public Recipe CheckRecipe(ItemType _item1, ItemType _item2) {
@@ -181,12 +192,16 @@ public class Crafter : MonoBehaviour {
 
         // Item removing process if the item was taken out of the crafter ( 6/3/2019 6:45pm )
         if (_tag == "CraftingPool" && _item != null) {
-            if (itemAmt >= 1 && itemAmt <= 2) {
-                itemAmt--;
+            RemoveItem(_item);
+        }
+    }
 
-                RemoveItem(_item);
-                UpdateCraftingUI();
+    public void CrfStateListener(Bstate _state) {
+        if (_state == Bstate.game_ROUNDRESET) {
+            for (int i = 0; i < craftingSlots.Count; i++) {
+                RemoveItem(craftingSlots[i]);
             }
+            
         }
     }
 

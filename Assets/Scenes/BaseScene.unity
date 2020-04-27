@@ -1824,6 +1824,7 @@ MonoBehaviour:
   waveList: []
   currentWave: 0
   loadedWave: {fileID: 0}
+  enemyList: []
   enemyPrefab: {fileID: 7151223040735735204, guid: c12e3d74b394edd41a888d1b6d306747,
     type: 3}
   spawnpoints:
@@ -2752,6 +2753,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8287572b598884743918058c68cd2800, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerObj: {fileID: 0}
 --- !u!4 &1978903096
 Transform:
   m_ObjectHideFlags: 0

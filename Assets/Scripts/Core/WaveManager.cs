@@ -17,20 +17,30 @@ public class WaveManager : MonoBehaviour {
     public int currentWave;
     public EnemyWave loadedWave; // loadedWave is the enemy wave itself of ID currentWave ( 10/28/2019 2:06pm )
 
+    public List<EnemyObject> enemyList = new List<EnemyObject>();
+
     [SerializeField]
     private GameObject enemyPrefab = null;
 
     [SerializeField]
-    private GameObject[] spawnpoints = null; 
+    private GameObject[] spawnpoints = null;
 
     // NOTE: Maximum number of spawnpoints should be 5, thus 5 enemies should only appear at any given moment ( 12/27/2019 10:52am )
 
+    #region Singleton & Awake
+
+    public static WaveManager instance;
+
     private void Awake() {
+        instance = this;
+
         // Oh my god this took so for this to work; finally realized my external class had to be on a DIFFERENT gameobject ( 12/26/2019 9:14pm )
         OnBattlestateChanged += WaveManagerListener;
     }
 
-   
+    #endregion
+
+
     void Start() {
         waveList = Resources.LoadAll<EnemyWave>("Enemy Waves");
 
@@ -46,8 +56,10 @@ public class WaveManager : MonoBehaviour {
     public void AddEnemy(EnemyType _enemy, GameObject _parent) {
         Debug.Log("Adding " + _enemy.enemyName + " to game world");
 
-        GameObject enemyObj = Instantiate(enemyPrefab, _parent.transform);
-        enemyObj.GetComponent<EnemyObject>().SetEnemy(_enemy);
+        GameObject _enemyObj = Instantiate(enemyPrefab, _parent.transform);
+        _enemyObj.GetComponent<EnemyObject>().SetEnemy(_enemy);
+
+        enemyList.Add(_enemyObj.GetComponent<EnemyObject>());
     }
 
     // Creates/Displays all of the enemies of a specific wave in the game world ( 12/26/2019 11:25pm )
@@ -58,8 +70,6 @@ public class WaveManager : MonoBehaviour {
             // Adds each enemy to enemy inventory ( 4/21/2020 5:26pm )
             EnemyInventory.instance.AddEnemyDef(_wave.enemies[i]);
         }
-
-        
     }
 
     // Something to sort the wave list that gets loaded. Sorted by ID number. Bubble sort. ( 10/27/2019 9:59am )

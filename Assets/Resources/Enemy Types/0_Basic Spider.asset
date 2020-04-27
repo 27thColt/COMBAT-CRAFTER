@@ -21,3 +21,4 @@ MonoBehaviour:
   drops:
   - {fileID: 0}
   baseHP: 30
+  baseAtk: 3

@@ -43,9 +43,10 @@ public enum Bstate {
     game_LOADWAVE,          // 1
     player_CRAFT,           // 2
     player_ENEMYSELECTION,  // 3
-    game_CALCULATE,         // 4
+    player_ATTACK,          // 4
     playerattack_ANIMATE,   // 5
-    enemy_ATTACK            // 6
+    enemy_ATTACK,           // 6
+    game_ROUNDRESET         // 7
 }
 
 /* DEPRECATED SHIT:

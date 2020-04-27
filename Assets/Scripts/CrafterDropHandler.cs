@@ -12,7 +12,7 @@ using static BattleState;
  * ^^ Copied that from the Inventory Pool Script, neat eh?
  */
 public class CrafterDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
-   
+
     #region IItemWindow
 
     public bool Interactable { get; set; } = false;
@@ -22,8 +22,11 @@ public class CrafterDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
 
     private Crafter _crafter;
 
+    public delegate void ClearWindow(List<GameObject> _objs);
+    public static event ClearWindow onClearCrafter;
+
     void Awake() {
-        OnBattlestateChanged += CrafDHListener;
+        OnBattlestateChanged += CrfDHListener;
     }
 
 
@@ -59,16 +62,26 @@ public class CrafterDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
     #region Event Listeners
 
     // Fires when the battlestate has been changed ( 12/27/2019 1:14pm )
-    public void CrafDHListener(Bstate _state) {
+    public void CrfDHListener(Bstate _state) {
         if (_state == Bstate.player_CRAFT) {
             Interactable = true;
+        
+        // Resets all items in the crafter ( 4/27/2020 3:17pm )
+        } else if (_state == Bstate.game_ROUNDRESET) {
+            print("Fuck you");
+            List<GameObject> _items = new List<GameObject>();
+
+            foreach (Transform _child in Pool.transform) {
+                if (_child.GetComponent<ItemObject>() != null) {
+                    _items.Add(_child.gameObject);
+                }
+                    
+            }
+
+            onClearCrafter(_items);
         }
 
         if (lastState == Bstate.player_CRAFT) {
-
-            //print(_state);
-            //print("inventory will NOT be interactable");
-
             Interactable = false;
         }
     }

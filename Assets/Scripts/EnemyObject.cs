@@ -74,7 +74,7 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     #endregion
 
     private void Awake() {
-        BattleManager.OnDamageCalculated += DamageListener;
+        BattleManager.OnPlayerAttack += DamageListener;
     }
 
     public void SetEnemy(EnemyType _enemy) {
