@@ -18,10 +18,10 @@ public class WaveManager : MonoBehaviour {
     public EnemyWave loadedWave; // loadedWave is the enemy wave itself of ID currentWave ( 10/28/2019 2:06pm )
 
     [SerializeField]
-    private GameObject enemyPrefab = null; // Dragged&Dropped into WaveManager gameobject ( 12/26/2019 11:13pm )
+    private GameObject enemyPrefab = null;
 
     [SerializeField]
-    private GameObject[] spawnpoints = null; // Like with the previous, Dragged&Dropped also ( 12/27/2019 10:48am )\
+    private GameObject[] spawnpoints = null; 
 
     // NOTE: Maximum number of spawnpoints should be 5, thus 5 enemies should only appear at any given moment ( 12/27/2019 10:52am )
 

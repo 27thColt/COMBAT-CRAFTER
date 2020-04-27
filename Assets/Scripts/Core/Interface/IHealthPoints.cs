@@ -1,18 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using UnityEngine;
 
-public class IHealthPoints : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+/* 4/26/2020 4:22pm - IHealthPoints Interface
+ * 
+ * For any object (i.e. player, enemy) that uses HealthPoints
+ */ 
+interface IHealthPoints {
+    int MaxHP { get; set; }
+    int CurrentHP { get; set; }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    IEnumerator TakeDamage(int _full, int _damage);
 }

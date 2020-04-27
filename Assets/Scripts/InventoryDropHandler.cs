@@ -10,9 +10,13 @@ using static BattleState;
  * The 'collider' which detects when items have been dropped back again into the inventory
  * Attached to inventory panel game object
  */
-public class InventoryDropHandler : MonoBehaviour, IDropHandler, ItemWindow {
+public class InventoryDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
+
+    #region IItemWindow
     public bool Interactable { get; set; } = false;
     public GameObject Pool { get; set; }
+
+    #endregion
 
     void Awake() {
         OnBattlestateChanged += InvDHListener;

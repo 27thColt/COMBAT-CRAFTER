@@ -48,7 +48,7 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         _startingPool = transform.parent.gameObject;
 
         // Will not do anything if the inventory pool is not interactrable ( 10/30/2019 1:45pm )
-        ItemWindow _itemPool = _startingPool.GetComponentInParent(typeof(ItemWindow)) as ItemWindow;
+        IItemWindow _itemPool = _startingPool.GetComponentInParent(typeof(IItemWindow)) as IItemWindow;
         if (_itemPool.Interactable == false)
             return;
 
@@ -95,7 +95,6 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         try {
             return draggedObject.GetComponent<ItemObject>().item;
         } catch {
-            Debug.Log("ItemWindow is Currently Uninteractable");
             return null;
         }
         

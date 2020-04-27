@@ -16,7 +16,7 @@ public class BattleManager : MonoBehaviour {
     private EnemyType defendingEnemy;
 
     public delegate void PerformDamage(int _damage);
-    public static event PerformDamage OnDamagePerformed;
+    public static event PerformDamage OnDamageCalculated;
 
 
     void Awake() {
@@ -29,7 +29,7 @@ public class BattleManager : MonoBehaviour {
 
     public bool CheckVulnerabilities(EnemyType _defEnemy, ItemType _attItem) {
         for (int i = 0; i < _defEnemy.vulnerabilities.Length; i++) {
-            if (defendingEnemy.vulnerabilities[i] == _attItem)
+            if (_defEnemy.vulnerabilities[i] == _attItem)
                 return true;
         }
 
@@ -79,7 +79,7 @@ public class BattleManager : MonoBehaviour {
                 print("Not Very Effective...");
             }
 
-            OnDamagePerformed(CalculateDamage(defendingEnemy, attackingItem));
+            OnDamageCalculated(CalculateDamage(defendingEnemy, attackingItem));
         }
     }
 

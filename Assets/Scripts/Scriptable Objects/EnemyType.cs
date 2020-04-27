@@ -14,8 +14,10 @@ public class EnemyType : ScriptableObject {
     public Sprite sprite;
     public ItemType[] vulnerabilities; // What the enemy will be weak to ( 6/12/2019 11:41am )
     public ItemType[] drops; // What the enemy will drop upon defeating ( 6/12/2019 11:41am )
-    public int baseHP; // base number of HP that an enemy may have ( 4/23/20220 5:32pm )
 
+
+    public int baseHP; // base number of HP that an enemy may have ( 4/23/20220 5:32pm )
+    public int baseAtk; // base attack that the enemy may deal ( 4/26/2020 1:34am )
 
     /* Not sure about the efficiency of this function; 
      * Used only during loading the savedata because serializing an 'enemy' scriptable object will just return a reference ID.

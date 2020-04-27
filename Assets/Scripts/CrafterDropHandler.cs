@@ -11,12 +11,16 @@ using static BattleState;
  * 
  * ^^ Copied that from the Inventory Pool Script, neat eh?
  */
-public class CrafterDropHandler : MonoBehaviour, IDropHandler, ItemWindow {
-    private Crafter _crafter;
+public class CrafterDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
+   
+    #region IItemWindow
 
     public bool Interactable { get; set; } = false;
     public GameObject Pool { get; set; }
 
+    #endregion
+
+    private Crafter _crafter;
 
     void Awake() {
         OnBattlestateChanged += CrafDHListener;
