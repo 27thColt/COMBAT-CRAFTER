@@ -68,7 +68,6 @@ public class CrafterDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
         
         // Resets all items in the crafter ( 4/27/2020 3:17pm )
         } else if (_state == Bstate.game_ROUNDRESET) {
-            print("Fuck you");
             List<GameObject> _items = new List<GameObject>();
 
             foreach (Transform _child in Pool.transform) {

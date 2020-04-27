@@ -28,7 +28,7 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     public static GameObject draggedObject;
 
-    public delegate void itemEndDrag(string _tag, ItemType _item);
+    public delegate void itemEndDrag(GameObject _window, ItemType _item);
     public static event itemEndDrag OnItemEndDrag;
 
     /* 5/31/2019 10:52am - I might get confused in the future by this so imma just put this here
@@ -78,7 +78,7 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         // Ensures item amount does not exceed limit ( 5/31/2019 4:10pm )
         if (transform.parent != _itemDraggerObject.transform) {
 
-            OnItemEndDrag(_startingPool.tag, GetDraggedItem());
+            OnItemEndDrag(_startingPool.transform.parent.gameObject, GetDraggedItem());
 
             // If the object has not already been set as the parent of another pool ( 5/31/2019 3:17pm )
         } else {

@@ -44,7 +44,7 @@ public class Crafter : MonoBehaviour {
         instance = this;
         OnResultUpdate += UpdateResultItem;
         DragHandler.OnItemEndDrag += RemoveItemFromCrafter;
-        BattleState.OnBattlestateChanged += CrfStateListener;
+        OnBattlestateChanged += CrfStateListener;
     }
 
     #endregion
@@ -131,13 +131,13 @@ public class Crafter : MonoBehaviour {
     }
 
     public void RemoveItem(ItemType _item) {
-        if (_item != null) {
-            if (itemAmt >= 1 && itemAmt <= 2) {
-                itemAmt--;
+        craftingSlots.Remove(_item);
 
-                craftingSlots.Remove(_item);
-                UpdateCraftingUI();
-            }
+        if (itemAmt >= 1 && itemAmt <= 2) {
+            itemAmt--;
+
+
+            UpdateCraftingUI();
         }
         
     }
@@ -187,11 +187,11 @@ public class Crafter : MonoBehaviour {
     }
 
     // Event listener which will fire once an item has been taken out of crafter, OnEndDrag() in DragHandler ( 12/28/2019 10:04pm )
-    public void RemoveItemFromCrafter(string _tag, ItemType _item) {
+    public void RemoveItemFromCrafter(GameObject _window, ItemType _item) {
         // This function used to be in DragHandler, but I just moved it to here to allow itemAmt to be privatized and for better modularization ( 12/28/2019 10:11pm )
 
         // Item removing process if the item was taken out of the crafter ( 6/3/2019 6:45pm )
-        if (_tag == "CraftingPool" && _item != null) {
+        if (_window.GetComponent<CrafterDropHandler>() != null && _item != null) {
             RemoveItem(_item);
         }
     }
