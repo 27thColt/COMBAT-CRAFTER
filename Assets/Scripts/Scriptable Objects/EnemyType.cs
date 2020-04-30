@@ -12,6 +12,7 @@ public class EnemyType : ScriptableObject {
     public string enemyName;
     public int ID = 0;
     public Sprite sprite;
+    public GameObject rig;
     public ItemType[] vulnerabilities; // What the enemy will be weak to ( 6/12/2019 11:41am )
     public ItemType[] drops; // What the enemy will drop upon defeating ( 6/12/2019 11:41am )
 

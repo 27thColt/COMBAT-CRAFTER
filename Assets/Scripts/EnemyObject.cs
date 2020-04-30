@@ -7,6 +7,7 @@ using TMPro;
 using static BattleState;
 using System;
 using UnityEditor;
+using System.Threading.Tasks;
 
 /* 12/26/2019 10:48pm - Enemy Display
  * Attached onto the enemy prefab. Takes information from the item scriptable object to be used in the UI.
@@ -52,8 +53,9 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public EnemyType enemyType;
 
-    [SerializeField]
-    private SpriteRenderer spriteRenderer = null;
+    // The Gameobject that the enemy is using (used to be a sprite but now we use character RIGZ) ( 4/30/2020 7:33pm )
+    private GameObject _rig = null;
+    private Animator _anim;
 
     private bool _selected = false;
 
@@ -81,7 +83,46 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         enemyType = _enemy;
         MaxHP = _enemy.baseHP;
         CurrentHP = MaxHP;
-        spriteRenderer.sprite = _enemy.sprite;
+
+        _rig = Instantiate(_enemy.rig);
+        _rig.transform.SetParent(transform);
+        _rig.transform.localScale = new Vector3(2, 2, 2);
+        _rig.transform.localPosition = new Vector3(0, 0, 0);
+        _rig.transform.localRotation = Quaternion.Euler(0, 0, 0);
+
+        try {
+            _anim = _rig.GetComponent<Animator>();
+        } catch {
+            Debug.Log(_rig.name + " does not have Animator Component!");
+        }
+        
+    }
+
+    // Coroutine for when the sprite needs to flash something (taking damage),, this takes into account that we are using RIGZ and not just stupid sprites ( 5/1/2020 1:34am )
+    public IEnumerator SpriteFlash(int _loops, float _delay) {
+        SpriteRenderer[] _sprites = _rig.GetComponentsInChildren<SpriteRenderer>();
+
+
+        for (int i = 1; i <= _loops + 1; i++) {
+            if (i % 2 == 0) {
+                foreach (SpriteRenderer _sprite in _sprites) {
+                    _sprite.color = new Color(1f, 1f, 1f, 0.7f); // White color, a bit transparent ( 5/1/2020 1:35am )
+                }
+            } else {
+                foreach (SpriteRenderer _sprite in _sprites) {
+                    _sprite.color = new Color(1f, 1f, 1f, 1f); // White color, opacity 100% ( 5/1/2020 1:35am )
+                }
+            }
+            
+
+
+            yield return new WaitForSeconds(_delay);
+        }
+
+        // Return to normal just in case ( 5/1/2020 1:35am )
+        foreach (SpriteRenderer _sprite in _sprites) {
+            _sprite.color = new Color(1f, 1f, 1f, 1f);
+        }
     }
 
     // Will select an enemy WHEN it is enemy selection phase ( 2/29/2020 3:39pm )
@@ -98,17 +139,25 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (_selected) {
             SetCurrentState(Bstate.playerattack_ANIMATE);
 
+            
             StartCoroutine(TakeDamage(CurrentHP, _damage));
+            StartCoroutine(SpriteFlash(3, 0.06f));
 
             // Disables the tooltip from following the mouse ( 4/26/2020 1:28am )
             _tooltip.GetComponent<EnemyTooltip>().SetMouseFollow(false);
 
             // There is no CreateTooltip function here because the logic is that a tooltip is already existing if they clicked on the enemy ( 4/26/2020 1:28am )
 
+            try {
+                _anim.SetTrigger("Damaged");
+            } catch {
+                Debug.Log(_rig.name + " does not have Animator Component and cannot performed Damaged action!");
+            }
+
             _autoTooltip = false;
             _selected = false;
         }
-    }
+    }   
 
     #region OnPointerEnter & Exit
     public void OnPointerEnter(PointerEventData eventData) {
