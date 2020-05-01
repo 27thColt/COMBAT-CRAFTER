@@ -21,6 +21,7 @@ public static class Tooltip {
         }
 
         _object.transform.SetParent(GameObject.FindGameObjectWithTag("TooltipCanvas").transform);
+        _object.transform.position = Input.mousePosition + (new UnityEngine.Vector3(0, 20, 0));
         _object.transform.localScale = new UnityEngine.Vector3(1, 1, 1);
 
         return _object;
