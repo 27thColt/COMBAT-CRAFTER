@@ -169,8 +169,8 @@ public class Crafter : MonoBehaviour {
             Inventory.instance.RemoveAllGhostItems();
         }
 
-        SetCurrentState(Bstate.player_ENEMYSELECTION);
 
+        FinishCurrentState(Bstate.player_CRAFT);
     }
 
     #endregion

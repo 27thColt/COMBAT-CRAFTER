@@ -28,9 +28,11 @@ public class PlayerObject : MonoBehaviour, IHealthPoints {
 
         yield return new WaitForSeconds(0.4f);
 
-        SetCurrentState(Bstate.game_ROUNDRESET);
-
         Debug.Log("Damage dealt: " + _damage + " | HP left: " + CurrentHP);
+    }
+
+    public void Die() {
+        return;
     }
 
     #endregion

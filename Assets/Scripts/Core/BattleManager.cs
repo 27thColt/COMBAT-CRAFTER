@@ -8,6 +8,8 @@ using static BattleState;
  * Handles game batle logic and all that shit
  * reconciles the differences between man and AI
  * 
+ * 
+ * 5/1/2020 1:11pm - Some refactoring going to be done,, really want to centralize the battle code onto the battle manager
  */
 public class BattleManager : MonoBehaviour {
     // Item used to attack (comes from resultItem in the Crafter) ( 12/27/2019 12:50pm )
@@ -34,7 +36,8 @@ public class BattleManager : MonoBehaviour {
     void Awake() {
         Crafter.OnItemCrafted += UpdateAttackingItem;
         EnemyObject.OnEnemySelected += UpdateDefendingEnemy;
-        OnBattlestateChanged += BattleManagerListener;
+        OnBattlestateChanged += BStateChanged_BMListener;
+        OnBattlestateFinished += BStateFinished_BMListener;
     }
 
     #endregion
@@ -42,11 +45,15 @@ public class BattleManager : MonoBehaviour {
     private void OnDestroy() {
         Crafter.OnItemCrafted -= UpdateAttackingItem;
         EnemyObject.OnEnemySelected -= UpdateDefendingEnemy;
-        OnBattlestateChanged -= BattleManagerListener;
+        OnBattlestateChanged -= BStateChanged_BMListener;
+        OnBattlestateFinished -= BStateFinished_BMListener;
     }
 
     private void Start() {
         _playerObj = FindObjectOfType<PlayerObject>();
+
+        // Calls WaveManager.cs ( 5/1/2020 1:11pm )
+        SetCurrentState(Bstate.game_LOADWAVE);
     }
 
     #region Functions
@@ -78,13 +85,44 @@ public class BattleManager : MonoBehaviour {
     public void UpdateDefendingEnemy(EnemyType _enemy) {
         _defendingEnemy = _enemy;
 
-        SetCurrentState(Bstate.player_ATTACK);
+        // Current state should be Bstate.player_ENEMYSELECTION ( 5/1/2020 1:27pm )
+        FinishCurrentState(Bstate.player_ENEMYSELECTION);
     }
 
+    public void BStateFinished_BMListener(Bstate _state) {
+        if (_state == Bstate.game_LOADWAVE || _state == Bstate.game_ROUNDRESET) {
+            SetCurrentState(Bstate.player_CRAFT);   // Crafter.cs ( 5/1/2020 1:44pm )
+
+        } else if (_state == Bstate.player_CRAFT) {
+            SetCurrentState(Bstate.player_ENEMYSELECTION);  //EnemyObject.cs ( 5/1/2020 1:44pm )
+
+        } else if (_state == Bstate.player_ENEMYSELECTION) {
+            SetCurrentState(Bstate.player_ATTACK);  // BattleManager.cs ( 5/1/2020 1:44pm )
+
+        } else if (_state == Bstate.player_ATTACK) {
+            if (WaveManager.instance.enemyList.Count > 0) {
+                SetCurrentState(Bstate.enemy_ATTACK);   // BattleManager.cs ( 5/1/2020 1:46pm )
+
+            } else {
+                // Fires if all enemies have been defeated ( 5/1/2020 5:29pm )
+                Debug.Break();
+            }
+            
+            //playerattack_animation
+        /*
+        } else if (_state == Bstate.playerattack_ANIMATE) {
+            SetCurrentState(Bstate.enemy_ATTACK);*/
+
+        } else if (_state == Bstate.enemy_ATTACK) {
+            SetCurrentState(Bstate.game_ROUNDRESET);
+        }
+    }
+
+
     // Fires when the gamestate has been changed ( 12/27/2019 1:14pm )
-    public void BattleManagerListener(Bstate _state) {
+    public void BStateChanged_BMListener(Bstate _state) {
         if (_state == Bstate.player_ATTACK) {
-            float _vulModifier = 1;
+            float _vulModifier;
 
             if (CheckVulnerabilities(_defendingEnemy, _attackingItem)) {
                 // Add vulnerability to enemy inventory ( 4/24/2020 1:03am )
@@ -99,13 +137,18 @@ public class BattleManager : MonoBehaviour {
             }
 
             OnPlayerAttack(CalculateAttackDamage(_attackingItem.baseAtk, _vulModifier));
+            
 
         // When the it is time for the enemies to attack the player ( 4/27/2020 2:29pm )
         }  else if (_state == Bstate.enemy_ATTACK) {
             int _count = WaveManager.instance.enemyList.Count;
 
-            int i = _rnd.Next(0, _count - 1);
 
+            int i = _rnd.Next(0, _count);
+
+            Debug.Log(i);
+
+            WaveManager.instance.enemyList[i].SetAttacking(true);
             OnEnemyAttack(CalculateAttackDamage(WaveManager.instance.enemyList[i].enemyType.baseAtk));
 
         // Reset all values ( 4/27/2020 3:07pm )
@@ -113,7 +156,8 @@ public class BattleManager : MonoBehaviour {
             _defendingEnemy = null;
             _attackingItem = null;
 
-            SetCurrentState(Bstate.player_CRAFT);
+            FinishCurrentState(Bstate.game_ROUNDRESET);
+            
         }
     }
 

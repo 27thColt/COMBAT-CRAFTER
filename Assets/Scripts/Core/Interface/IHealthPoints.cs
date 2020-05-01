@@ -12,4 +12,6 @@ interface IHealthPoints {
     int CurrentHP { get; set; }
 
     IEnumerator TakeDamage(int _full, int _damage);
+
+    void Die();
 }

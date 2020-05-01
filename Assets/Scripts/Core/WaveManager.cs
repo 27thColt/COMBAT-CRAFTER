@@ -48,11 +48,6 @@ public class WaveManager : MonoBehaviour {
         OnBattlestateChanged -= WaveManagerListener;
     }
 
-
-    void Start() {
-        SetCurrentState(Bstate.game_LOADWAVE);
-    }
-
     #region Functions
 
     // Creates/Displays an enemy in the world ( 12/26/2019 11:15pm )
@@ -104,7 +99,7 @@ public class WaveManager : MonoBehaviour {
 
             AddAllEnemiesInWave(waveList[currentWave]);
 
-            SetCurrentState(Bstate.player_CRAFT);
+            FinishCurrentState(Bstate.game_LOADWAVE);
         }
     }
 

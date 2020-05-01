@@ -14,6 +14,7 @@ public static class BattleState {
     // Good Delegates and Events video -- https://www.youtube.com/watch?v=qwQ16sS8FSs ( 10/24/2019 9:34pm )
     public delegate void BattlestateChange(Bstate _state);
     public static event BattlestateChange OnBattlestateChanged;
+    public static event BattlestateChange OnBattlestateFinished;
 
     public static void SetCurrentState(Bstate _state) {
         lastState = currentState;
@@ -33,6 +34,11 @@ public static class BattleState {
          *  ( 12/28/2019 6:06pm )
          */
     }
+
+    // Called when a Bstate is finished ( 5/1/2020 1:17pm )
+    public static void FinishCurrentState(Bstate _state) {
+        OnBattlestateFinished(_state);
+    }
 }
 
 // The list of Battlestate that the game may choose from ( 10/24/2019 7:51pm )
@@ -44,7 +50,7 @@ public enum Bstate {
     player_CRAFT,           // 2
     player_ENEMYSELECTION,  // 3
     player_ATTACK,          // 4
-    playerattack_ANIMATE,   // 5
+    //playerattack_ANIMATE,   // 5
     enemy_ATTACK,           // 6
     game_ROUNDRESET         // 7
 }
