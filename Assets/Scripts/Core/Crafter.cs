@@ -49,6 +49,12 @@ public class Crafter : MonoBehaviour {
 
     #endregion
 
+    private void OnDestroy() {
+        OnResultUpdate -= UpdateResultItem;
+        DragHandler.OnItemEndDrag -= RemoveItemFromCrafter;
+        OnBattlestateChanged -= CrfStateListener;
+    }
+
     void Start() {
         /* The following is how I plan to do this shit ( 6/3/2019 6:04pm )
          * 

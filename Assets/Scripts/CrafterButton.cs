@@ -20,6 +20,10 @@ public class CrafterButton : MonoBehaviour {
        Crafter.OnResultUpdate += UpdateResultButton;
     }
 
+    private void OnDestroy() {
+        Crafter.OnResultUpdate -= UpdateResultButton;
+    }
+
     void Start() {
         _button = GetComponent<Button>();
     }

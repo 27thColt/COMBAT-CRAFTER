@@ -16,7 +16,7 @@ using SimpleJSON;
 public static class FileIO_GameData {
     // Too lazy for this shit rn so here: https://www.youtube.com/watch?v=6uMFEM-napE ( 12/28/2019 11:15pm )
 
-    #region inventory
+    #region Inventory
     private static readonly string _PATH = Application.dataPath + "/Save Data";
 
     // Loads savedata to the game; will return the inventory list ( 2/25/2020 5:36pm )
@@ -70,7 +70,7 @@ public static class FileIO_GameData {
 
     #endregion
 
-    #region enemy inventory
+    #region Enemy Inventory
     
     public static List<EnemyDefinition> LoadEnemyInv() {
         if (File.Exists(_PATH + "/vulnerabilities.json")) {

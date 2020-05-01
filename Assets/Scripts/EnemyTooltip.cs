@@ -23,8 +23,6 @@ public class EnemyTooltip : MonoBehaviour {
     [SerializeField]
     private GameObject _hpBar = null;
 
-    private EnemyObject _currentEnemy;
-
     // Will determine if the tooltip follows the mouse or not ( 4/24/2020 5:23pm )
     private bool _followMouse = true;
 
@@ -43,9 +41,6 @@ public class EnemyTooltip : MonoBehaviour {
 
     #region Functions
     public void SetTooltip(EnemyObject _enemy) {
-        _currentEnemy = _enemy;
-
-
         _nameText.text = _enemy.enemyType.enemyName;
         _hpBar.GetComponent<HPBar>().SetObject(_enemy.gameObject);
 

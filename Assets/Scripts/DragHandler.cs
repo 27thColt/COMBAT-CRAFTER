@@ -14,29 +14,15 @@ using UnityEngine.EventSystems;
  * 10/30/2019 4:45am - important to note that this is only being attached to draggable objects (aka the items themselves)
  */
 public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler {
-
-    #region Private Values
-
     private GameObject _itemDraggerObject; // Items will be stored as a child of this object when being dragged ( 5/31/2019 1:32pm )
-
-    private GameObject _inventoryPool;
-    private GameObject _inventoryPoolScript; // Holds InventoryPool script; not actually the inventory pool parent. Confusing right? ( 10/30/2019 4:42am)
 
     private GameObject _startingPool = null; // Where the item was first in (either inventory or crafter) ( 5/31/2019 2:36pm )
 
-    #endregion
 
     public static GameObject draggedObject;
 
     public delegate void itemEndDrag(GameObject _window, ItemType _item);
     public static event itemEndDrag OnItemEndDrag;
-
-    /* 5/31/2019 10:52am - I might get confused in the future by this so imma just put this here
-     * Awake() calls before Start() ; Start() are for inits that depend on other components, while Awake() is for this component
-     */
-    private void Awake() {
-
-    }
 
     private void Start() {
         _itemDraggerObject = GameObject.FindGameObjectWithTag("ItemDraggerObject");

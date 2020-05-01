@@ -11,18 +11,6 @@ using UnityEngine;
  * In the far future, hoping to add system where is reads data off of an external file to gather the list
  */ 
 public class Inventory : MonoBehaviour {
-
-    #region Singleton
-    
-    // hehe, learned this from Brackeys - Singleton is apparently a technique that restricts a class to a single instance ( 5/31/2019 1:48pm )
-    public static Inventory instance;
-
-    private void Awake() {
-        instance = this;
-    }
-
-    #endregion
-
     public List<ItemType> itemInv;
     public List<ItemType> startingInv; // ngl im not sure if I could've done without this but thsi straight from brackeys ( 5/30/2019 9:06pm )
     // Starting item list should be explicitly stated
@@ -35,6 +23,17 @@ public class Inventory : MonoBehaviour {
 
     [SerializeField]
     private GameObject ghostItem = null; // Displays an item in the inventory without actually being an item ( 6/12/2019 12:48pm )
+
+    #region Singleton
+
+    // hehe, learned this from Brackeys - Singleton is apparently a technique that restricts a class to a single instance ( 5/31/2019 1:48pm )
+    public static Inventory instance;
+
+    private void Awake() {
+        instance = this;
+    }
+
+    #endregion
 
     void Start() {
         LoadItems();

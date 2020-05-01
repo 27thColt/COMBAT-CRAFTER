@@ -12,7 +12,6 @@ using static BattleState;
  * The term 'object' is used to refers to a physical gameobject that can be seen in the scene rather than the data type (at least the way I use it)
  */ 
 public class PlayerObject : MonoBehaviour, IHealthPoints {
-
     #region IHealthPoints
 
     public int MaxHP { get; set; } = 60;
@@ -41,6 +40,10 @@ public class PlayerObject : MonoBehaviour, IHealthPoints {
 
     void Awake() {
         BattleManager.OnEnemyAttack += DamageListener;
+    }
+
+    private void OnDestroy() {
+        BattleManager.OnEnemyAttack -= DamageListener;
     }
 
     void Start() {

@@ -35,6 +35,7 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         yield return new WaitForSeconds(0.4f);
 
+        // Following chunk of code refers to the tooltip ( 5/1/2020 1:04pm )
         _autoTooltip = true;
         _tooltip.GetComponent<EnemyTooltip>().SetMouseFollow(true);
 
@@ -77,6 +78,10 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     private void Awake() {
         BattleManager.OnPlayerAttack += DamageListener;
+    }
+
+    private void OnDestroy() {
+        BattleManager.OnPlayerAttack -= DamageListener;
     }
 
     public void SetEnemy(EnemyType _enemy) {

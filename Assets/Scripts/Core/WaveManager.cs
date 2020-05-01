@@ -12,7 +12,6 @@ using static BattleState;
  * This script initialize everything; ever since the fall of Mr. GameStateManager (rip) ( 12/27/2019 4:00pm )
  */ 
 public class WaveManager : MonoBehaviour {
-
     public EnemyWave[] waveList;
     public int currentWave;
     public EnemyWave loadedWave; // loadedWave is the enemy wave itself of ID currentWave ( 10/28/2019 2:06pm )
@@ -36,17 +35,21 @@ public class WaveManager : MonoBehaviour {
 
         // Oh my god this took so for this to work; finally realized my external class had to be on a DIFFERENT gameobject ( 12/26/2019 9:14pm )
         OnBattlestateChanged += WaveManagerListener;
-    }
 
-    #endregion
-
-
-    void Start() {
         waveList = Resources.LoadAll<EnemyWave>("Enemy Waves");
 
         waveList = SortWaveList(waveList);
         currentWave = 0;
+    }
 
+    #endregion
+
+    private void OnDestroy() {
+        OnBattlestateChanged -= WaveManagerListener;
+    }
+
+
+    void Start() {
         SetCurrentState(Bstate.game_LOADWAVE);
     }
 

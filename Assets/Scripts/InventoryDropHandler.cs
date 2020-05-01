@@ -20,7 +20,12 @@ public class InventoryDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
 
     void Awake() {
         OnBattlestateChanged += InvDHListener;
-        CrafterDropHandler.onClearCrafter += ReturnToInventory;
+        CrafterDropHandler.OnClearCrafter += ReturnToInventory;
+    }
+
+    private void OnDestroy() {
+        OnBattlestateChanged -= InvDHListener;
+        CrafterDropHandler.OnClearCrafter -= ReturnToInventory;
     }
 
     void Start() {

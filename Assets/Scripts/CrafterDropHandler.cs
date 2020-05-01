@@ -23,10 +23,14 @@ public class CrafterDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
     private Crafter _crafter;
 
     public delegate void ClearWindow(List<GameObject> _objs);
-    public static event ClearWindow onClearCrafter;
+    public static event ClearWindow OnClearCrafter;
 
     void Awake() {
         OnBattlestateChanged += CrfDHListener;
+    }
+
+    private void OnDestroy() {
+        OnBattlestateChanged -= CrfDHListener;
     }
 
 
@@ -77,7 +81,7 @@ public class CrafterDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
                     
             }
 
-            onClearCrafter(_items);
+            OnClearCrafter(_items);
         }
 
         if (lastState == Bstate.player_CRAFT) {

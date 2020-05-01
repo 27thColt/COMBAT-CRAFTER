@@ -10,7 +10,6 @@ using static BattleState;
  * 
  */
 public class BattleManager : MonoBehaviour {
-
     // Item used to attack (comes from resultItem in the Crafter) ( 12/27/2019 12:50pm )
     private ItemType _attackingItem = null;
     private EnemyType _defendingEnemy = null;
@@ -31,10 +30,19 @@ public class BattleManager : MonoBehaviour {
 
     #endregion
 
+    #region Awake
     void Awake() {
         Crafter.OnItemCrafted += UpdateAttackingItem;
         EnemyObject.OnEnemySelected += UpdateDefendingEnemy;
         OnBattlestateChanged += BattleManagerListener;
+    }
+
+    #endregion
+
+    private void OnDestroy() {
+        Crafter.OnItemCrafted -= UpdateAttackingItem;
+        EnemyObject.OnEnemySelected -= UpdateDefendingEnemy;
+        OnBattlestateChanged -= BattleManagerListener;
     }
 
     private void Start() {
