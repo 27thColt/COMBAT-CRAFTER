@@ -10,8 +10,14 @@ using static BattleState;
  * Attached to crafting panel game object
  * 
  * ^^ Copied that from the Inventory Pool Script, neat eh?
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 5/4/2020 2:34pm - AS OF NOW, THIS SCRIPT WILL NOT BE USED (CrafterWindow removed)
  */
-public class CrafterDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
+public class CrafterWindow : MonoBehaviour, IDropHandler, IItemWindow {
 
     #region IItemWindow
 

@@ -9,8 +9,13 @@ using TMPro;
 /* 5/31/2019 1:37pm - Inventory Pool Script
  * The 'collider' which detects when items have been dropped back again into the inventory
  * Attached to inventory panel game object
+ * 
+ * 
+ * 
+ * 
+ * 5/4/2020 2:34pm - AS OF NOW, THIS SCRIPT WILL NOT BE USED (Item Drag functionality removed)
  */
-public class InventoryDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
+public class InventoryWindow : MonoBehaviour, IDropHandler, IItemWindow {
 
     #region IItemWindow
     public bool Interactable { get; set; } = false;
@@ -20,12 +25,12 @@ public class InventoryDropHandler : MonoBehaviour, IDropHandler, IItemWindow {
 
     void Awake() {
         OnBattlestateChanged += InvDHListener;
-        CrafterDropHandler.OnClearCrafter += ReturnToInventory;
+        CrafterWindow.OnClearCrafter += ReturnToInventory;
     }
 
     private void OnDestroy() {
         OnBattlestateChanged -= InvDHListener;
-        CrafterDropHandler.OnClearCrafter -= ReturnToInventory;
+        CrafterWindow.OnClearCrafter -= ReturnToInventory;
     }
 
     void Start() {

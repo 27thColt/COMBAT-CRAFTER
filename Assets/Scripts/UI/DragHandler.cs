@@ -12,6 +12,12 @@ using UnityEngine.EventSystems;
  * 
  * 
  * 10/30/2019 4:45am - important to note that this is only being attached to draggable objects (aka the items themselves)
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 5/4/2020 2:34pm - AS OF NOW, THIS SCRIPT WILL NOT BE USED (Item Drag functionality removed)
  */
 public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler {
     private GameObject _itemDraggerObject; // Items will be stored as a child of this object when being dragged ( 5/31/2019 1:32pm )

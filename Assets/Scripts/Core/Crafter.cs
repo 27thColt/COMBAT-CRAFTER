@@ -197,7 +197,7 @@ public class Crafter : MonoBehaviour {
         // This function used to be in DragHandler, but I just moved it to here to allow itemAmt to be privatized and for better modularization ( 12/28/2019 10:11pm )
 
         // Item removing process if the item was taken out of the crafter ( 6/3/2019 6:45pm )
-        if (_window.GetComponent<CrafterDropHandler>() != null && _item != null) {
+        if (_window.GetComponent<CrafterWindow>() != null && _item != null) {
             RemoveItem(_item);
         }
     }
