@@ -11,6 +11,7 @@ using UnityEngine;
  * 
  */ 
 public static class Tooltip {
+
     public static GameObject CreateTooltip(Component _component) {
         GameObject _object;
 

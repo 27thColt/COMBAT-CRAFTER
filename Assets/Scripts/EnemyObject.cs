@@ -134,7 +134,7 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         yield return new WaitForSeconds(0.3f); // A small delay because the animation does not start immediately ( 5/1/2020 5:09pm )
         yield return new WaitForSeconds(_anim.GetCurrentAnimatorClipInfo(0)[0].clip.length - (_anim.GetCurrentAnimatorStateInfo(0).normalizedTime * _anim.GetCurrentAnimatorClipInfo(0)[0].clip.length) - 0.3f);
 
-
+        SetAttacking(false);
         FinishCurrentState(Bstate.enemy_ATTACK);
     }
 
