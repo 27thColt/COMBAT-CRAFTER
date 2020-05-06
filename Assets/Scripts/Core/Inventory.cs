@@ -11,18 +11,9 @@ using UnityEngine;
  * In the far future, hoping to add system where is reads data off of an external file to gather the list
  */ 
 public class Inventory : MonoBehaviour {
-    public List<ItemType> itemInv;
+    public List<Item> itemInv;
     public List<ItemType> startingInv; // ngl im not sure if I could've done without this but thsi straight from brackeys ( 5/30/2019 9:06pm )
     // Starting item list should be explicitly stated
-
-    [SerializeField]
-    private GameObject itemPrefab = null; // should be Dragged&Dropped in the inventory gameObject ( 5/30/2019 7:57pm )
-
-    [SerializeField]
-    private Transform inventoryGrid = null; // and also this
-
-    [SerializeField]
-    private GameObject ghostItem = null; // Displays an item in the inventory without actually being an item ( 6/12/2019 12:48pm )
 
     #region Singleton
 
@@ -43,11 +34,12 @@ public class Inventory : MonoBehaviour {
 
     // Will Load all of the items from a File onto the actual inventory ( 12/29/2019 1:33pm )
     public void LoadItems() {
+        Debug.Log("Loading Items");
         if (FileIO_GameData.LoadInventory() != null) {
-            List<ItemType> _itemList = FileIO_GameData.LoadInventory();
+            List<Item> _itemList = FileIO_GameData.LoadInventory();
 
-            foreach (ItemType item in _itemList) {
-                AddItem(item);
+            foreach (Item item in _itemList) {
+                AddItem(item.itemType, item.number);
             }
         } else {
 
@@ -59,41 +51,82 @@ public class Inventory : MonoBehaviour {
     }
 
     // Will add an item to the inventory, referenced as _item. Simple, right? ( 5/30/2019 8:01pm )
-    public void AddItem(ItemType _item) {
-        Debug.Log("Adding " + _item.itemName + " to inventory");
+    public void AddItem(ItemType _itemType, int _amt = 1) {
+        if (itemInv != null) {
+            foreach (Item _item in itemInv) {
 
-        itemInv.Add(_item);
+                // Item does exist in list and will add one to it ( 5/4/2020 5:56pm )
+                if (_item.itemType == _itemType) {
+                    
+                    Debug.Log("Adding " + _amt + " to " + _item.itemType.itemName + " in inventory");
 
-        GameObject itemObj = Instantiate(itemPrefab, inventoryGrid);
-        itemObj.GetComponent<ItemObject>().SetItem(_item);
+                    _item.AddItem();
+                    Item.ReturnItemFromArray(_itemType).GetComponent<ItemObject>().UpdateItemInfo(_item);
 
-        FileIO_GameData.SaveInventory(itemInv);
+                    FileIO_GameData.SaveInventory(itemInv);
+                    return;
+                }
+            }
+
+            // Item does not exist and will create a new instance in the list ( 5/4/2020 5:56pm )
+            Debug.Log("Creating " + _amt + " " + _itemType.itemName);
+
+            itemInv.Add(new Item(_itemType, _amt));
+            Item.CreateItemObj(_itemType, _amt);
+
+            FileIO_GameData.SaveInventory(itemInv);
+            return;
+
+        } else {
+            // Will create the list if it does not exist ( 5/4/2020 7:46pm )
+
+            Debug.Log("Creating " + _amt + " " + _itemType.itemName);
+
+
+            itemInv = new List<Item>();
+            itemInv.Add(new Item(_itemType, _amt));
+            Item.CreateItemObj(_itemType, _amt);
+
+            FileIO_GameData.SaveInventory(itemInv);
+            return;
+        }
+        
     }
 
-    // Creation of ghost items. Not actually interactable. ( 6/12/2019 1:05pm )
-    public GameObject CreateGhostItem(ItemType _item) {
-        GameObject itemObj = Instantiate(ghostItem, inventoryGrid);
-        itemObj.GetComponent<ItemObject>().SetItem(_item);
 
-        return itemObj;
+    public void RemoveItem(ItemType _itemType) {
+        for (int i = 0; i < itemInv.Count; i++) {
+            if (itemInv[i].itemType == _itemType) {
+                Debug.Log(itemInv[i].itemType.itemName + " " + itemInv[i].number);
+                // If there is only 1 more item left, destroy the game object itself ( 5/5/2020 4:32pm )
+                if (itemInv[i].number == 1) {
+                    Debug.Log("only one left");
+                    Destroy(Item.ReturnItemFromArray(_itemType));
+
+                    itemInv.Remove(itemInv[i]);
+
+                    FileIO_GameData.SaveInventory(itemInv);
+                    return;
+
+                } else {
+                    itemInv[i].RemoveItem();
+                    Item.ReturnItemFromArray(_itemType).GetComponent<ItemObject>().UpdateItemInfo(itemInv[i]);
+
+
+                    FileIO_GameData.SaveInventory(itemInv);
+                    return;
+                }
+            }
+        }
     }
 
-    public void RemoveAllGhostItems() {
-        GameObject[] itemObj = GameObject.FindGameObjectsWithTag("GhostItem");
+    public bool HasItem(ItemType _itemType) {
+        foreach (Item _item in itemInv) {
+            if (_item.itemType == _itemType)
+                return true;
+        }
 
-        for (int i = 0; i < itemObj.Length; i++)
-            Destroy(itemObj[i]);
-    }
-
-    // Just realize I might never need this, but I'm keeping it just in case ( 5/31/2019 1:26pm )
-    public void RemoveItem(ItemType _item) {
-        Debug.Log("Removing " + _item.itemName + " from inventory");
-
-        itemInv.Remove(_item); //By the way this doesn't work as of now ( 5/31/2019 1:27pm )
-    }
-
-    public bool HasItem(ItemType _item) {
-        return itemInv.Contains(_item);
+        return false;
     }
 
 

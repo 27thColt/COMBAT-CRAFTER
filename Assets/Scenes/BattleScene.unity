@@ -608,7 +608,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &351990451
 RectTransform:
   m_ObjectHideFlags: 0
@@ -739,13 +739,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9415ed548f027184a95d04603628cc98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemInv: []
-  startingInv: []
-  itemPrefab: {fileID: 4257111579264029903, guid: 0f61f67c1960b91418d73ad1c3154e70,
-    type: 3}
-  inventoryGrid: {fileID: 491190746}
-  ghostItem: {fileID: 6275116968434999372, guid: 33e0fdf95e32b974f94a86de5f502df8,
-    type: 3}
+  startingInv:
+  - {fileID: 11400000, guid: 6fca146ee81e2f64c9d533267bb85786, type: 2}
+  - {fileID: 11400000, guid: 512367a967a3fe84aac960bebcba529c, type: 2}
+  - {fileID: 11400000, guid: 9cc6e9137d1bb764aac34159fed265cc, type: 2}
+  - {fileID: 11400000, guid: 944e47119a8b2a0419bdcd61f7da557a, type: 2}
+  - {fileID: 11400000, guid: 944e47119a8b2a0419bdcd61f7da557a, type: 2}
+  - {fileID: 11400000, guid: 944e47119a8b2a0419bdcd61f7da557a, type: 2}
 --- !u!4 &421622165
 Transform:
   m_ObjectHideFlags: 0
@@ -962,8 +962,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -6.4, y: 0.8502507}
-  m_SizeDelta: {x: 567.6677, y: 237.89105}
+  m_AnchoredPosition: {x: -6.4, y: 0.00017042545}
+  m_SizeDelta: {x: 567.6677, y: 244.5553}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &491190747
 MonoBehaviour:
@@ -2149,8 +2149,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -5.66, y: 15.9}
-  m_SizeDelta: {x: 90, y: 90}
+  m_AnchoredPosition: {x: -6.01, y: 24.16}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1502030091
 MonoBehaviour:
@@ -2230,7 +2230,6 @@ GameObject:
   - component: {fileID: 1588252009}
   - component: {fileID: 1588252011}
   - component: {fileID: 1588252010}
-  - component: {fileID: 1588252012}
   m_Layer: 5
   m_Name: Crafting Panel
   m_TagString: Untagged
@@ -2296,18 +2295,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1588252008}
   m_CullTransparentMesh: 0
---- !u!114 &1588252012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1588252008}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39fadf77468697649970d7f2743a15d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1641050786
 GameObject:
   m_ObjectHideFlags: 0
@@ -2863,10 +2850,9 @@ GameObject:
   - component: {fileID: 2083739029}
   - component: {fileID: 2083739033}
   - component: {fileID: 2083739032}
-  - component: {fileID: 2083739031}
   m_Layer: 5
-  m_Name: Inventory Panel
-  m_TagString: Untagged
+  m_Name: Inventory Window
+  m_TagString: InventoryWindow
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2928,18 +2914,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2083739027}
   m_CullTransparentMesh: 0
---- !u!114 &2083739031
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2083739027}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf4cd476e83bdee4988c8f2f41e16838, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2083739032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3214,6 +3188,22 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 0.24999994
+      objectReference: {fileID: 0}
+    - target: {fileID: 4994166574046748704, guid: ec13e6beeb1ee3842b2c8af1e0638a45,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -2338397349611311698, guid: 554365804f8055b4081ced9b2cd3766f,
+        type: 3}
+    - target: {fileID: 4994166574046748704, guid: ec13e6beeb1ee3842b2c8af1e0638a45,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4994166574046748704, guid: ec13e6beeb1ee3842b2c8af1e0638a45,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 0.78125
       objectReference: {fileID: 0}
     - target: {fileID: 6849819242415231888, guid: ec13e6beeb1ee3842b2c8af1e0638a45,
         type: 3}

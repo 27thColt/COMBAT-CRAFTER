@@ -146,8 +146,6 @@ public class BattleManager : MonoBehaviour {
 
             int i = _rnd.Next(0, _count);
 
-            Debug.Log(i);
-
             WaveManager.instance.enemyList[i].SetAttacking(true);
             OnEnemyAttack(CalculateAttackDamage(WaveManager.instance.enemyList[i].enemyType.baseAtk));
 

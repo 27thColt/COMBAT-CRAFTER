@@ -5,10 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - ItemDraggerObject
-  - Pool
   - GhostItem
   - Enemy
   - TooltipCanvas
+  - InventoryWindow
   layers:
   - Default
   - TransparentFX

@@ -19,7 +19,8 @@ using UnityEngine.EventSystems;
  * 
  * 5/4/2020 2:34pm - AS OF NOW, THIS SCRIPT WILL NOT BE USED (Item Drag functionality removed)
  */
-public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler {
+public class DragHandler : MonoBehaviour/*, IDragHandler, IBeginDragHandler, IEndDragHandler*/ {
+    /*
     private GameObject _itemDraggerObject; // Items will be stored as a child of this object when being dragged ( 5/31/2019 1:32pm )
 
     private GameObject _startingPool = null; // Where the item was first in (either inventory or crafter) ( 5/31/2019 2:36pm )
@@ -61,6 +62,8 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     /* OnEndDrag() triggers AFTER OnDrop() ( 5/31/2019 3:16pm )
      * Thank you quill18creates!! https://www.youtube.com/watch?v=P66SSOzCqFU
      */
+
+    /*
     public void OnEndDrag(PointerEventData eventData) {
         
         //Debug.Log("ON END DRAG");
@@ -92,5 +95,5 @@ public class DragHandler : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         
     }
 
-    #endregion
+    #endregion*/
 }
