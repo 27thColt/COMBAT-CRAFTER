@@ -14,14 +14,12 @@ public class CrafterButton : MonoBehaviour {
     [SerializeField]
     private Image resultSprite = null;
 
-    
-
     private void Awake() {
-       Crafter.OnResultUpdate += UpdateResultButton;
+        EventManager.StartListening("ResultUpdate", On_ResultUpdate);
     }
 
     private void OnDestroy() {
-        Crafter.OnResultUpdate -= UpdateResultButton;
+        EventManager.StopListening("ResultUpdate", On_ResultUpdate);
     }
 
     void Start() {
@@ -39,14 +37,16 @@ public class CrafterButton : MonoBehaviour {
 
     #region Event Listeners
 
-    public void UpdateResultButton(ItemType _item = null, ItemType _second = null) {
-        if (_item != null) {
+    public void On_ResultUpdate(EventParams _eventParams) {
+        if (_eventParams.itemTypeParam1 != null) {
+            GetComponent<Animator>().SetBool("PanelOpen", true);
             _button.interactable = true;
 
             resultSprite.enabled = true;
-            resultSprite.sprite = _item.sprite;
+            resultSprite.sprite = _eventParams.itemTypeParam1.sprite;
 
         } else {
+            GetComponent<Animator>().SetBool("PanelOpen", false);
             _button.interactable = false;
 
             resultSprite.enabled = false;
