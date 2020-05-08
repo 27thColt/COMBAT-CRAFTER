@@ -46,7 +46,11 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler {
     private bool _selected;
 
     void Awake() {
-        BattleState.OnBattlestateChanged += ResetItem;
+        EventManager.StartListening("BStateChange", On_BStateChange);
+    }
+
+    void OnDestroy() {
+        EventManager.StopListening("BStateChange", On_BStateChange);
     }
 
     void Start() {
@@ -63,9 +67,10 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler {
     }
 
     // Resets the selection state of the item ( 5/4/2020 2:56pm )
-    private void ResetItem(Bstate _state) {
+    private void On_BStateChange(EventParams _eventParams) {
         if (BattleState.lastState == Bstate.player_CRAFT && _selected == true) {
             UpdateSelection(false);
         }
+
     }
 }
