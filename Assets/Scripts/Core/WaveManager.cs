@@ -12,6 +12,25 @@ using static BattleState;
  * This script initialize everything; ever since the fall of Mr. GameStateManager (rip) ( 12/27/2019 4:00pm )
  */ 
 public class WaveManager : MonoBehaviour {
+    #region Singleton
+
+    private static WaveManager _waveManager;
+
+    public static WaveManager instance {
+        get {
+            if (!_waveManager) {
+                _waveManager = FindObjectOfType(typeof(WaveManager)) as WaveManager;
+
+                if (!_waveManager) {
+                    Debug.LogError("There needs to be one active EventManager script on a GameObject in your scene.");
+                }
+            }
+
+            return _waveManager;
+        }
+    }
+    #endregion
+
     public EnemyWave[] waveList;
     public int currentWave;
     public EnemyWave loadedWave; // loadedWave is the enemy wave itself of ID currentWave ( 10/28/2019 2:06pm )
@@ -25,16 +44,9 @@ public class WaveManager : MonoBehaviour {
     private GameObject[] spawnpoints = null;
 
     // NOTE: Maximum number of spawnpoints should be 5, thus 5 enemies should only appear at any given moment ( 12/27/2019 10:52am )
-
-    #region Singleton & Awake
-
-    public static WaveManager instance;
-
+    
     private void Awake() {
-        instance = this;
-
-        // Oh my god this took so for this to work; finally realized my external class had to be on a DIFFERENT gameobject ( 12/26/2019 9:14pm )
-        OnBattlestateChanged += WaveManagerListener;
+        EventManager.StartListening("BStateChange", On_BStateChange);
 
         waveList = Resources.LoadAll<EnemyWave>("Enemy Waves");
 
@@ -42,10 +54,9 @@ public class WaveManager : MonoBehaviour {
         currentWave = 0;
     }
 
-    #endregion
 
     private void OnDestroy() {
-        OnBattlestateChanged -= WaveManagerListener;
+        EventManager.StopListening("BStateChange", On_BStateChange);
     }
 
     #region Functions
@@ -92,14 +103,15 @@ public class WaveManager : MonoBehaviour {
     #region Event Listeners
 
     // Fires when the gamestate has been changed ( 12/27/2019 1:14pm )
-    public void WaveManagerListener(Bstate _state) {
-        if (_state == Bstate.game_LOADWAVE) {
+    public void On_BStateChange(EventParams _eventParams) {
+        if (_eventParams.bstateParam == Bstate.game_LOADWAVE) {
             loadedWave = waveList[currentWave];
             EnemyInventory.instance.LoadEnemyDefs();
 
             AddAllEnemiesInWave(waveList[currentWave]);
 
-            FinishCurrentState(Bstate.game_LOADWAVE);
+
+            EventManager.TriggerEvent("BStateFinish", new EventParams(Bstate.game_LOADWAVE));
         }
     }
 

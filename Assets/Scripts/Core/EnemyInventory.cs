@@ -11,13 +11,21 @@ using UnityEngine;
  */
 
 public class EnemyInventory : MonoBehaviour {
-    #region Singleton and Awake
+    #region Singleton
+    private static EnemyInventory _enemyInventory;
 
-    public static EnemyInventory instance;
+    public static EnemyInventory instance {
+        get {
+            if (!_enemyInventory) {
+                _enemyInventory = FindObjectOfType(typeof(EnemyInventory)) as EnemyInventory;
 
+                if (!_enemyInventory) {
+                    Debug.LogError("There needs to be one active EnemyInventory script on a GameObject in your scene.");
+                }
+            }
 
-    private void Awake() {
-        instance = this;
+            return _enemyInventory;
+        }
     }
 
     #endregion
@@ -25,8 +33,8 @@ public class EnemyInventory : MonoBehaviour {
     public List<EnemyDefinition> enemyInventory = new List<EnemyDefinition>();
 
     public void LoadEnemyDefs() {
-        if (FileIO_GameData.LoadEnemyInv() != null) {
-            enemyInventory = FileIO_GameData.LoadEnemyInv();
+        if (IO_EnemyInv.LoadEnemyInv() != null) {
+            enemyInventory = IO_EnemyInv.LoadEnemyInv();
         }
     }
 
@@ -45,7 +53,7 @@ public class EnemyInventory : MonoBehaviour {
         Debug.Log("Adding " + _enemy.enemyName + " to inventory");
 
 
-        FileIO_GameData.SaveEnemyInv(enemyInventory);
+        IO_EnemyInv.SaveEnemyInv(enemyInventory);
         return;
     }
 
@@ -56,7 +64,7 @@ public class EnemyInventory : MonoBehaviour {
                 Debug.Log("Adding " + _item.itemName + " to " + _enemy.enemyName + " definition");
                 CheckInvFor(_enemy).vulnerabilities.Add(_item.ID);
 
-                FileIO_GameData.SaveEnemyInv(enemyInventory);
+                IO_EnemyInv.SaveEnemyInv(enemyInventory);
             }
             return;
         }
@@ -65,7 +73,7 @@ public class EnemyInventory : MonoBehaviour {
         AddEnemyDef(_enemy);
         AddEnemyVul(_enemy, _item);
 
-        FileIO_GameData.SaveEnemyInv(enemyInventory);
+        IO_EnemyInv.SaveEnemyInv(enemyInventory);
         return;
     }
 

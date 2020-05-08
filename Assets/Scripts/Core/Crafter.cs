@@ -8,15 +8,26 @@ using static BattleState;
  * Manages crafting system
  */
 public class Crafter : MonoBehaviour {
+    #region Singleton
+    private static Crafter _crafter;
+
+    public static Crafter instance {
+        get {
+            if (!_crafter) {
+                _crafter = FindObjectOfType(typeof(Crafter)) as Crafter;
+
+                if (!_crafter) {
+                    Debug.LogError("There needs to be one active EventManager script on a GameObject in your scene.");
+                }
+            }
+
+            return _crafter;
+        }
+    }
+
+    #endregion
     private ItemType _resultItem;
     private ItemType _resultSecond;
-
-    // Drag&Dropped values ( 12/28/2019 10:38pm )
-    [SerializeField]
-    private GameObject craftingSlot1 = null;
-
-    [SerializeField]
-    private GameObject craftingSlot2 = null;
 
     public Recipe[] recipeList;
     //public List<Recipe> knownRecipes; // List of recipes known to the player ( 12/28/2019 10:38pm )
@@ -24,33 +35,16 @@ public class Crafter : MonoBehaviour {
     public int itemAmt;
 
     private List<ItemType> craftingSlots = new List<ItemType>();
-    
-    #region Events
-
-    public delegate void crafterUpdate(ItemType _item = null, ItemType _second = null);
-    public static event crafterUpdate OnResultUpdate;
-
-    // Event for when an item has been crafted ( 12/27/2019 11:49am )
-    public delegate void ItemCraft(ItemType _item);
-    public static event ItemCraft OnItemCrafted;
-
-    #endregion
-
-    #region Singleton and Awake
-
-    public static Crafter instance;
 
     private void Awake() {
-        instance = this;
-        OnResultUpdate += UpdateResultItem;
-        OnBattlestateChanged += Crf_StateListener;
+        EventManager.StartListening("ResultUpdate", On_ResultUpdate);
+        EventManager.StartListening("BStateChange", On_BStateChange);
     }
 
-    #endregion
 
     private void OnDestroy() {
-        OnResultUpdate -= UpdateResultItem;
-        OnBattlestateChanged -= Crf_StateListener;
+        EventManager.StopListening("ResultUpdate", On_ResultUpdate);
+        EventManager.StopListening("BStateChange", On_BStateChange);
     }
 
     void Start() {
@@ -78,17 +72,17 @@ public class Crafter : MonoBehaviour {
             // Crafting Button ( 6/5/2019 6:21pm )
             if (CheckRecipe(craftingSlots[0], craftingSlots[1]) != null) {
                 Recipe _recipe = CheckRecipe(craftingSlots[0], craftingSlots[1]);
-
-                OnResultUpdate(_recipe.result, _recipe.resultSecondary);
+                
+                EventManager.TriggerEvent("ResultUpdate", new EventParams(_recipe.result, _recipe.resultSecondary));
             } else {
-                OnResultUpdate();
+                EventManager.TriggerEvent("ResultUpdate", new EventParams());
             }
 
         } else if (itemAmt == 1) {
-            OnResultUpdate(craftingSlots[0]);
+            EventManager.TriggerEvent("ResultUpdate", new EventParams(craftingSlots[0]));
 
         } else {
-            OnResultUpdate();
+            EventManager.TriggerEvent("ResultUpdate", new EventParams());
 
         }
     }
@@ -123,7 +117,7 @@ public class Crafter : MonoBehaviour {
 
     // Will be called uppon button press of the crafter button-- referenced through unity on the button component ( 12/27/2019 11:49am )
     public void OnCrafterButtonPressed() {
-        OnItemCrafted(_resultItem);
+        EventManager.TriggerEvent("ItemCraft", new EventParams(_resultItem));
 
         foreach(ItemType _itemType in craftingSlots) {
             Inventory.instance.RemoveItem(_itemType);
@@ -144,12 +138,12 @@ public class Crafter : MonoBehaviour {
     #region Event Listeners
 
     // Will set the result item whenever it is updated ( 12/27/2019 12:49pm )
-    public void UpdateResultItem(ItemType _item = null, ItemType _second = null) {
-        if (_item != null) {
-            _resultItem = _item;
+    public void On_ResultUpdate(EventParams _eventParams) {
+        if (_eventParams.itemTypeParam1 != null) {
+            _resultItem = _eventParams.itemTypeParam1;
 
-            if (_second != null) {
-                _resultSecond = _second;
+            if (_eventParams.itemTypeParam2 != null) {
+                _resultSecond = _eventParams.itemTypeParam2;
             } else {
                 _resultSecond = null;
             }
@@ -158,8 +152,8 @@ public class Crafter : MonoBehaviour {
         }
     }
 
-    public void Crf_StateListener(Bstate _state) {
-        if (_state == Bstate.game_ROUNDRESET) {
+    public void On_BStateChange(EventParams _eventParams) {
+        if (_eventParams.bstateParam == Bstate.game_ROUNDRESET) {
             for (int i = 0; i < craftingSlots.Count; i++) {
                 RemoveItem(craftingSlots[i]);
 
@@ -167,6 +161,7 @@ public class Crafter : MonoBehaviour {
             }
             
         }
+       
     }
 
     #endregion
