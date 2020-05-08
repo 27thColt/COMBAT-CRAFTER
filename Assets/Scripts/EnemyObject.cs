@@ -5,7 +5,9 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using static BattleState;
-
+using System;
+using UnityEditor;
+using System.Threading.Tasks;
 
 /* 12/26/2019 10:48pm - Enemy Display
  * Attached onto the enemy prefab. Takes information from the item scriptable object to be used in the UI.
@@ -32,7 +34,30 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             yield return new WaitForEndOfFrame();
         }
 
+        // Following Code waits for the damaged/died animation to play out first ( 5/1/2020 5:09pm )
+        yield return new WaitForSeconds(0.3f); // A small delay because the animation does not start immediately ( 5/1/2020 5:09pm )
+        yield return new WaitForSeconds(_anim.GetCurrentAnimatorClipInfo(0)[0].clip.length - (_anim.GetCurrentAnimatorStateInfo(0).normalizedTime * _anim.GetCurrentAnimatorClipInfo(0)[0].clip.length) - 0.3f);
+
+        // Following chunk of code refers to the tooltip ( 5/1/2020 1:04pm )
+        _autoTooltip = true;
+        _tooltip.GetComponent<EnemyTooltip>().SetMouseFollow(true);
+
+        if (!_mouseOver) {
+            Tooltip.DeleteTooltip(_tooltip);
+            _tooltip = null;
+        }
+
         Debug.Log("Damage dealt: " + _damage + " | HP left: " + CurrentHP);
+
+        // If the enemy fucking DIED ( 5/1/2020 1:59pm )
+        if (CurrentHP <= 0) {
+            WaveManager.instance.enemyList.Remove(GetComponent<EnemyObject>());
+            Debug.Log("Enemy died at" + Time.time);
+            Die();
+        }
+
+        FinishCurrentState(Bstate.player_ATTACK);
+        // FinishCurrentState(Bstate.playerattack_ANIMATE);
     }
 
     public void Die() {
@@ -44,7 +69,8 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public EnemyType enemyType;
 
     // The Gameobject that the enemy is using (used to be a sprite but now we use character RIGZ) ( 4/30/2020 7:33pm )
-    public GameObject rig = null;
+    private GameObject _rig = null;
+    private Animator _anim = null;
 
     // Values for if the enemy object is attacking / defending ( 5/1/2020 7:11pm )
     private bool _isDefending = false;
@@ -58,23 +84,58 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     // boolean for whenever the mouse is hovering over the enemy ( 4/26/2020 1:04am )
     private bool _mouseOver = false;
 
-    private void Awake() {
-        EventManager.StartListening("PlayerAttack", On_PlayerAttack);
-        EventManager.StartListening("EnemyAttack", On_EnemyAttack);
-        EventManager.StartListening("EnemyAttackAnimEnd", On_EnemyAttackAnimEnd);
-        EventManager.StartListening("EnemyDefendAnimEnd", On_EnemyDefendAnimEnd);
-    }
+    #region Delegates
 
-    private void Start() {
-        if (GetComponentInChildren(typeof(ObjectAnimator.IObjectAnimator)) == null) {
-            Debug.LogError(gameObject.name + " has no IObjectAnimator component attached.");
-        }
+    // event for when an enemy has been selected ( 12/27/2019 11:38am )
+    public delegate void enemySelect(EnemyType _enemy);
+    public static event enemySelect OnEnemySelected;
+
+    #endregion
+
+    private void Awake() {
+        BattleManager.OnPlayerAttack += DamageListener;
+        BattleManager.OnEnemyAttack += AttackListener;
     }
 
     private void OnDestroy() {
-        EventManager.StopListening("PlayerAttack", On_PlayerAttack);
-        EventManager.StopListening("EnemyAttack", On_EnemyAttack);
-        EventManager.StopListening("EnemyAttackAnimEnd", On_EnemyAttackAnimEnd);
+        BattleManager.OnPlayerAttack -= DamageListener;
+        BattleManager.OnEnemyAttack -= AttackListener;
+    }
+
+    // Coroutine for when the sprite needs to flash something (taking damage),, this takes into account that we are using RIGZ and not just stupid sprites ( 5/1/2020 1:34am )
+    private IEnumerator SpriteFlash(int _loops, float _delay) {
+        SpriteRenderer[] _sprites = _rig.GetComponentsInChildren<SpriteRenderer>();
+
+
+        for (int i = 1; i <= _loops + 1; i++) {
+            if (i % 2 == 0) {
+                foreach (SpriteRenderer _sprite in _sprites) {
+                    _sprite.color = new Color(1f, 1f, 1f, 0.7f); // White color, a bit transparent ( 5/1/2020 1:35am )
+                }
+            } else {
+                foreach (SpriteRenderer _sprite in _sprites) {
+                    _sprite.color = new Color(1f, 1f, 1f, 1f); // White color, opacity 100% ( 5/1/2020 1:35am )
+                }
+            }
+
+            yield return new WaitForSeconds(_delay);
+        }
+
+        // Return to normal just in case ( 5/1/2020 1:35am )
+        foreach (SpriteRenderer _sprite in _sprites) {
+            _sprite.color = new Color(1f, 1f, 1f, 1f);
+        }
+    }
+
+    private IEnumerator AttackAnim() {
+        _anim.SetTrigger("Attack");
+
+        // Following Code waits for the damaged/died animation to play out first ( 5/1/2020 5:09pm )
+        yield return new WaitForSeconds(0.3f); // A small delay because the animation does not start immediately ( 5/1/2020 5:09pm )
+        yield return new WaitForSeconds(_anim.GetCurrentAnimatorClipInfo(0)[0].clip.length - (_anim.GetCurrentAnimatorStateInfo(0).normalizedTime * _anim.GetCurrentAnimatorClipInfo(0)[0].clip.length) - 0.3f);
+
+        SetAttacking(false);
+        FinishCurrentState(Bstate.enemy_ATTACK);
     }
 
     #region Functions
@@ -84,23 +145,22 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         MaxHP = _enemy.baseHP;
         CurrentHP = MaxHP;
 
-        rig = Instantiate(_enemy.rig);
-        rig.transform.SetParent(transform);
-        rig.transform.localScale = new Vector3(2, 2, 2);
-        rig.transform.localPosition = new Vector3(0, 0, 0);
-        rig.transform.localRotation = Quaternion.Euler(0, 0, 0);    
+        _rig = Instantiate(_enemy.rig);
+        _rig.transform.SetParent(transform);
+        _rig.transform.localScale = new Vector3(2, 2, 2);
+        _rig.transform.localPosition = new Vector3(0, 0, 0);
+        _rig.transform.localRotation = Quaternion.Euler(0, 0, 0);
+
+        try {
+            _anim = _rig.GetComponent<Animator>();
+        } catch {
+            Debug.Log(_rig.name + " does not have Animator Component!");
+        }
+        
     }
 
     public void SetAttacking(bool _bool) {
         _isAttacking = _bool;
-    }
-
-    public bool GetAttacking() {
-        return _isAttacking;
-    }
-
-    public bool GetDefending() {
-        return _isDefending;
     }
 
     #endregion
@@ -110,92 +170,47 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (currentState == Bstate.player_ENEMYSELECTION) {
             _isDefending = true;
 
-            EventManager.TriggerEvent("EnemySelect", new EventParams(enemyType));
+            OnEnemySelected(enemyType);
         }
     }
-    
-    #region Event Listeners
 
     // Fires when the damage has been calculated, only the selected enemy will be operated on ( 4/24/2020 5:29pm )
-    public void On_PlayerAttack(EventParams _eventParams) {
-        if (_eventParams.intParam1 != 0) {
-            int _damage = _eventParams.intParam1;
+    public void DamageListener(int _damage) {
+        if (_isDefending) {
+            StartCoroutine(TakeDamage(CurrentHP, _damage));
+            StartCoroutine(SpriteFlash(3, 0.06f));
 
-            if (_isDefending) {
-                StartCoroutine(TakeDamage(CurrentHP, _damage));
-
-                // Animations ( 5/1/2020 5:18pm )
-                if (CurrentHP - _damage > 0) {
-                    EventManager.TriggerEvent("EnemyDefendAnim", new EventParams("Damaged"));
-                } else {
-                    EventManager.TriggerEvent("EnemyDefendAnim", new EventParams("Died"));
+            // Animations ( 5/1/2020 5:18pm )
+            if (CurrentHP - _damage > 0) {
+                try {
+                    _anim.SetTrigger("Damaged");
+                } catch {
+                    Debug.Log(_rig.name + " does not have Animator Component and/or cannot performed Damaged action!");
                 }
-
-                // Disables the tooltip from following the mouse ( 4/26/2020 1:28am )
-                _tooltip.GetComponent<EnemyTooltip>().SetMouseFollow(false);
-
-                // There is no CreateTooltip function here because the logic is that a tooltip is already existing if they clicked on the enemy ( 4/26/2020 1:28am )
-
-                _autoTooltip = false;
+            } else {
+                try {
+                    _anim.SetTrigger("Died");
+                } catch {
+                    Debug.Log(_rig.name + " does not have Animator Component and/or cannot performed Died action!");
+                }
             }
-        } else {
-            Debug.LogError("EventParams with non-zero intParam1 expected.");
+
+            // Disables the tooltip from following the mouse ( 4/26/2020 1:28am )
+            _tooltip.GetComponent<EnemyTooltip>().SetMouseFollow(false);
+
+            // There is no CreateTooltip function here because the logic is that a tooltip is already existing if they clicked on the enemy ( 4/26/2020 1:28am )
+
+            _autoTooltip = false;
+            _isDefending = false;
         }
-        
     }   
 
-    // Fires when the enemy attacks ( 5/7/2020 2:39pm )
-    public void On_EnemyAttack(EventParams _eventParams) {
-        if (_eventParams.intParam1 != 0) {
-            if (_isAttacking) {
-            EventParams _ep = new EventParams("Attack");
-            _ep.intParam1 = _eventParams.intParam1; // Transfers damage done so that it can be called later ( 5/7/2020 5:20 )
-
-            EventManager.TriggerEvent("EnemyAttackAnim", _ep);
-            }
-        } else {
-            Debug.LogError("EventParams with non-zero intParam1 expected.");
-        }
-    }
-
-    // Called by Enemy Object Animator, fires when the attack animation is over ( 5/7/2020 2:54pm )
-    public void On_EnemyAttackAnimEnd(EventParams _eventParams) {
+    // Fires when the enemy attacks
+    public void AttackListener(int _damage) {
         if (_isAttacking) {
-            SetAttacking(false);
-            FinishCurrentState(Bstate.enemy_ATTACK);
-        }
-        
-    }
-
-    // Fires when the Defend animation is over ( 5/7/2020 2:54pm )
-    public void On_EnemyDefendAnimEnd(EventParams _eventParams) {
-        if (_isDefending) {
-            // Following chunk of code refers to the tooltip ( 5/1/2020 1:04pm )
-            if (_tooltip != null) {
-                _autoTooltip = true;
-                _tooltip.GetComponent<EnemyTooltip>().SetMouseFollow(true);
-
-                if (!_mouseOver) {
-                    Tooltip.DeleteTooltip(_tooltip);
-                    _tooltip = null;
-                }
-            }
-            
-
-            // If the enemy fucking DIED ( 5/1/2020 1:59pm )
-            if (CurrentHP <= 0) {
-                WaveManager.instance.enemyList.Remove(GetComponent<EnemyObject>());
-                Debug.Log("Enemy died at " + Time.time);
-                Die();
-            }
-
-            _isDefending = false;
-
-            FinishCurrentState(Bstate.player_ATTACK);
+            StartCoroutine(AttackAnim());
         }
     }
-
-    #endregion
 
     #region OnPointerEnter & Exit
     public void OnPointerEnter(PointerEventData eventData) {

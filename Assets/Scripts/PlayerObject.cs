@@ -31,7 +31,6 @@ public class PlayerObject : MonoBehaviour, IHealthPoints {
         Debug.Log("Damage dealt: " + _damage + " | HP left: " + CurrentHP);
     }
 
-    
     public void Die() {
         return;
     }
@@ -42,47 +41,20 @@ public class PlayerObject : MonoBehaviour, IHealthPoints {
     private GameObject _hpBar = null;
 
     void Awake() {
-        EventManager.StartListening("EnemyAttackAnimEnd", On_EnemyAttackAnimEnd);
+        BattleManager.OnEnemyAttack += DamageListener;
     }
 
     private void OnDestroy() {
-        EventManager.StopListening("EnemyAttackAnimEnd", On_EnemyAttackAnimEnd);
+        BattleManager.OnEnemyAttack -= DamageListener;
     }
 
     void Start() {
-        if (GetComponent(typeof(ObjectAnimator.IObjectAnimator)) == null) {
-            Debug.LogError(gameObject.name + " has no IObjectAnimator component attached.");
-        }
-
-
         // Following shit sets up the health and stuff ( 4/27/2020 2:05pm )
         CurrentHP = MaxHP;
         _hpBar.GetComponent<HPBar>().SetObject(gameObject);
     }
 
-    // Is performed after the enemy attack animation ends ( 5/7/2020 5:22pm )
-    private void On_EnemyAttackAnimEnd(EventParams _eventParams) {
-        if (_eventParams.intParam1 != 0) {
-            int _damage = _eventParams.intParam1;
-
-
-            StartCoroutine(TakeDamage(CurrentHP, _damage));
-
-
-            if (CurrentHP - _damage > 0) {
-                    try {
-                        EventManager.TriggerEvent("PlayerDefendAnim", new EventParams("Damaged"));
-                    } catch {
-                        Debug.Log(name + " does not have Animator Component and/or cannot performed Damaged action!");
-                    }
-                } else {
-                    try {
-                        EventManager.TriggerEvent("PlayerDefendAnim", new EventParams("Died"));
-                    } catch {
-                        Debug.Log(name + " does not have Animator Component and/or cannot performed Died action!");
-                    }
-            }
-        }
-        
+    private void DamageListener(int _damage) {
+        StartCoroutine(TakeDamage(CurrentHP, _damage));
     }
 }
