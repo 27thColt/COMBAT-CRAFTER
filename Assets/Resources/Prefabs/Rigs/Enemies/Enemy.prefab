@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: {fileID: 0}
+  rig: {fileID: 0}
 --- !u!61 &6771838733448510096
 BoxCollider2D:
   m_ObjectHideFlags: 0
