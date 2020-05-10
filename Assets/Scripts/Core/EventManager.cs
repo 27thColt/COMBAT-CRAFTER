@@ -112,4 +112,10 @@ public class EventParams {
     public EventParams(String _stringParam1) {
         stringParam1 = _stringParam1;
     }
-}
+
+    public MonoBehaviour componentParams = null;
+
+    public EventParams(MonoBehaviour _componentParams) {
+        componentParams = _componentParams;
+    }
+} 

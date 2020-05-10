@@ -27,8 +27,6 @@ public class Crafter : MonoBehaviour {
 
     #endregion
     private ItemType _resultItem;
-    private ItemType _resultSecond;
-
     public Recipe[] recipeList;
     //public List<Recipe> knownRecipes; // List of recipes known to the player ( 12/28/2019 10:38pm )
 
@@ -73,7 +71,7 @@ public class Crafter : MonoBehaviour {
             if (CheckRecipe(craftingSlots[0], craftingSlots[1]) != null) {
                 Recipe _recipe = CheckRecipe(craftingSlots[0], craftingSlots[1]);
                 
-                EventManager.TriggerEvent("ResultUpdate", new EventParams(_recipe.result, _recipe.resultSecondary));
+                EventManager.TriggerEvent("ResultUpdate", new EventParams(_recipe.result));
             } else {
                 EventManager.TriggerEvent("ResultUpdate", new EventParams());
             }
@@ -125,11 +123,6 @@ public class Crafter : MonoBehaviour {
 
         print(_resultItem.itemName + " Crafted!");
 
-        if (_resultSecond != null && !Inventory.instance.HasItem(_resultSecond)) {
-            Inventory.instance.AddItem(_resultSecond);
-        }
-
-
         FinishCurrentState(Bstate.player_CRAFT);
     }
 
@@ -141,12 +134,6 @@ public class Crafter : MonoBehaviour {
     public void On_ResultUpdate(EventParams _eventParams) {
         if (_eventParams.itemTypeParam1 != null) {
             _resultItem = _eventParams.itemTypeParam1;
-
-            if (_eventParams.itemTypeParam2 != null) {
-                _resultSecond = _eventParams.itemTypeParam2;
-            } else {
-                _resultSecond = null;
-            }
         } else {
             _resultItem = null;
         }

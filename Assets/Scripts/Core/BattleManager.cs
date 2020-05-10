@@ -71,7 +71,7 @@ public class BattleManager : MonoBehaviour {
                     SetCurrentState(Bstate.enemy_ATTACK);   // BattleManager.cs ( 5/1/2020 1:46pm )
 
                 } else {
-                    // Fires if all enemies have been defeated ( 5/1/2020 5:29pm )
+                    // Fires if all enemies in the wavee have been defeated ( 5/1/2020 5:29pm )
                     Debug.Break();
                 }
                 break;
@@ -101,13 +101,18 @@ public class BattleManager : MonoBehaviour {
 
     // Will update the defending enemy once the enemy has been selected. Will also change the gamestate ( 12/27/2019 1:08pm )
     public void On_EnemySelect(EventParams _eventParams) {
-        if (_eventParams.enemyTypeParam1 != null) {
-            _defendingEnemy = _eventParams.enemyTypeParam1;
+        if (_eventParams.componentParams != null) {
+            if (_eventParams.componentParams is EnemyObject) {
+                EnemyObject _enemy = _eventParams.componentParams as EnemyObject;
 
-            // Current state should be Bstate.player_ENEMYSELECTION ( 5/1/2020 1:27pm )
-            FinishCurrentState(Bstate.player_ENEMYSELECTION);
+                _defendingEnemy = _enemy.enemyType;
+
+                // Current state should be Bstate.player_ENEMYSELECTION ( 5/1/2020 1:27pm )
+                FinishCurrentState(Bstate.player_ENEMYSELECTION);
+            }
+            
         } else {
-            Debug.LogError("EventParams with non-null enemyTypeParam1 expected.");
+            Debug.LogError("EventParams with non-null componentParams expected.");
         }
         
     }
