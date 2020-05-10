@@ -12,8 +12,5 @@ public class Recipe : ScriptableObject {
     public ItemType material2;
 
     public ItemType result;
-
-    // Some recipes will result a second item, typically the first will be a "weapon", while secondaries are not ( 6/3/2019 8:20pm )
-    public ItemType resultSecondary; 
     
 }
