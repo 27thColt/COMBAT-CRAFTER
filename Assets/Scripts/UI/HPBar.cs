@@ -8,30 +8,37 @@ using UnityEngine.UI;
  * 
  */
 public class HPBar : MonoBehaviour {
-
-    // The IHealthPoints object that the health bar will focus on ( 4/26/2020 4:55pm )
-    private GameObject _object = null;
-
     [SerializeField]
     private Image _hpBar = null;
 
-    private IHealthPoints _health;
-
-    void Update() {
-        // If theres ever a way to only update the screen when the bar needs to be changed, i would gladly accept that instead ( 4/27/2020 2:03pm )
-        _hpBar.fillAmount = (float)_health.CurrentHP / (float)_health.MaxHP;
-
-    }
-
     // Sets the focused object ( 4/27/2020 2:02pm )
     public void SetObject(GameObject _obj) {
-
         // Error if the object does not contain a component which implements IHealthPoints ( 4/27/2020 1:55pm )
         if (_obj.GetComponent(typeof(IHealthPoints)) != null) {
-            _object = _obj;
-            _health = _object.GetComponent(typeof(IHealthPoints)) as IHealthPoints;
+            IHealthPoints _health = _obj.GetComponent(typeof(IHealthPoints)) as IHealthPoints;
+
+             _hpBar.fillAmount = (float)_health.CurrentHP / (float)_health.MaxHP;
         } else {
-            Debug.Log(_obj.name + " does not implement IHealthPoints!");
+            Debug.LogError(_obj.name + " does not implement IHealthPoints!");
         }
+    }
+
+    // Coroutine which animates the HP Bar ( 5/9/2020 3:31pm )
+    public IEnumerator AnimateDamage(int _maxHP, int _startHP, int _endHP) {
+        int _currentHP = _startHP;
+
+        yield return new WaitForSeconds(0.4f);
+
+        while (_currentHP > _endHP) {
+            
+            _currentHP -= 1;
+            _hpBar.fillAmount = (float)_currentHP / _maxHP;
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield return new WaitForSeconds(0.4f);
+
+        // Debug.Log("Damage dealt: " + _damage + " | HP left: " + CurrentHP);
     }
 }
