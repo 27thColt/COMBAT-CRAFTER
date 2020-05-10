@@ -21,18 +21,11 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public int CurrentHP { get; set; }
 
+    public int HPCache { get; set; } = 0;
 
-    // This is a coroutine so that the HP can update in real time, and not just automatically ( 4/24/2020 5:25 pm)
-    public IEnumerator TakeDamage(int _full, int _damage) {
-        yield return new WaitForSeconds(0.4f);
-
-        while (CurrentHP > _full - _damage) {
-            CurrentHP -= 1;
-
-            yield return new WaitForEndOfFrame();
-        }
-
-        Debug.Log("Damage dealt: " + _damage + " | HP left: " + CurrentHP);
+    public void TakeDamage(int _damage) {
+        HPCache = CurrentHP;
+        CurrentHP -= _damage;
     }
 
     public void Die() {
@@ -46,20 +39,18 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     // The Gameobject that the enemy is using (used to be a sprite but now we use character RIGZ) ( 4/30/2020 7:33pm )
     public GameObject rig = null;
 
+    private EnemyInfoPanel _infoPanel = null;
+
     // Values for if the enemy object is attacking / defending ( 5/1/2020 7:11pm )
     private bool _isDefending = false;
     private bool _isAttacking = false;
-
-    private GameObject _tooltip = null;
-
-    // Will determine if the tooltip automatically show / hide itself ( 4/24/2020 7:32pm )
-    private bool _autoTooltip = true;
 
     // boolean for whenever the mouse is hovering over the enemy ( 4/26/2020 1:04am )
     private bool _mouseOver = false;
 
     private void Awake() {
         EventManager.StartListening("PlayerAttack", On_PlayerAttack);
+        EventManager.StartListening("PlayerAttackAnimEnd", On_PlayerAttackAnimEnd);
         EventManager.StartListening("EnemyAttack", On_EnemyAttack);
         EventManager.StartListening("EnemyAttackAnimEnd", On_EnemyAttackAnimEnd);
         EventManager.StartListening("EnemyDefendAnimEnd", On_EnemyDefendAnimEnd);
@@ -69,10 +60,18 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (GetComponentInChildren(typeof(ObjectAnimator.IObjectAnimator)) == null) {
             Debug.LogError(gameObject.name + " has no IObjectAnimator component attached.");
         }
+        
+        try {
+            _infoPanel = FindObjectOfType<EnemyInfoPanel>();
+        } catch {
+            Debug.LogError("Enemy Info Panel cannot be found!");
+        }
+        
     }
 
     private void OnDestroy() {
         EventManager.StopListening("PlayerAttack", On_PlayerAttack);
+        EventManager.StopListening("PlayerAttackEnd", On_PlayerAttackAnimEnd);
         EventManager.StopListening("EnemyAttack", On_EnemyAttack);
         EventManager.StopListening("EnemyAttackAnimEnd", On_EnemyAttackAnimEnd);
     }
@@ -110,56 +109,51 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (currentState == Bstate.player_ENEMYSELECTION) {
             _isDefending = true;
 
-            EventManager.TriggerEvent("EnemySelect", new EventParams(enemyType));
+            EventManager.TriggerEvent("EnemySelect", new EventParams(GetComponent<EnemyObject>()));
         }
     }
     
     #region Event Listeners
 
-    // Fires when the damage has been calculated, only the selected enemy will be operated on ( 4/24/2020 5:29pm )
-    public void On_PlayerAttack(EventParams _eventParams) {
+    private void On_PlayerAttack(EventParams _eventParams) {
         if (_eventParams.intParam1 != 0) {
-            int _damage = _eventParams.intParam1;
-
-            if (_isDefending) {
-                StartCoroutine(TakeDamage(CurrentHP, _damage));
-
-                // Animations ( 5/1/2020 5:18pm )
-                if (CurrentHP - _damage > 0) {
-                    EventManager.TriggerEvent("EnemyDefendAnim", new EventParams("Damaged"));
-                } else {
-                    EventManager.TriggerEvent("EnemyDefendAnim", new EventParams("Died"));
-                }
-
-                // Disables the tooltip from following the mouse ( 4/26/2020 1:28am )
-                _tooltip.GetComponent<EnemyTooltip>().SetMouseFollow(false);
-
-                // There is no CreateTooltip function here because the logic is that a tooltip is already existing if they clicked on the enemy ( 4/26/2020 1:28am )
-
-                _autoTooltip = false;
-            }
-        } else {
-            Debug.LogError("EventParams with non-zero intParam1 expected.");
-        }
-        
-    }   
-
-    // Fires when the enemy attacks ( 5/7/2020 2:39pm )
-    public void On_EnemyAttack(EventParams _eventParams) {
-        if (_eventParams.intParam1 != 0) {
-            if (_isAttacking) {
-            EventParams _ep = new EventParams("Attack");
-            _ep.intParam1 = _eventParams.intParam1; // Transfers damage done so that it can be called later ( 5/7/2020 5:20 )
-
-            EventManager.TriggerEvent("EnemyAttackAnim", _ep);
-            }
+            if (_isDefending) TakeDamage(_eventParams.intParam1);
         } else {
             Debug.LogError("EventParams with non-zero intParam1 expected.");
         }
     }
 
+    // Fires when the damage has been calculated, only the selected enemy will be operated on ( 4/24/2020 5:29pm )
+    private void On_PlayerAttackAnimEnd(EventParams _eventParams) {
+            int _damage = _eventParams.intParam1;
+
+            if (_isDefending) {
+                StartCoroutine(_infoPanel.GetComponent<EnemyInfoPanel>().hpBar.GetComponent<HPBar>().AnimateDamage(MaxHP, HPCache, CurrentHP));
+                    
+                HPCache = 0;
+
+                // Animations ( 5/1/2020 5:18pm )
+                if (CurrentHP > 0) {
+                    EventManager.TriggerEvent("EnemyDefendAnim", new EventParams("Damaged"));
+                } else {
+                    EventManager.TriggerEvent("EnemyDefendAnim", new EventParams("Died"));
+                }
+
+            
+            }
+        
+    }   
+
+    // Fires when the enemy attacks ( 5/7/2020 2:39pm )
+    private void On_EnemyAttack(EventParams _eventParams) {
+        if (_isAttacking) {
+            EventManager.TriggerEvent("EnemyAttackAnim", new EventParams("Attack"));
+        }
+        
+    }
+
     // Called by Enemy Object Animator, fires when the attack animation is over ( 5/7/2020 2:54pm )
-    public void On_EnemyAttackAnimEnd(EventParams _eventParams) {
+    private void On_EnemyAttackAnimEnd(EventParams _eventParams) {
         if (_isAttacking) {
             SetAttacking(false);
             FinishCurrentState(Bstate.enemy_ATTACK);
@@ -168,20 +162,8 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     }
 
     // Fires when the Defend animation is over ( 5/7/2020 2:54pm )
-    public void On_EnemyDefendAnimEnd(EventParams _eventParams) {
+    private void On_EnemyDefendAnimEnd(EventParams _eventParams) {
         if (_isDefending) {
-            // Following chunk of code refers to the tooltip ( 5/1/2020 1:04pm )
-            if (_tooltip != null) {
-                _autoTooltip = true;
-                _tooltip.GetComponent<EnemyTooltip>().SetMouseFollow(true);
-
-                if (!_mouseOver) {
-                    Tooltip.DeleteTooltip(_tooltip);
-                    _tooltip = null;
-                }
-            }
-            
-
             // If the enemy fucking DIED ( 5/1/2020 1:59pm )
             if (CurrentHP <= 0) {
                 WaveManager.instance.enemyList.Remove(GetComponent<EnemyObject>());
@@ -201,19 +183,13 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public void OnPointerEnter(PointerEventData eventData) {
         _mouseOver = true;
 
-        if (_autoTooltip) {
-            _tooltip = Tooltip.CreateTooltip(GetComponent<EnemyObject>());
-            _tooltip.GetComponent<EnemyTooltip>().SetTooltip(GetComponent<EnemyObject>());
-        }
+        EventManager.TriggerEvent("EnemyHoverEnter", new EventParams(GetComponent<EnemyObject>()));
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         _mouseOver = false;
 
-        if (_autoTooltip) {
-            Tooltip.DeleteTooltip(_tooltip);
-            _tooltip = null;
-        } 
+        EventManager.TriggerEvent("EnemyHoverExit", new EventParams(GetComponent<EnemyObject>()));
     }
 
     #endregion

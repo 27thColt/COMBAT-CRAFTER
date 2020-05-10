@@ -17,20 +17,12 @@ public class PlayerObject : MonoBehaviour, IHealthPoints {
     public int MaxHP { get; set; } = 60;
     public int CurrentHP { get; set; }
 
-    public IEnumerator TakeDamage(int _full, int _damage) {
-        yield return new WaitForSeconds(0.4f);
+    public int HPCache { get; set; } = 0;
 
-        while (CurrentHP > _full - _damage) {
-            CurrentHP -= 1;
-
-            yield return new WaitForEndOfFrame();
-        }
-
-        yield return new WaitForSeconds(0.4f);
-
-        Debug.Log("Damage dealt: " + _damage + " | HP left: " + CurrentHP);
+    public void TakeDamage(int _damage) {
+        HPCache = CurrentHP;
+        CurrentHP -= _damage;   
     }
-
     
     public void Die() {
         return;
@@ -42,15 +34,19 @@ public class PlayerObject : MonoBehaviour, IHealthPoints {
     private GameObject _hpBar = null;
 
     void Awake() {
+        EventManager.StartListening("PlayerAttack", On_PlayerAttack);
         EventManager.StartListening("EnemyAttackAnimEnd", On_EnemyAttackAnimEnd);
+        EventManager.StartListening("EnemyAttack", On_EnemyAttack);
     }
 
     private void OnDestroy() {
+        EventManager.StopListening("PlayerAttack", On_PlayerAttack);
         EventManager.StopListening("EnemyAttackAnimEnd", On_EnemyAttackAnimEnd);
+        EventManager.StopListening("EnemyAttack", On_EnemyAttack);
     }
 
     void Start() {
-        if (GetComponent(typeof(ObjectAnimator.IObjectAnimator)) == null) {
+        if (GetComponentInChildren(typeof(ObjectAnimator.IObjectAnimator)) == null) {
             Debug.LogError(gameObject.name + " has no IObjectAnimator component attached.");
         }
 
@@ -60,28 +56,35 @@ public class PlayerObject : MonoBehaviour, IHealthPoints {
         _hpBar.GetComponent<HPBar>().SetObject(gameObject);
     }
 
+    private void On_PlayerAttack(EventParams _eventParams) {
+        EventManager.TriggerEvent("PlayerAttackAnim", new EventParams("Attack"));
+    }
+
+    private void On_EnemyAttack(EventParams _eventParams) {
+        if (_eventParams.intParam1 != 0) {
+            TakeDamage(_eventParams.intParam1);
+        } else {
+            Debug.LogError("EventParams with non-zero intParam1 expected.");
+        }
+    }
+
     // Is performed after the enemy attack animation ends ( 5/7/2020 5:22pm )
     private void On_EnemyAttackAnimEnd(EventParams _eventParams) {
-        if (_eventParams.intParam1 != 0) {
-            int _damage = _eventParams.intParam1;
+        StartCoroutine(_hpBar.GetComponent<HPBar>().AnimateDamage(MaxHP, HPCache, CurrentHP));
+        HPCache = 0;
 
-
-            StartCoroutine(TakeDamage(CurrentHP, _damage));
-
-
-            if (CurrentHP - _damage > 0) {
-                    try {
-                        EventManager.TriggerEvent("PlayerDefendAnim", new EventParams("Damaged"));
-                    } catch {
-                        Debug.Log(name + " does not have Animator Component and/or cannot performed Damaged action!");
-                    }
-                } else {
-                    try {
-                        EventManager.TriggerEvent("PlayerDefendAnim", new EventParams("Died"));
-                    } catch {
-                        Debug.Log(name + " does not have Animator Component and/or cannot performed Died action!");
-                    }
-            }
+        if (CurrentHP > 0) {
+                try {
+                    EventManager.TriggerEvent("PlayerDefendAnim", new EventParams("Damaged"));
+                } catch {
+                    Debug.Log(name + " does not have Animator Component and/or cannot performed Damaged action!");
+                }
+            } else {
+                try {
+                    EventManager.TriggerEvent("PlayerDefendAnim", new EventParams("Died"));
+                } catch {
+                    Debug.Log(name + " does not have Animator Component and/or cannot performed Died action!");
+                }
         }
         
     }

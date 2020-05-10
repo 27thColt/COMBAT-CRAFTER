@@ -8,12 +8,10 @@ using static ObjectAnimator;
 
 */
 
-//[RequireComponent(typeof(EnemyObject))]
+[RequireComponent(typeof(Animator))]
 public class EnemyObjectAnimator : MonoBehaviour, IObjectAnimator {
     private EnemyObject _enemyObject = null;
     private Animator _anim = null;
-
-    private int _damageDealt = 0;
 
     void Awake() {
         EventManager.StartListening("EnemyDefendAnim", On_DefendAnim);
@@ -31,11 +29,9 @@ public class EnemyObjectAnimator : MonoBehaviour, IObjectAnimator {
         _anim = GetComponent<Animator>();
     }
 
-    // Fires when the attack animation is done ( 5/8/2020 3:52pm )
+    // Fires when the attack animation is done. THIS IS REFERENCED THROUGH AN ANIMATION EVENT ( 5/8/2020 3:52pm )
     public void AttackAnimEnd() {
-        EventManager.TriggerEvent("EnemyAttackAnimEnd", new EventParams(_damageDealt));
-
-        _damageDealt = 0;
+        EventManager.TriggerEvent("EnemyAttackAnimEnd", new EventParams());
     }
 
     #region IObjectAnimator
@@ -61,8 +57,6 @@ public class EnemyObjectAnimator : MonoBehaviour, IObjectAnimator {
         if (_eventParams.stringParam1 != null) {
             if (_enemyObject.GetAttacking()) {
                 // _eventParams.intParam1 carries the calculated damage from BattleManager. This is then passed on to PlayerObject ( 5/7/2020 5:23pm )
-
-                _damageDealt = _eventParams.intParam1;
                 try {
                     StartCoroutine(DoAfterAnim(_eventParams.stringParam1, _anim, () => {    }));
                 }  catch {
