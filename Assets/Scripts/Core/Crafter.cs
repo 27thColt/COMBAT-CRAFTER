@@ -123,6 +123,10 @@ public class Crafter : MonoBehaviour {
 
         print(_resultItem.itemName + " Crafted!");
 
+        if (_resultItem is WeaponType) {
+            Inventory.instance.AddItem(_resultItem as WeaponType);
+        }
+
         FinishCurrentState(Bstate.player_CRAFT);
     }
 

@@ -26,7 +26,7 @@ public static class IO_Inventory {
             List<Item> _outputList = new List<Item>();
 
             for (int i = 0; i < _json["Inventory"].AsArray.Count; i++) {
-                _outputList.Add(new Item(ItemType.ReturnItemFromID(_json["Inventory"].AsArray[i]["ID"].AsInt), _json["Inventory"].AsArray[i]["Number"].AsInt));
+                _outputList.Add(new Item(Inventory.ReturnItemFromID(_json["Inventory"].AsArray[i]["ID"].AsInt), _json["Inventory"].AsArray[i]["Number"].AsInt));
             }
 
             return _outputList;

@@ -9,11 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe84216c8b7f8074cbf8244fbe47eadb, type: 3}
+  m_Script: {fileID: 11500000, guid: f743e50f51ec8cf4397487ffca4355a0, type: 3}
   m_Name: 4_Hatchet
   m_EditorClassIdentifier: 
   itemName: Hatchet
   ID: 4
   sprite: {fileID: 21300000, guid: 422ddd1a49dfcd843b9a6b45a9503ab9, type: 3}
-  isWeapon: 1
+  stackable: 0
   baseAtk: 5
+  maxDurability: 3
+  atkDecayRate: -1

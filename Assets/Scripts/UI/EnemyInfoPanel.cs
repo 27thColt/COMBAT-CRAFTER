@@ -23,13 +23,18 @@ public class EnemyInfoPanel : MonoBehaviour {
 
     private bool _autoDisable = true; // Will automatically disable the panel if set to true ( 5/10/2020 1:44pm )
     private bool _mouseOn = false;
-    private GameObject _obj = null;
+
+    // Positions for when the enemy info panel is enabled and disabled ( 5/10/2020 5:02pm )
+    private Vector2 _onPos = new Vector2(-140.5f, -77.29f);
+    private Vector2 _offPos = new Vector2(142, -77.29f);
 
     void Awake() {
         EventManager.StartListening("EnemySelect", On_EnemySelect);
         EventManager.StartListening("EnemyHoverEnter", On_EnemyHoverEnter);
         EventManager.StartListening("EnemyHoverExit", On_EnemyHoverExit);
         EventManager.StartListening("EnemyDefendAnimEnd", On_EnemyDefendAnimEnd);
+
+        gameObject.GetComponent<RectTransform>().anchoredPosition = _offPos;
     }
 
     void OnDestroy() {
@@ -38,6 +43,8 @@ public class EnemyInfoPanel : MonoBehaviour {
         EventManager.StopListening("EnemyHoverExit", On_EnemyHoverExit);
         EventManager.StopListening("EnemyDefendAnimEnd", On_EnemyDefendAnimEnd);
     }
+
+    
     private void SetInfo(EnemyObject _enemy) {
         _nameText.text = _enemy.enemyType.enemyName;
         hpBar = GetComponentInChildren<HPBar>().gameObject;
@@ -59,10 +66,8 @@ public class EnemyInfoPanel : MonoBehaviour {
             Destroy(_child.gameObject);
         }
             
-        gameObject.SetActive(false);
+        gameObject.GetComponent<RectTransform>().anchoredPosition = _offPos;
     }
-
-    
 
     #region Event Listeners
 
@@ -71,12 +76,11 @@ public class EnemyInfoPanel : MonoBehaviour {
             if (_eventParams.componentParams is EnemyObject) {
                 if (!gameObject.activeSelf) {
                     SetInfo(_eventParams.componentParams as EnemyObject);
-                    gameObject.SetActive(true);
+                    gameObject.GetComponent<RectTransform>().anchoredPosition = _onPos;
                 }
                 
 
                 _autoDisable = false;
-
                 
             }
         } else {
@@ -97,7 +101,7 @@ public class EnemyInfoPanel : MonoBehaviour {
         if (_eventParams.componentParams != null) {
             if (_eventParams.componentParams is EnemyObject) {
                 SetInfo(_eventParams.componentParams as EnemyObject);
-                gameObject.SetActive(true);
+                gameObject.GetComponent<RectTransform>().anchoredPosition = _onPos;
 
                 _mouseOn = true;
             }
@@ -107,7 +111,7 @@ public class EnemyInfoPanel : MonoBehaviour {
     }
 
     private void On_EnemyHoverExit(EventParams _eventParams) {
-        if (gameObject.activeSelf && _autoDisable) {
+        if (_autoDisable) {
             DisablePanel();
             
         }

@@ -45,9 +45,6 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private bool _isDefending = false;
     private bool _isAttacking = false;
 
-    // boolean for whenever the mouse is hovering over the enemy ( 4/26/2020 1:04am )
-    private bool _mouseOver = false;
-
     private void Awake() {
         EventManager.StartListening("PlayerAttack", On_PlayerAttack);
         EventManager.StartListening("PlayerAttackAnimEnd", On_PlayerAttackAnimEnd);
@@ -181,14 +178,10 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     #region OnPointerEnter & Exit
     public void OnPointerEnter(PointerEventData eventData) {
-        _mouseOver = true;
-
         EventManager.TriggerEvent("EnemyHoverEnter", new EventParams(GetComponent<EnemyObject>()));
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        _mouseOver = false;
-
         EventManager.TriggerEvent("EnemyHoverExit", new EventParams(GetComponent<EnemyObject>()));
     }
 

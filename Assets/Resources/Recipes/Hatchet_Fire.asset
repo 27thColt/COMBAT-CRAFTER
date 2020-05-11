@@ -14,5 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material1: {fileID: 11400000, guid: 512367a967a3fe84aac960bebcba529c, type: 2}
   material2: {fileID: 11400000, guid: 6fca146ee81e2f64c9d533267bb85786, type: 2}
-  result: {fileID: 11400000, guid: 997fe4e28cbdc3941acd2f02bdadd53b, type: 2}
-  resultSecondary: {fileID: 11400000, guid: 944e47119a8b2a0419bdcd61f7da557a, type: 2}
+  result: {fileID: 11400000, guid: 00acf0c408e5ac84ba1d418f13883cf4, type: 2}
