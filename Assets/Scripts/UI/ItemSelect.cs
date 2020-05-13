@@ -17,14 +17,12 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler {
     // Fires when the item is clicked ( 5/4/2020 2:47pm )
     public void OnPointerClick(PointerEventData eventData) {
         if (BattleState.currentState == Bstate.player_CRAFT) {
-            ItemType _item = GetComponent<ItemObject>().item.itemType;
+            Item _item = GetComponent<ItemObject>().item;
 
             if (_crafter.itemAmt < 2 && !_selected) {
                 _crafter.itemAmt++;
 
                 UpdateSelection(true);
-
-
                 // Add the actual item to the crafting slot ( 6/3/2019 6:32pm )
                 
                 _crafter.AddItem(_item);
@@ -62,8 +60,6 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler {
     private void UpdateSelection(bool _selection) {
         _selected = _selection;
         _selectedBG.enabled = _selection;
-
-        Debug.Log(GetComponent<ItemObject>().item.itemType.itemName + " selected " + _selection);
     }
 
     // Resets the selection state of the item ( 5/4/2020 2:56pm )

@@ -31,11 +31,17 @@ public class ItemObject : MonoBehaviour {
         _textMesh.text = _item.itemType.itemName;
         _displayImage.sprite = _item.itemType.sprite;
 
+        // Weapon Item Clause ( 5/11/2020 1:33pm )
         if (_item is Weapon) {
+            Weapon _weapon = _item as Weapon;
+            
             _number.gameObject.SetActive(false);
 
             _durabilityBar.gameObject.SetActive(true);
             _durabilityBG.gameObject.SetActive(true);
+
+            _durabilityBar.fillAmount = (float) _weapon.currentDurability / (float)_weapon.maxDurability;
+        // Generic Item Clause ( 5/11/2020 1:33pm )
         } else {
             _number.text = _item.number.ToString();
 
