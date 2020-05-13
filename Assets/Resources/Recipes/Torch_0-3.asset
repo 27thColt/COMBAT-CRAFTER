@@ -9,10 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe84216c8b7f8074cbf8244fbe47eadb, type: 3}
-  m_Name: 1_String
+  m_Script: {fileID: 11500000, guid: 65ee5eeced838be48a63d73c63b8cee6, type: 3}
+  m_Name: Torch_
   m_EditorClassIdentifier: 
-  itemName: String
-  ID: 1
-  sprite: {fileID: 21300000, guid: 8a9c82f6fef0b4746b1f525fbd343ca4, type: 3}
-  baseAtk: 2
+  material1: {fileID: 0}
+  material2: {fileID: 0}
+  result: {fileID: 0}

@@ -15,7 +15,6 @@ MonoBehaviour:
   itemName: Hatchet
   ID: 4
   sprite: {fileID: 21300000, guid: 422ddd1a49dfcd843b9a6b45a9503ab9, type: 3}
-  stackable: 0
   baseAtk: 5
   maxDurability: 3
-  atkDecayRate: -1
+  atkDecayRate: 1

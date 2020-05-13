@@ -38,13 +38,12 @@ public class CrafterButton : MonoBehaviour {
     #region Event Listeners
 
     public void On_ResultUpdate(EventParams _eventParams) {
-        if (_eventParams.itemTypeParam1 != null) {
+        if (_eventParams.itemParam != null) {
             GetComponent<Animator>().SetBool("PanelOpen", true);
             _button.interactable = true;
 
             resultSprite.enabled = true;
-            resultSprite.sprite = _eventParams.itemTypeParam1.sprite;
-
+            resultSprite.sprite = _eventParams.itemParam.itemType.sprite;
         } else {
             GetComponent<Animator>().SetBool("PanelOpen", false);
             _button.interactable = false;

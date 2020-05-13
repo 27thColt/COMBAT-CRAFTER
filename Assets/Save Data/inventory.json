@@ -1,1 +1,36 @@
-{"Inventory":[{"ID":0,"Number":19},{"ID":2,"Number":7},{"ID":1,"Number":11},{"ID":3,"Number":9}]}
+{
+    "Inventory": [
+        {
+            "ID": 0,
+            "Number": 19
+        },
+        {
+            "ID": 2,
+            "Number": 6
+        },
+        {
+            "ID": 1,
+            "Number": 11
+        },
+        {
+            "ID": 3,
+            "Number": 9
+        },
+        {
+            "ID": 4,
+            "Durability": 2
+        },
+        {
+            "ID": 4,
+            "Durability": 2
+        },
+        {
+            "ID": 5,
+            "Durability": 3,
+        },
+        {
+            "ID": 6,
+            "Durability": 3
+        }
+    ]
+}

@@ -14,12 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Spider
   ID: 0
-  sprite: {fileID: 0}
   rig: {fileID: 2764120347842315848, guid: 8f668c7637299004bae0b71904885a04, type: 3}
   vulnerabilities:
   - {fileID: 11400000, guid: 512367a967a3fe84aac960bebcba529c, type: 2}
   - {fileID: 11400000, guid: 944e47119a8b2a0419bdcd61f7da557a, type: 2}
   drops:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 9cc6e9137d1bb764aac34159fed265cc, type: 2}
   baseHP: 30
   baseAtk: 3

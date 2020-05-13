@@ -9,10 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe84216c8b7f8074cbf8244fbe47eadb, type: 3}
-  m_Name: 1_String
+  m_Script: {fileID: 11500000, guid: f743e50f51ec8cf4397487ffca4355a0, type: 3}
+  m_Name: 5_Bola
   m_EditorClassIdentifier: 
-  itemName: String
-  ID: 1
-  sprite: {fileID: 21300000, guid: 8a9c82f6fef0b4746b1f525fbd343ca4, type: 3}
-  baseAtk: 2
+  itemName: Bola
+  ID: 5
+  sprite: {fileID: 21300000, guid: 26f1dd5a44bc30c40bb2e513c0f6489d, type: 3}
+  baseAtk: 4
+  maxDurability: 3
+  atkDecayRate: 1
