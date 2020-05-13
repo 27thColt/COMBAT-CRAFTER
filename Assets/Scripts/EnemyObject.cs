@@ -26,6 +26,8 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     public void TakeDamage(int _damage) {
         HPCache = CurrentHP;
         CurrentHP -= _damage;
+
+        Debug.Log("Damage Dealt: " + _damage + " | HP Left: " + CurrentHP);
     }
 
     public void Die() {

@@ -12,9 +12,6 @@ public static class ObjectAnimator {
     public static IEnumerator DoAfterAnim(string _animName = null, Animator _anim = null, Action _action = null) {
         if (_animName != null && _anim != null) 
             _anim.SetTrigger(_animName);
-
-        
-
         
         // Following Code waits for the damaged/died animation to play out first ( 5/1/2020 5:09pm )
         yield return new WaitForSeconds(0.4f); // A small delay because the animation does not start immediately ( 5/1/2020 5:09pm )

@@ -20,9 +20,9 @@ public class EnemyInfoPanel : MonoBehaviour {
     private GameObject _iconPrefab = null;
 
     public GameObject hpBar = null; // Referenced through Unity Editor ( 5/9/2020 3:58pm )
-
     private bool _autoDisable = true; // Will automatically disable the panel if set to true ( 5/10/2020 1:44pm )
-    private bool _mouseOn = false;
+    private bool _mouseOn = false; // If the mouse is hovered over an enemy ( 5/13/2020 11:46am )
+    // private bool _isActive = false; // if the panel is already active ( 5/13/2020 11:47am )
 
     // Positions for when the enemy info panel is enabled and disabled ( 5/10/2020 5:02pm )
     private Vector2 _onPos = new Vector2(-140.5f, -77.29f);
@@ -100,10 +100,12 @@ public class EnemyInfoPanel : MonoBehaviour {
     private void On_EnemyHoverEnter(EventParams _eventParams) {
         if (_eventParams.componentParams != null) {
             if (_eventParams.componentParams is EnemyObject) {
-                SetInfo(_eventParams.componentParams as EnemyObject);
-                gameObject.GetComponent<RectTransform>().anchoredPosition = _onPos;
+                if (!_mouseOn) {
+                    SetInfo(_eventParams.componentParams as EnemyObject);
+                    gameObject.GetComponent<RectTransform>().anchoredPosition = _onPos;
 
-                _mouseOn = true;
+                    _mouseOn = true;
+                }
             }
         } else {
             Debug.LogError("Eventparams containing non-null componentParams expected!");
