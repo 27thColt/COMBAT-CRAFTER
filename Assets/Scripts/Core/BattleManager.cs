@@ -14,7 +14,7 @@ using static BattleLogic;
  */
 public class BattleManager : MonoBehaviour {
     // Item used to attack (comes from resultItem in the Crafter) ( 12/27/2019 12:50pm )
-    private ItemType _attackingItem = null;
+    private Item _attackingItem = null;
     private EnemyType _defendingEnemy = null;
 
     [SerializeField]
@@ -60,6 +60,9 @@ public class BattleManager : MonoBehaviour {
 
             case Bstate.player_CRAFT:
                 SetCurrentState(Bstate.player_ENEMYSELECTION);
+                if (_attackingItem is Weapon) {
+                    
+                }
                 break;
 
             case Bstate.player_ENEMYSELECTION:
@@ -92,10 +95,10 @@ public class BattleManager : MonoBehaviour {
 
     // Updates the Attacking Item when it is crafted ( 5/7/2020 11:35pm )
     public void On_ItemCraft(EventParams _eventParams) {
-        if (_eventParams.itemTypeParam1 != null)
-            _attackingItem = _eventParams.itemTypeParam1;
+        if (_eventParams.itemParam != null)
+            _attackingItem = _eventParams.itemParam;
         else {
-            Debug.LogError("EventParams with non-null itemTypeParam1 expected.");
+            Debug.LogError("EventParams with non-null itemParam expected.");
         }
     }
 
@@ -123,21 +126,26 @@ public class BattleManager : MonoBehaviour {
             Bstate _state = _eventParams.bstateParam;
 
             if (_state == Bstate.player_ATTACK) {
-                float _vulModifier;
+                float _modifier;
 
-                if (CheckVulnerabilities(_defendingEnemy, _attackingItem)) {
+                if (CheckVulnerabilities(_defendingEnemy, _attackingItem.itemType)) {
                     // Add vulnerability to enemy inventory ( 4/24/2020 1:03am )
-                    EnemyInventory.instance.AddEnemyVul(_defendingEnemy, _attackingItem);
+                    EnemyInventory.instance.AddEnemyVul(_defendingEnemy, _attackingItem.itemType);
 
-                    _vulModifier = seModifier;
+                    _modifier = seModifier;
                     print("It's Super Effective!");
                 } else {
-
-                    _vulModifier = neModifier;
+                    
+                    if (_attackingItem is Weapon) {
+                        _modifier = neModifier_Weapon;
+                    } else {
+                        _modifier = neModifier;
+                    }
+                    
                     print("Not Very Effective...");
                 }
 
-                EventManager.TriggerEvent("PlayerAttack", new EventParams(CalculateAttackDamage(_attackingItem.baseAtk, _vulModifier, true, _rnd)));
+                EventManager.TriggerEvent("PlayerAttack", new EventParams(CalculateAttackDamage(_attackingItem.atk, _modifier, true, _rnd)));
             
             // When the it is time for the enemies to attack the player ( 4/27/2020 2:29pm )
             }  else if (_state == Bstate.enemy_ATTACK) {

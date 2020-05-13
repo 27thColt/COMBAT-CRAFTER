@@ -26,7 +26,13 @@ public static class IO_Inventory {
             List<Item> _outputList = new List<Item>();
 
             for (int i = 0; i < _json["Inventory"].AsArray.Count; i++) {
-                _outputList.Add(new Item(Inventory.ReturnItemFromID(_json["Inventory"].AsArray[i]["ID"].AsInt), _json["Inventory"].AsArray[i]["Number"].AsInt));
+                ItemType _itemType = Inventory.ReturnItemFromID(_json["Inventory"].AsArray[i]["ID"].AsInt);
+
+                if (_itemType is WeaponType) {
+                    _outputList.Add(new Weapon(_itemType as WeaponType, i, 1,  _json["Inventory"].AsArray[i]["Durability"].AsInt));
+                } else { 
+                    _outputList.Add(new Item(_itemType, i, _json["Inventory"].AsArray[i]["Number"].AsInt));
+                }
             }
 
             return _outputList;
@@ -43,9 +49,20 @@ public static class IO_Inventory {
 
         foreach (Item _itemObj in _inventory) {
             JSONObject _item = new JSONObject();
-
+            
             _item.Add("ID", _itemObj.itemType.ID);
-            _item.Add("Number", _itemObj.number);
+
+            // Weapon Item Clause ( 5/11/2020 1:21pm )
+            if (_itemObj is Weapon) {
+                Debug.Log("WEAPON SAVED");
+                Weapon _weaponObj = _itemObj as Weapon;
+                _item.Add("Durability", _weaponObj.currentDurability);
+
+            // Generic Item Clause ( 5/11/2020 1:20pm )
+            } else {
+                _item.Add("Number", _itemObj.number);
+            }
+            
 
             _inv.Add(_item);
         }

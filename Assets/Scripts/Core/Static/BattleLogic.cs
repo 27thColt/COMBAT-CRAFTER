@@ -9,6 +9,7 @@ public static class BattleLogic {
 
     // Damage modifier values ( 5/8/2020 2:50pm )
     public static float neModifier = 1.0f; // Not Effective Modifier ( 5/8/2020 2:56pm )
+    public static float neModifier_Weapon = 0.75f; // A special not effective modifier for weapons ( 5/8/2020 2:56pm )
     public static float seModifier = 1.5f; // Super Effective Modifier ( 5/8/2020 2:56pm )
 
     // Percentages for upper and lower bounds for the variation modifier (randomizes attack damage) ( 5/8/2020 2:58pm )

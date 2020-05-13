@@ -50,77 +50,51 @@ public class Inventory : MonoBehaviour {
             List<Item> _itemList = IO_Inventory.LoadInventory();
 
             foreach (Item item in _itemList) {
-                if (item.itemType is WeaponType) AddItem(item.itemType as WeaponType);
-                else AddItem(item.itemType, item.number);
+                AddItem(item);
             }
+
         } else {
             Debug.LogError("Inventory cannot be loaded!");
         }
     }
 
-    #region AddItem
-
-    // Generic Add Item Function ( 5/10/2020 10:14pm )
-    public void AddItem(ItemType _itemType, int _amt = 1) {
+    public void AddItem(Item _item) {
         // Will create the list if it does not exist ( 5/4/2020 7:46pm )
         if (itemInv == null) itemInv = new List<Item>(); 
 
-        foreach (Item _item in itemInv) {
+        // Check through the inventory and if Item does exist in list and will add one to it ( 5/4/2020 5:56pm )
+        foreach (Item item in itemInv) {
+            if (item.itemType == _item.itemType && !(item is Weapon)) {
+                Debug.Log("Adding " + _item.number + " to " + _item.itemType.itemName + " in inventory. UID: " + _item.UID);
 
-            // Item does exist in list and will add one to it ( 5/4/2020 5:56pm )
-            if (_item.itemType == _itemType) {
-            
-                Debug.Log("Adding " + _amt + " to " + _item.itemType.itemName + " in inventory");
-
-                _item.AddItem();
-                ReturnItemFromArray(_itemType).GetComponent<ItemObject>().UpdateItemInfo(_item);
+                item.AddInstance();
+                ReturnItemFromList(_item).GetComponent<ItemObject>().UpdateItemInfo(_item);
                 
                 return;
             }
         }
-
+        
         // Item does not exist and will create a new instance in the list ( 5/4/2020 5:56pm )
+        Debug.Log("Creating " + _item.number + " " + _item.itemType.itemName + ". UID: " + _item.UID);
 
-        Debug.Log("Creating " + _amt + " " + _itemType.itemName);
-
-        itemInv.Add(new Item(_itemType, _amt));
-        CreateItemObj(_itemType, _amt);
-
-        return;      
-    }
-
-    // Add Weapon function ( 5/10/2020 10:15pm )
-    public void AddItem(WeaponType _weaponType) {
-        // Will create the list if it does not exist ( 5/4/2020 7:46pm )
-        if (itemInv == null) itemInv = new List<Item>(); 
-
-        Debug.Log("Creating " + _weaponType.itemName + " WEAPON");
-
-        itemInv.Add(new Weapon(_weaponType));
-        CreateItemObj(_weaponType as WeaponType);
+        itemInv.Add(_item);
+        CreateItemObj(_item);
 
         return;
+              
     }
 
-    #endregion
-
-    public void RemoveItem(ItemType _itemType) {
+    public void RemoveItem(Item _item) {
         for (int i = 0; i < itemInv.Count; i++) {
-            if (itemInv[i].itemType == _itemType) {
-                Debug.Log(itemInv[i].itemType.itemName + " " + itemInv[i].number);
-                // If there is only 1 more item left, destroy the game object itself ( 5/5/2020 4:32pm )
-                if (itemInv[i].number == 1) {
-                    Debug.Log("only one left");
-                    Destroy(ReturnItemFromArray(_itemType));
+            if (itemInv[i].UID == _item.UID && itemInv[i].itemType == _item.itemType) {
+                // Clause for when there are still more instance of the item being usable ( 5/11/2020 2:52pm )
+                if (itemInv[i].RemoveInstance()) {
+                    ReturnItemFromList(_item).GetComponent<ItemObject>().UpdateItemInfo(itemInv[i]);
 
+                // Clause for when the item can no longer be used and must be destroyed ( 5/11/2020 2:52pm )
+                } else {        
+                    Destroy(ReturnItemFromList(_item));
                     itemInv.Remove(itemInv[i]);
-
-                    return;
-                } else {
-                    itemInv[i].RemoveItem();
-                    ReturnItemFromArray(_itemType).GetComponent<ItemObject>().UpdateItemInfo(itemInv[i]);
-
-                    return;
                 }
             }
         }
@@ -141,7 +115,7 @@ public class Inventory : MonoBehaviour {
     #region Static Functions
 
     // Creates an Item Object and sets it as the child of the inventory window ( 5/4/2020 5:52pm )
-    public static void CreateItemObj(ItemType _itemType, int _amt = 1) {
+    public static void CreateItemObj(Item _item) {
         try {
             GameObject _parent = GameObject.FindGameObjectWithTag("InventoryWindow").GetComponentInChildren<GridLayoutGroup>().gameObject;
 
@@ -149,11 +123,8 @@ public class Inventory : MonoBehaviour {
 
             _itemObj.transform.localScale = new Vector3(1, 1, 1);
 
-            if (_itemType is WeaponType) {
-                _itemObj.GetComponent<ItemObject>().SetItem(new Weapon(_itemType as WeaponType, _amt));
-            } else {
-                _itemObj.GetComponent<ItemObject>().SetItem(new Item(_itemType, _amt));
-            }
+            _itemObj.GetComponent<ItemObject>().SetItem(_item);
+            
             
         } catch {
             Debug.Log("Cannot Create Item, object with 'InventoryWindow' tag does not exist!");
@@ -180,12 +151,15 @@ public class Inventory : MonoBehaviour {
     }
 
     // Returns the specific item object from the array ( 5/5/2020 10:47pm )
-    public static GameObject ReturnItemFromArray(ItemType _itemType) {
+    public static GameObject ReturnItemFromList(Item _item) {
         List<GameObject> _list = ReturnItemObjArray();
 
-        foreach (GameObject _item in _list) {
-            if (_item.GetComponent<ItemObject>().item.itemType == _itemType) {
-                return _item;
+        foreach (GameObject _listItem in _list) {
+            if (_listItem.GetComponent<ItemObject>().item.itemType == _item.itemType) {
+                if (_listItem.GetComponent<ItemObject>().item.UID == _item.UID) {
+                    return _listItem;
+                }
+                Debug.Log(_listItem.GetComponent<ItemObject>().item.itemType.itemName + " found but with different UID ( " + _listItem.GetComponent<ItemObject>().item.UID + " ). Input UID of " + _item.UID);
             }
         }
 

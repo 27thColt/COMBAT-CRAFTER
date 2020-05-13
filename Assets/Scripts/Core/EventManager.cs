@@ -94,6 +94,11 @@ public class EventParams {
         itemTypeParam2 = _itemTypeParam2;
     }
 
+    public Item itemParam = null;
+
+    public EventParams(Item _itemParams) {
+        itemParam = _itemParams;
+    }
 
     public int intParam1 = 0;
 

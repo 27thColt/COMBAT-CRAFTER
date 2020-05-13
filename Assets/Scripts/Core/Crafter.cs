@@ -26,13 +26,12 @@ public class Crafter : MonoBehaviour {
     }
 
     #endregion
-    private ItemType _resultItem;
+    private Item _resultItem;
     public Recipe[] recipeList;
     //public List<Recipe> knownRecipes; // List of recipes known to the player ( 12/28/2019 10:38pm )
-
     public int itemAmt;
 
-    private List<ItemType> craftingSlots = new List<ItemType>();
+    private List<Item> craftingSlots = new List<Item>();
 
     private void Awake() {
         EventManager.StartListening("ResultUpdate", On_ResultUpdate);
@@ -68,10 +67,15 @@ public class Crafter : MonoBehaviour {
     public void UpdateCraftingUI() {
         if (itemAmt == 2) {
             // Crafting Button ( 6/5/2019 6:21pm )
-            if (CheckRecipe(craftingSlots[0], craftingSlots[1]) != null) {
-                Recipe _recipe = CheckRecipe(craftingSlots[0], craftingSlots[1]);
+            if (CheckRecipe(craftingSlots[0].itemType, craftingSlots[1].itemType) != null) {
+                Recipe _recipe = CheckRecipe(craftingSlots[0].itemType, craftingSlots[1].itemType);
                 
-                EventManager.TriggerEvent("ResultUpdate", new EventParams(_recipe.result));
+                if (_recipe.result is WeaponType) {
+                    EventManager.TriggerEvent("ResultUpdate", new EventParams(new Weapon(_recipe.result, Inventory.instance.itemInv.Count)));
+                } else {
+                    EventManager.TriggerEvent("ResultUpdate", new EventParams(new Item(_recipe.result, Inventory.instance.itemInv.Count)));
+                }
+                
             } else {
                 EventManager.TriggerEvent("ResultUpdate", new EventParams());
             }
@@ -85,12 +89,12 @@ public class Crafter : MonoBehaviour {
         }
     }
 
-    public void AddItem(ItemType _item) {
+    public void AddItem(Item _item) {
         craftingSlots.Add(_item);
         UpdateCraftingUI();
     }
 
-    public void RemoveItem(ItemType _item) {
+    public void RemoveItem(Item _item) {
         craftingSlots.Remove(_item);
 
         if (itemAmt >= 1 && itemAmt <= 2) {
@@ -117,14 +121,16 @@ public class Crafter : MonoBehaviour {
     public void OnCrafterButtonPressed() {
         EventManager.TriggerEvent("ItemCraft", new EventParams(_resultItem));
 
-        foreach(ItemType _itemType in craftingSlots) {
-            Inventory.instance.RemoveItem(_itemType);
+        foreach(Item _item in craftingSlots) {
+            Inventory.instance.RemoveItem(_item);
         }
 
-        print(_resultItem.itemName + " Crafted!");
+        print(_resultItem.itemType.itemName + " Crafted!");
 
-        if (_resultItem is WeaponType) {
-            Inventory.instance.AddItem(_resultItem as WeaponType);
+        
+        
+        if (!craftingSlots.Contains(_resultItem)) {
+            _resultItem.OnCraft();
         }
 
         FinishCurrentState(Bstate.player_CRAFT);
@@ -136,8 +142,8 @@ public class Crafter : MonoBehaviour {
 
     // Will set the result item whenever it is updated ( 12/27/2019 12:49pm )
     public void On_ResultUpdate(EventParams _eventParams) {
-        if (_eventParams.itemTypeParam1 != null) {
-            _resultItem = _eventParams.itemTypeParam1;
+        if (_eventParams.itemParam != null) {
+            _resultItem = _eventParams.itemParam;
         } else {
             _resultItem = null;
         }
