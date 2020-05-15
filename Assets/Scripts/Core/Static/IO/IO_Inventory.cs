@@ -30,6 +30,8 @@ public static class IO_Inventory {
 
                 if (_itemType is WeaponType) {
                     _outputList.Add(new Weapon(_itemType as WeaponType, i, 1,  _json["Inventory"].AsArray[i]["Durability"].AsInt));
+                } else if (_itemType is PotionType) {
+                    _outputList.Add(new Potion(_itemType, i, 1));
                 } else { 
                     _outputList.Add(new Item(_itemType, i, _json["Inventory"].AsArray[i]["Number"].AsInt));
                 }
@@ -54,11 +56,13 @@ public static class IO_Inventory {
 
             // Weapon Item Clause ( 5/11/2020 1:21pm )
             if (_itemObj is Weapon) {
-                Debug.Log("WEAPON SAVED");
                 Weapon _weaponObj = _itemObj as Weapon;
                 _item.Add("Durability", _weaponObj.currentDurability);
 
             // Generic Item Clause ( 5/11/2020 1:20pm )
+            } else if (_itemObj is Potion) { 
+                // No need to add the number because potions should not be stackable ( 5/14/2020 3:51pm )
+
             } else {
                 _item.Add("Number", _itemObj.number);
             }
