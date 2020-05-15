@@ -784,6 +784,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9415ed548f027184a95d04603628cc98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemInv: []
   startingInv:
   - {fileID: 11400000, guid: 6fca146ee81e2f64c9d533267bb85786, type: 2}
   - {fileID: 11400000, guid: 512367a967a3fe84aac960bebcba529c, type: 2}
@@ -1790,6 +1791,21 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7886389928303806928, guid: cca61d5a50af35048a124248398fe8a9,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7886389928303806928, guid: cca61d5a50af35048a124248398fe8a9,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7886389928303806928, guid: cca61d5a50af35048a124248398fe8a9,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7886389928509416668, guid: cca61d5a50af35048a124248398fe8a9,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -1908,7 +1924,7 @@ PrefabInstance:
     - target: {fileID: 7886389929808585892, guid: cca61d5a50af35048a124248398fe8a9,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 51.9
+      value: 42
       objectReference: {fileID: 0}
     - target: {fileID: 7886389929808585892, guid: cca61d5a50af35048a124248398fe8a9,
         type: 3}
@@ -2667,7 +2683,7 @@ PrefabInstance:
     - target: {fileID: 7886389929808585892, guid: cca61d5a50af35048a124248398fe8a9,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -25.3
+      value: -36.9
       objectReference: {fileID: 0}
     - target: {fileID: 7886389929808585892, guid: cca61d5a50af35048a124248398fe8a9,
         type: 3}
@@ -2728,7 +2744,7 @@ GameObject:
   - component: {fileID: 1185543537}
   - component: {fileID: 1185543538}
   m_Layer: 0
-  m_Name: Player Object
+  m_Name: Player Entity
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2758,7 +2774,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1185543536}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5af26e64f5df9a5419ecee512ece4d0c, type: 3}
+  m_Script: {fileID: 11500000, guid: d0a84ed5731a8d54b8b205d26da054d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _hpBar: {fileID: 22974796}
@@ -4337,8 +4353,7 @@ PrefabInstance:
       propertyPath: m_LocalRotation.w
       value: 0.06118173
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3528484459461371226, guid: ec13e6beeb1ee3842b2c8af1e0638a45, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ec13e6beeb1ee3842b2c8af1e0638a45, type: 3}
 --- !u!4 &7255053338316752165 stripped
 Transform:

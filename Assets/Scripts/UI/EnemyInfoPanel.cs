@@ -45,7 +45,7 @@ public class EnemyInfoPanel : MonoBehaviour {
     }
 
     
-    private void SetInfo(EnemyObject _enemy) {
+    private void SetInfo(EnemyEntity _enemy) {
         _nameText.text = _enemy.enemyType.enemyName;
         hpBar = GetComponentInChildren<HPBar>().gameObject;
         hpBar.GetComponent<HPBar>().SetObject(_enemy.gameObject);
@@ -73,9 +73,9 @@ public class EnemyInfoPanel : MonoBehaviour {
 
     private void On_EnemySelect(EventParams _eventParams) {
         if (_eventParams.componentParams != null) {
-            if (_eventParams.componentParams is EnemyObject) {
+            if (_eventParams.componentParams is EnemyEntity) {
                 if (!gameObject.activeSelf) {
-                    SetInfo(_eventParams.componentParams as EnemyObject);
+                    SetInfo(_eventParams.componentParams as EnemyEntity);
                     gameObject.GetComponent<RectTransform>().anchoredPosition = _onPos;
                 }
                 
@@ -99,9 +99,9 @@ public class EnemyInfoPanel : MonoBehaviour {
     // The following 2 functions are for when the mouse hovers over an enemy ( 5/10/2020 1:22pm )
     private void On_EnemyHoverEnter(EventParams _eventParams) {
         if (_eventParams.componentParams != null) {
-            if (_eventParams.componentParams is EnemyObject) {
+            if (_eventParams.componentParams is EnemyEntity) {
                 if (!_mouseOn) {
-                    SetInfo(_eventParams.componentParams as EnemyObject);
+                    SetInfo(_eventParams.componentParams as EnemyEntity);
                     gameObject.GetComponent<RectTransform>().anchoredPosition = _onPos;
 
                     _mouseOn = true;

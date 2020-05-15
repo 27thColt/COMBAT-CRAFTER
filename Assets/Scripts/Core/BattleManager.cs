@@ -18,7 +18,7 @@ public class BattleManager : MonoBehaviour {
     private EnemyType _defendingEnemy = null;
 
     [SerializeField]
-    private PlayerObject _playerObj;
+    private PlayerEntity _playerObj;
 
     /* A random object must be created because if new random objects are generated within too close of a time, the numbers may end up become the same ( 4/27/2020 2:51pm )
      * System.Random utilizes the system time in order to generate random numbers
@@ -43,7 +43,7 @@ public class BattleManager : MonoBehaviour {
     }
 
     private void Start() {
-        _playerObj = FindObjectOfType<PlayerObject>();
+        _playerObj = FindObjectOfType<PlayerEntity>();
 
         // Calls WaveManager.cs ( 5/1/2020 1:11pm )
         SetCurrentState(Bstate.game_LOADWAVE);
@@ -59,9 +59,13 @@ public class BattleManager : MonoBehaviour {
                 break;
 
             case Bstate.player_CRAFT:
-                SetCurrentState(Bstate.player_ENEMYSELECTION);
-                if (_attackingItem is Weapon) {
-                    
+                
+                // In the case that the player crafted a potion ( 5/14/2020 1:58pm )
+                if (_attackingItem is Potion) {
+                   SetCurrentState(Bstate.player_ATTACK);
+                // In any other case
+                } else {
+                    SetCurrentState(Bstate.player_ENEMYSELECTION);
                 }
                 break;
 
@@ -105,8 +109,8 @@ public class BattleManager : MonoBehaviour {
     // Will update the defending enemy once the enemy has been selected. Will also change the gamestate ( 12/27/2019 1:08pm )
     public void On_EnemySelect(EventParams _eventParams) {
         if (_eventParams.componentParams != null) {
-            if (_eventParams.componentParams is EnemyObject) {
-                EnemyObject _enemy = _eventParams.componentParams as EnemyObject;
+            if (_eventParams.componentParams is EnemyEntity) {
+                EnemyEntity _enemy = _eventParams.componentParams as EnemyEntity;
 
                 _defendingEnemy = _enemy.enemyType;
 
@@ -124,29 +128,9 @@ public class BattleManager : MonoBehaviour {
     public void On_BStateChange(EventParams _eventParams) {
         if (_eventParams.bstateParam != Bstate.none) {
             Bstate _state = _eventParams.bstateParam;
-
             if (_state == Bstate.player_ATTACK) {
-                float _modifier;
+                PlayerAttackState();
 
-                if (CheckVulnerabilities(_defendingEnemy, _attackingItem.itemType)) {
-                    // Add vulnerability to enemy inventory ( 4/24/2020 1:03am )
-                    EnemyInventory.instance.AddEnemyVul(_defendingEnemy, _attackingItem.itemType);
-
-                    _modifier = seModifier;
-                    print("It's Super Effective!");
-                } else {
-                    
-                    if (_attackingItem is Weapon) {
-                        _modifier = neModifier_Weapon;
-                    } else {
-                        _modifier = neModifier;
-                    }
-                    
-                    print("Not Very Effective...");
-                }
-
-                EventManager.TriggerEvent("PlayerAttack", new EventParams(CalculateAttackDamage(_attackingItem.atk, _modifier, true, _rnd)));
-            
             // When the it is time for the enemies to attack the player ( 4/27/2020 2:29pm )
             }  else if (_state == Bstate.enemy_ATTACK) {
                 int _count = WaveManager.instance.enemyList.Count;
@@ -167,8 +151,36 @@ public class BattleManager : MonoBehaviour {
         } else {
             Debug.LogError("EventParams with non-default bstateParam expected.");
         }
-        
-        
+    }
+
+    public void PlayerAttackState() {
+        if (_attackingItem is Potion) {
+            // When the attacking item is a potion, the battle skips the enemy selection phase and goes straight to player_ATTACK ( 5/14/2020 2:03pm )
+            Potion _activePotion = _attackingItem as Potion;
+
+            EventManager.TriggerEvent("PlayerHeal", new EventParams(_activePotion.potionType.regen));
+        } else {
+            float _modifier;
+
+            if (CheckVulnerabilities(_defendingEnemy, _attackingItem.itemType)) {
+                // Add vulnerability to enemy inventory ( 4/24/2020 1:03am )
+                EnemyInventory.instance.AddEnemyVul(_defendingEnemy, _attackingItem.itemType);
+
+                _modifier = seModifier;
+                print("It's Super Effective!");
+            } else {
+                
+                if (_attackingItem is Weapon) {
+                    _modifier = neModifier_Weapon;
+                } else {
+                    _modifier = neModifier;
+                }
+                
+                print("Not Very Effective...");
+            }
+
+            EventManager.TriggerEvent("PlayerAttack", new EventParams(CalculateAttackDamage(_attackingItem.atk, _modifier, true, _rnd)));
+        }      
     }
 
     #endregion

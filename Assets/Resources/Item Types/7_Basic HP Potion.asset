@@ -9,12 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f743e50f51ec8cf4397487ffca4355a0, type: 3}
-  m_Name: 6_Torch
+  m_Script: {fileID: 11500000, guid: 0b6f968fa19fcb148b09b784c729c361, type: 3}
+  m_Name: 7_Basic HP Potion
   m_EditorClassIdentifier: 
-  itemName: Torch
-  ID: 6
-  sprite: {fileID: 21300000, guid: cbb82cb2dbd666746b3bd1fdb6096481, type: 3}
-  baseAtk: 4
-  maxDurability: 3
-  atkDecayRate: 1
+  itemName: HP Potion
+  ID: 7
+  sprite: {fileID: 21300000, guid: de43c3455e04c2647b280aab2b2f212b, type: 3}
+  baseAtk: 0
+  regen: 10

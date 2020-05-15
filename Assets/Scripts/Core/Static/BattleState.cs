@@ -36,7 +36,6 @@ public enum Bstate {
     player_CRAFT,           // 2
     player_ENEMYSELECTION,  // 3
     player_ATTACK,          // 4
-    //playerattack_ANIMATE,   // 5
     enemy_ATTACK,           // 6
     game_ROUNDRESET         // 7
 }
