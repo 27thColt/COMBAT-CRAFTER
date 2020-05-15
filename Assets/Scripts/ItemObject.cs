@@ -42,6 +42,11 @@ public class ItemObject : MonoBehaviour {
 
             _durabilityBar.fillAmount = (float) _weapon.currentDurability / (float)_weapon.maxDurability;
         // Generic Item Clause ( 5/11/2020 1:33pm )
+        } else if (_item is Potion) { 
+            _number.gameObject.SetActive(false);
+
+            _durabilityBar.gameObject.SetActive(false);
+            _durabilityBG.gameObject.SetActive(false);
         } else {
             _number.text = _item.number.ToString();
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static ObjectAnimator;
+using static EntityAnimator;
 
 /*  5/6/2020 5:36pm - Enemy Object Animator
     Handles the logic side of the enemy animations
@@ -9,8 +9,8 @@ using static ObjectAnimator;
 */
 
 [RequireComponent(typeof(Animator))]
-public class EnemyObjectAnimator : MonoBehaviour, IObjectAnimator {
-    private EnemyObject _enemyObject = null;
+public class EnemyEntityAnimator : MonoBehaviour, IEntityAnimator {
+    private EnemyEntity _enemyObject = null;
     private Animator _anim = null;
 
     void Awake() {
@@ -24,7 +24,7 @@ public class EnemyObjectAnimator : MonoBehaviour, IObjectAnimator {
     }
 
     void Start() {
-        _enemyObject = GetComponentInParent<EnemyObject>();
+        _enemyObject = GetComponentInParent<EnemyEntity>();
         
         _anim = GetComponent<Animator>();
     }

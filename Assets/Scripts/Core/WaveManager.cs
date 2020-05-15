@@ -35,7 +35,7 @@ public class WaveManager : MonoBehaviour {
     public int currentWave;
     public EnemyWave loadedWave; // loadedWave is the enemy wave itself of ID currentWave ( 10/28/2019 2:06pm )
 
-    public List<EnemyObject> enemyList = new List<EnemyObject>();
+    public List<EnemyEntity> enemyList = new List<EnemyEntity>();
 
     [SerializeField]
     private GameObject enemyPrefab = null;
@@ -66,9 +66,9 @@ public class WaveManager : MonoBehaviour {
         Debug.Log("Adding " + _enemy.enemyName + " to game world");
 
         GameObject _enemyObj = Instantiate(enemyPrefab, _parent.transform);
-        _enemyObj.GetComponent<EnemyObject>().SetEnemy(_enemy);
+        _enemyObj.GetComponent<EnemyEntity>().SetEnemy(_enemy);
 
-        enemyList.Add(_enemyObj.GetComponent<EnemyObject>());
+        enemyList.Add(_enemyObj.GetComponent<EnemyEntity>());
     }
 
     // Creates/Displays all of the enemies of a specific wave in the game world ( 12/26/2019 11:25pm )

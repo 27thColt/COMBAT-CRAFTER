@@ -7,7 +7,7 @@ using UnityEngine;
     This class holds object animator specific functions
 
 */
-public static class ObjectAnimator {
+public static class EntityAnimator {
     // Coroutine that plays an animation after a specified animation ( 5/7/2020 2:45pm )
     public static IEnumerator DoAfterAnim(string _animName = null, Animator _anim = null, Action _action = null) {
         if (_animName != null && _anim != null) 
@@ -56,7 +56,7 @@ public static class ObjectAnimator {
         Interface that contains functions for an animator controller
         (EnemyObjectAnimator, PlayerObjectAnimator)
     */
-    public interface IObjectAnimator {
+    public interface IEntityAnimator {
         void On_DefendAnim(EventParams _eventParams);
         void On_AttackAnim(EventParams _eventParams);
     }

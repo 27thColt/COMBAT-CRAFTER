@@ -14,7 +14,7 @@ using static BattleState;
  * 
  * Deals more than just UI,, deals with all the logic related to the enemy gameobject itself ( 12/27/2019 1:21pm )
  */
-public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IHealthPoints {
+public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IHealthPoints {
 
     #region IHealthPoints
     public int MaxHP { get; set; }
@@ -56,7 +56,7 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     }
 
     private void Start() {
-        if (GetComponentInChildren(typeof(ObjectAnimator.IObjectAnimator)) == null) {
+        if (GetComponentInChildren(typeof(EntityAnimator.IEntityAnimator)) == null) {
             Debug.LogError(gameObject.name + " has no IObjectAnimator component attached.");
         }
         
@@ -108,7 +108,7 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (currentState == Bstate.player_ENEMYSELECTION) {
             _isDefending = true;
 
-            EventManager.TriggerEvent("EnemySelect", new EventParams(GetComponent<EnemyObject>()));
+            EventManager.TriggerEvent("EnemySelect", new EventParams(GetComponent<EnemyEntity>()));
         }
     }
     
@@ -165,7 +165,7 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (_isDefending) {
             // If the enemy fucking DIED ( 5/1/2020 1:59pm )
             if (CurrentHP <= 0) {
-                WaveManager.instance.enemyList.Remove(GetComponent<EnemyObject>());
+                WaveManager.instance.enemyList.Remove(GetComponent<EnemyEntity>());
                 Debug.Log("Enemy died at " + Time.time);
                 Die();
             }
@@ -180,11 +180,11 @@ public class EnemyObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     #region OnPointerEnter & Exit
     public void OnPointerEnter(PointerEventData eventData) {
-        EventManager.TriggerEvent("EnemyHoverEnter", new EventParams(GetComponent<EnemyObject>()));
+        EventManager.TriggerEvent("EnemyHoverEnter", new EventParams(GetComponent<EnemyEntity>()));
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        EventManager.TriggerEvent("EnemyHoverExit", new EventParams(GetComponent<EnemyObject>()));
+        EventManager.TriggerEvent("EnemyHoverExit", new EventParams(GetComponent<EnemyEntity>()));
     }
 
     #endregion

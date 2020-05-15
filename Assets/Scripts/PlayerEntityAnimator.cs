@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static ObjectAnimator;
+using static EntityAnimator;
 
 [RequireComponent(typeof(Animator))]
-public class PlayerObjectAnimator : MonoBehaviour, IObjectAnimator {
-    private PlayerObject _playerObject = null;
+public class PlayerEntityAnimator : MonoBehaviour, IEntityAnimator {
+    private PlayerEntity _playerObject = null;
     private Animator _anim = null;
 
     void Awake() {
@@ -19,7 +19,7 @@ public class PlayerObjectAnimator : MonoBehaviour, IObjectAnimator {
     }
 
     void Start() {
-        _playerObject = GetComponent<PlayerObject>();
+        _playerObject = GetComponent<PlayerEntity>();
         
         _anim = GetComponentInChildren<Animator>();
     }
