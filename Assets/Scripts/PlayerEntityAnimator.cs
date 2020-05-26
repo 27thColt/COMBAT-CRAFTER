@@ -5,56 +5,37 @@ using static EntityAnimator;
 
 [RequireComponent(typeof(Animator))]
 public class PlayerEntityAnimator : MonoBehaviour, IEntityAnimator {
-    private PlayerEntity _playerObject = null;
     private Animator _anim = null;
 
-    void Awake() {
-        EventManager.StartListening("PlayerDefendAnim", On_DefendAnim);
-        EventManager.StartListening("PlayerAttackAnim", On_AttackAnim);
-    }
-
-    void OnDestroy() {
-        EventManager.StopListening("PlayerDefendAnim", On_DefendAnim);
-        EventManager.StopListening("PlayerAttackAnim", On_AttackAnim);
-    }
-
     void Start() {
-        _playerObject = GetComponent<PlayerEntity>();
-        
-        _anim = GetComponentInChildren<Animator>();
+        _anim = GetComponent<Animator>();
     }
 
     // Fires when the attack animation is done. THIS IS REFERENCED THROUGH AN ANIMATION EVENT ( 5/8/2020 7:438pm )
-    public void AttackAnimEnd() {
+    public void ActionAnimEnd() {
         EventManager.TriggerEvent("PlayerAttackAnimEnd", new EventParams());
     }
 
     #region IObjectAnimator
 
-    public void On_AttackAnim(EventParams _eventParams) {
-        if (_eventParams.stringParam1 != null) {
-            try {
-                StartCoroutine(DoAfterAnim(_eventParams.stringParam1, _anim, () => {    }));
-            }  catch {
-                Debug.LogError(_anim.gameObject.name + " does not have Animator Component and/or cannot performed Damaged action!");
-            }
-        } else {
-            Debug.LogError("EventParams with non-null stringParam1 expected.");
+    public void DoDefendAnim(string _animName) {
+        try {
+            StartCoroutine(SpriteFlash(_anim.gameObject, 3, 0.06f));
+            StartCoroutine(DoAfterAnim(_animName, _anim, () => {
+                EventManager.TriggerEvent("PlayerDefendAnimEnd", new EventParams());
+            }));
+        }  catch {
+            Debug.LogError(_anim.gameObject.name + " does not have Animator Component and/or cannot perform action!");
         }
     }
 
-    public void On_DefendAnim(EventParams _eventParams) {
-        if (_eventParams.stringParam1 != null) {
-            try {
-                StartCoroutine(SpriteFlash(_anim.gameObject, 3, 0.06f));
-                StartCoroutine(DoAfterAnim(_eventParams.stringParam1, _anim, () => {
-                    EventManager.TriggerEvent("PlayerDefendAnimEnd", new EventParams());
-                }));
-            }  catch {
-                Debug.LogError(_anim.gameObject.name + " does not have Animator Component and/or cannot performed Damaged action!");
-            }
-        } else {
-            Debug.LogError("EventParams with non-null stringParam1 expected.");
+    public void DoAnim(string _animName) {
+        if (_animName == "Attack") {
+            StartCoroutine(DoAfterAnim(_animName, _anim, () => {    }));
+        } else if (_animName == "Heal") {
+            StartCoroutine(DoAfterAnim(_animName, _anim, () => {
+                BattleState.FinishCurrentState(Bstate.player_ATTACK);
+            }));
         }
     }
 

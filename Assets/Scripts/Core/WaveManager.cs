@@ -22,13 +22,14 @@ public class WaveManager : MonoBehaviour {
                 _waveManager = FindObjectOfType(typeof(WaveManager)) as WaveManager;
 
                 if (!_waveManager) {
-                    Debug.LogError("There needs to be one active EventManager script on a GameObject in your scene.");
+                    Debug.LogError("There needs to be one active WaveManager script on a GameObject in your scene.");
                 }
             }
 
             return _waveManager;
         }
     }
+    
     #endregion
 
     public EnemyWave[] waveList;

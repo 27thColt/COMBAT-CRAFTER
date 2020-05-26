@@ -16,10 +16,12 @@ public class CrafterButton : MonoBehaviour {
 
     private void Awake() {
         EventManager.StartListening("ResultUpdate", On_ResultUpdate);
+        EventManager.StartListening("CancelCraft", On_CancelCraft);
     }
 
     private void OnDestroy() {
         EventManager.StopListening("ResultUpdate", On_ResultUpdate);
+        EventManager.StopListening("CancelCraft", On_CancelCraft);
     }
 
     void Start() {
@@ -35,23 +37,34 @@ public class CrafterButton : MonoBehaviour {
 
     #endregion
 
+    public void ActivateButton(Sprite _sprite) {
+        GetComponent<Animator>().SetBool("PanelOpen", true);
+        _button.interactable = true;
+
+        resultSprite.enabled = true;
+        resultSprite.sprite = _sprite;
+    }
+
+    public void DeactivateButton() {
+        GetComponent<Animator>().SetBool("PanelOpen", false);
+        _button.interactable = false;
+
+        resultSprite.enabled = false;
+        resultSprite.sprite = null;
+    }
+    
     #region Event Listeners
 
     public void On_ResultUpdate(EventParams _eventParams) {
         if (_eventParams.itemParam != null) {
-            GetComponent<Animator>().SetBool("PanelOpen", true);
-            _button.interactable = true;
-
-            resultSprite.enabled = true;
-            resultSprite.sprite = _eventParams.itemParam.itemType.sprite;
+            ActivateButton(_eventParams.itemParam.itemType.sprite);
         } else {
-            GetComponent<Animator>().SetBool("PanelOpen", false);
-            _button.interactable = false;
-
-            resultSprite.enabled = false;
-            resultSprite.sprite = null;
-
+            DeactivateButton();
         }
+    }
+
+    public void On_CancelCraft(EventParams _eventParams) {
+        DeactivateButton();
     }
 
     #endregion

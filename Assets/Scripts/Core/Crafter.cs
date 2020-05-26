@@ -28,7 +28,6 @@ public class Crafter : MonoBehaviour {
     #endregion
     private Item _resultItem;
     public Recipe[] recipeList;
-    //public List<Recipe> knownRecipes; // List of recipes known to the player ( 12/28/2019 10:38pm )
     public int itemAmt;
 
     private List<Item> craftingSlots = new List<Item>();
@@ -36,12 +35,13 @@ public class Crafter : MonoBehaviour {
     private void Awake() {
         EventManager.StartListening("ResultUpdate", On_ResultUpdate);
         EventManager.StartListening("BStateChange", On_BStateChange);
+        EventManager.StartListening("CancelCraft", On_CancelCraft);
     }
-
 
     private void OnDestroy() {
         EventManager.StopListening("ResultUpdate", On_ResultUpdate);
         EventManager.StopListening("BStateChange", On_BStateChange);
+        EventManager.StopListening("CancelCraft", On_CancelCraft);
     }
 
     void Start() {
@@ -106,8 +106,6 @@ public class Crafter : MonoBehaviour {
         
     }
 
-
-
     // Checks if two items match a recipe from the recipe list ( 6/3/2019 10:04pm )
     public Recipe CheckRecipe(ItemType _item1, ItemType _item2) {
         for (int i = 0; i < recipeList.Length; i++) {
@@ -117,31 +115,50 @@ public class Crafter : MonoBehaviour {
         return null;
     }
 
-    // Will be called uppon button press of the crafter button-- referenced through unity on the button component ( 12/27/2019 11:49am )
-    public void OnCrafterButtonPressed() {
-        EventManager.TriggerEvent("ItemCraft", new EventParams(_resultItem));
-
-        foreach(Item _item in craftingSlots) {
-            Inventory.instance.RemoveItem(_item);
+    public void ResetCrafter() {
+        for (int i = 0; i < craftingSlots.Count; i++) {
+            RemoveItem(craftingSlots[i]);
+            i--;
         }
 
-        print(_resultItem.itemType.itemName + " Crafted!");
-
-        
-        
-        if (!craftingSlots.Contains(_resultItem)) {
-            _resultItem.OnCraft();
-        }
-
-        FinishCurrentState(Bstate.player_CRAFT);
+        _resultItem = null;
     }
 
     #endregion
 
+    #region Button Listeners
+
+    // Will be called uppon button press of the crafter button-- referenced through unity on the button component ( 12/27/2019 11:49am )
+    public void OnCrafterButtonPressed() {
+        EventManager.TriggerEvent("ItemCraft", new EventParams(_resultItem));
+
+        foreach (Item _item in craftingSlots) {
+            Inventory.instance.RemoveItem(_item);
+        }
+
+        print(_resultItem.itemType.itemName + " Crafted");
+        FinishCurrentState(Bstate.player_CRAFT);
+    }
+    
+    #endregion
+
     #region Event Listeners
 
+    // When the Cancel Craft button is pressed ( 5/16/2020 3:48pm )
+    private void On_CancelCraft(EventParams _eventParams) {
+        if (currentState == Bstate.player_ENEMYSELECTION) {
+            foreach (Item _item in craftingSlots) {
+                Inventory.instance.AddItem(_item);
+            }
+
+            print(_resultItem.itemType.itemName + " uncrafted.");
+
+            ResetCrafter();
+        }
+    }
+
     // Will set the result item whenever it is updated ( 12/27/2019 12:49pm )
-    public void On_ResultUpdate(EventParams _eventParams) {
+    private void On_ResultUpdate(EventParams _eventParams) {
         if (_eventParams.itemParam != null) {
             _resultItem = _eventParams.itemParam;
         } else {
@@ -149,16 +166,17 @@ public class Crafter : MonoBehaviour {
         }
     }
 
-    public void On_BStateChange(EventParams _eventParams) {
+    private void On_BStateChange(EventParams _eventParams) {
+        // Resets the crafter values ( 5/18/2020 9:39am )
         if (_eventParams.bstateParam == Bstate.game_ROUNDRESET) {
-            for (int i = 0; i < craftingSlots.Count; i++) {
-                RemoveItem(craftingSlots[i]);
+            ResetCrafter();
 
-                i--;
+        // Does item On Craft action when player attacks ( 5/18/2020 9:50am )
+        } else if (_eventParams.bstateParam == Bstate.player_ATTACK) {
+            if (!craftingSlots.Contains(_resultItem)) {
+                _resultItem.OnCraft();
             }
-            
         }
-       
     }
 
     #endregion

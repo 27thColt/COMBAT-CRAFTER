@@ -10,21 +10,11 @@ using static EntityAnimator;
 
 [RequireComponent(typeof(Animator))]
 public class EnemyEntityAnimator : MonoBehaviour, IEntityAnimator {
-    private EnemyEntity _enemyObject = null;
+    private EnemyEntity _enemy = null;
     private Animator _anim = null;
 
-    void Awake() {
-        EventManager.StartListening("EnemyDefendAnim", On_DefendAnim);
-        EventManager.StartListening("EnemyAttackAnim", On_AttackAnim);
-    }
-
-    void OnDestroy() {
-        EventManager.StopListening("EnemyDefendAnim", On_DefendAnim);
-        EventManager.StopListening("EnemyAttackAnim", On_AttackAnim);
-    }
-
     void Start() {
-        _enemyObject = GetComponentInParent<EnemyEntity>();
+        _enemy = GetComponentInParent<EnemyEntity>();
         
         _anim = GetComponent<Animator>();
     }
@@ -36,35 +26,22 @@ public class EnemyEntityAnimator : MonoBehaviour, IEntityAnimator {
 
     #region IObjectAnimator
 
-    public void On_DefendAnim(EventParams _eventParams) {
-        if (_eventParams.stringParam1 != null) {
-            if (_enemyObject.GetDefending()) {
-                try {
-                    StartCoroutine(SpriteFlash(_anim.gameObject, 3, 0.06f));
-                    StartCoroutine(DoAfterAnim(_eventParams.stringParam1, _anim, () => {
-                        EventManager.TriggerEvent("EnemyDefendAnimEnd", new EventParams());
-                    }));
-                }  catch {
-                    Debug.LogError(_anim.gameObject.name + " does not have Animator Component and/or cannot performed Damaged action!");
-                }
-            }
-        } else {
-            Debug.LogError("EventParams with non-null stringParam1 expected.");
+    public void DoDefendAnim(string _animName) {
+        try {
+            StartCoroutine(SpriteFlash(_anim.gameObject, 3, 0.06f));
+            StartCoroutine(DoAfterAnim(_animName, _anim, () => {
+                EventManager.TriggerEvent("EnemyDefendAnimEnd", new EventParams());
+            }));
+        }  catch {
+            Debug.LogError(_anim.gameObject.name + " does not have Animator Component and/or cannot perform action!");
         }
     }
 
-    public void On_AttackAnim(EventParams _eventParams) {
-        if (_eventParams.stringParam1 != null) {
-            if (_enemyObject.GetAttacking()) {
-                // _eventParams.intParam1 carries the calculated damage from BattleManager. This is then passed on to PlayerObject ( 5/7/2020 5:23pm )
-                try {
-                    StartCoroutine(DoAfterAnim(_eventParams.stringParam1, _anim, () => {    }));
-                }  catch {
-                    Debug.LogError(_anim.gameObject.name + " does not have Animator Component and/or cannot performed Damaged action!");
-                }
-            }
-        } else {
-            Debug.LogError("EventParams with non-null stringParam1 expected.");
+    public void DoAnim(string _animName) {
+        try {
+            StartCoroutine(DoAfterAnim(_animName, _anim, () => {    }));
+        }  catch {
+            Debug.LogError(_anim.gameObject.name + " does not have Animator Component and/or cannot perform action!");
         }
     }
 

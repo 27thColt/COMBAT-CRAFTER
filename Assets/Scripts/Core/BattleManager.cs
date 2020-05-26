@@ -27,19 +27,23 @@ public class BattleManager : MonoBehaviour {
 
     #region Awake
     void Awake() {
-        EventManager.StartListening("BStateFinish", On_BstateFinish);
+        EventManager.StartListening("BStateFinish", On_BStateFinish);
         EventManager.StartListening("BStateChange", On_BStateChange);
+
         EventManager.StartListening("ItemCraft", On_ItemCraft);
         EventManager.StartListening("EnemySelect", On_EnemySelect);
+        EventManager.StartListening("CancelCraft", On_CancelCraft);
     }
 
     #endregion
 
     private void OnDestroy() {
-        EventManager.StopListening("BStateFinish", On_BstateFinish);
+        EventManager.StopListening("BStateFinish", On_BStateFinish);
         EventManager.StopListening("BStateChange", On_BStateChange);
+
         EventManager.StopListening("ItemCraft", On_ItemCraft);
         EventManager.StopListening("EnemySelect", On_EnemySelect);
+        EventManager.StopListening("CancelCraft", On_CancelCraft);
     }
 
     private void Start() {
@@ -51,8 +55,10 @@ public class BattleManager : MonoBehaviour {
 
     #region Event Listeners
 
+
+    #region Battlestate
     // Dictionary Tag "BStateFinish" ( 5/6/2020 11:46pm )
-    private void On_BstateFinish(EventParams _eventParams) {
+    private void On_BStateFinish(EventParams _eventParams) {
         switch (_eventParams.bstateParam) {
             case Bstate.game_LOADWAVE:
                 SetCurrentState(Bstate.player_CRAFT);
@@ -97,8 +103,43 @@ public class BattleManager : MonoBehaviour {
         }
     }
 
+    private void On_BStateChange(EventParams _eventParams) {
+        if (_eventParams.bstateParam != Bstate.none) {
+            Bstate _state = _eventParams.bstateParam;
+            if (_state == Bstate.player_ATTACK) {
+                PlayerAttackState();
+
+            // When the it is time for the enemies to attack the player ( 4/27/2020 2:29pm )
+            }  else if (_state == Bstate.enemy_ATTACK) {
+                int _count = WaveManager.instance.enemyList.Count;
+
+                int i = _rnd.Next(0, _count);
+
+                Debug.Log("PICKING ENEMY OF " + i);
+                WaveManager.instance.enemyList[i].SetAttacking(true);
+                EventManager.TriggerEvent("EnemyAttack", new EventParams(CalculateAttackDamage(WaveManager.instance.enemyList[i].enemyType.baseAtk, 1, true, _rnd)));
+
+            // Reset all values ( 4/27/2020 3:07pm )
+            } else if (_state == Bstate.game_ROUNDRESET) {
+                _defendingEnemy = null;
+                _attackingItem = null;
+
+                FinishCurrentState(Bstate.game_ROUNDRESET);
+                
+            }
+        } else {
+            Debug.LogError("EventParams with non-default bstateParam expected.");
+        }
+    }
+
+    #endregion
+
+    private void On_CancelCraft(EventParams _eventParams) {
+        SetCurrentState(Bstate.player_CRAFT);
+    }
+
     // Updates the Attacking Item when it is crafted ( 5/7/2020 11:35pm )
-    public void On_ItemCraft(EventParams _eventParams) {
+    private void On_ItemCraft(EventParams _eventParams) {
         if (_eventParams.itemParam != null)
             _attackingItem = _eventParams.itemParam;
         else {
@@ -107,7 +148,7 @@ public class BattleManager : MonoBehaviour {
     }
 
     // Will update the defending enemy once the enemy has been selected. Will also change the gamestate ( 12/27/2019 1:08pm )
-    public void On_EnemySelect(EventParams _eventParams) {
+    private void On_EnemySelect(EventParams _eventParams) {
         if (_eventParams.componentParams != null) {
             if (_eventParams.componentParams is EnemyEntity) {
                 EnemyEntity _enemy = _eventParams.componentParams as EnemyEntity;
@@ -125,35 +166,9 @@ public class BattleManager : MonoBehaviour {
     }
 
     // Fires when the gamestate has been changed ( 12/27/2019 1:14pm )
-    public void On_BStateChange(EventParams _eventParams) {
-        if (_eventParams.bstateParam != Bstate.none) {
-            Bstate _state = _eventParams.bstateParam;
-            if (_state == Bstate.player_ATTACK) {
-                PlayerAttackState();
+    #endregion
 
-            // When the it is time for the enemies to attack the player ( 4/27/2020 2:29pm )
-            }  else if (_state == Bstate.enemy_ATTACK) {
-                int _count = WaveManager.instance.enemyList.Count;
-
-                int i = _rnd.Next(0, _count);
-
-                WaveManager.instance.enemyList[i].SetAttacking(true);
-                EventManager.TriggerEvent("EnemyAttack", new EventParams(CalculateAttackDamage(WaveManager.instance.enemyList[i].enemyType.baseAtk, 1, true, _rnd)));
-
-            // Reset all values ( 4/27/2020 3:07pm )
-            } else if (_state == Bstate.game_ROUNDRESET) {
-                _defendingEnemy = null;
-                _attackingItem = null;
-
-                FinishCurrentState(Bstate.game_ROUNDRESET);
-                
-            }
-        } else {
-            Debug.LogError("EventParams with non-default bstateParam expected.");
-        }
-    }
-
-    public void PlayerAttackState() {
+    private void PlayerAttackState() {
         if (_attackingItem is Potion) {
             // When the attacking item is a potion, the battle skips the enemy selection phase and goes straight to player_ATTACK ( 5/14/2020 2:03pm )
             Potion _activePotion = _attackingItem as Potion;
@@ -182,7 +197,4 @@ public class BattleManager : MonoBehaviour {
             EventManager.TriggerEvent("PlayerAttack", new EventParams(CalculateAttackDamage(_attackingItem.atk, _modifier, true, _rnd)));
         }      
     }
-
-    #endregion
-
 }

@@ -32,6 +32,7 @@ public class PlayerEntity : MonoBehaviour, IHealthPoints {
 
     [SerializeField]
     private GameObject _hpBar = null;
+    private EntityAnimator.IEntityAnimator _entityAnimator = null;
 
     void Awake() {
         EventManager.StartListening("PlayerAttack", On_PlayerAttack);
@@ -50,6 +51,8 @@ public class PlayerEntity : MonoBehaviour, IHealthPoints {
     void Start() {
         if (GetComponentInChildren(typeof(EntityAnimator.IEntityAnimator)) == null) {
             Debug.LogError(gameObject.name + " has no IObjectAnimator component attached.");
+        } else {
+            _entityAnimator = GetComponentInChildren<PlayerEntityAnimator>();
         }
 
         // Following shit sets up the health and stuff ( 4/27/2020 2:05pm )
@@ -69,19 +72,18 @@ public class PlayerEntity : MonoBehaviour, IHealthPoints {
             } else {
                 TakeDamage(-_regen);
             }
-            
+
             StartCoroutine(_hpBar.GetComponent<HPBar>().AnimateDamage(MaxHP, HPCache, CurrentHP));
             HPCache = 0;
 
-            // Two instances of this specific call, here and in the enemyobject script ( 5/14/2020 4:14pm )
-            FinishCurrentState(Bstate.player_ATTACK);
+            _entityAnimator.DoAnim("Heal");
         } else {
             Debug.LogError("EventParams with non-zero intParam1 expected.");
         }
     }
 
     private void On_PlayerAttack(EventParams _eventParams) {
-        EventManager.TriggerEvent("PlayerAttackAnim", new EventParams("Attack"));
+        _entityAnimator.DoAnim("Attack");
     }
 
     private void On_EnemyAttack(EventParams _eventParams) {
@@ -98,17 +100,9 @@ public class PlayerEntity : MonoBehaviour, IHealthPoints {
         HPCache = 0;
 
         if (CurrentHP > 0) {
-            try {
-                EventManager.TriggerEvent("PlayerDefendAnim", new EventParams("Damaged"));
-            } catch {
-                Debug.Log(name + " does not have Animator Component and/or cannot performed Damaged action!");
-            }
+            _entityAnimator.DoDefendAnim("Damaged");
         } else {
-            try {
-                EventManager.TriggerEvent("PlayerDefendAnim", new EventParams("Died"));
-            } catch {
-                Debug.Log(name + " does not have Animator Component and/or cannot performed Died action!");
-            }
+            _entityAnimator.DoDefendAnim("Died");
         }
     }
 

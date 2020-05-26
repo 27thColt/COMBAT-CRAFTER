@@ -57,8 +57,8 @@ public static class EntityAnimator {
         (EnemyObjectAnimator, PlayerObjectAnimator)
     */
     public interface IEntityAnimator {
-        void On_DefendAnim(EventParams _eventParams);
-        void On_AttackAnim(EventParams _eventParams);
+        void DoDefendAnim(string _animName);
+        void DoAnim(string _animName);
     }
 
 }

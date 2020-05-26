@@ -40,6 +40,7 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     // The Gameobject that the enemy is using (used to be a sprite but now we use character RIGZ) ( 4/30/2020 7:33pm )
     public GameObject rig = null;
+    private EntityAnimator.IEntityAnimator _entityAnimator = null;
 
     private EnemyInfoPanel _infoPanel = null;
 
@@ -47,7 +48,7 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private bool _isDefending = false;
     private bool _isAttacking = false;
 
-    private void Awake() {
+    void Awake() {
         EventManager.StartListening("PlayerAttack", On_PlayerAttack);
         EventManager.StartListening("PlayerAttackAnimEnd", On_PlayerAttackAnimEnd);
         EventManager.StartListening("EnemyAttack", On_EnemyAttack);
@@ -55,24 +56,21 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         EventManager.StartListening("EnemyDefendAnimEnd", On_EnemyDefendAnimEnd);
     }
 
-    private void Start() {
-        if (GetComponentInChildren(typeof(EntityAnimator.IEntityAnimator)) == null) {
-            Debug.LogError(gameObject.name + " has no IObjectAnimator component attached.");
-        }
-        
+    void OnDestroy() {
+        EventManager.StopListening("PlayerAttack", On_PlayerAttack);
+        EventManager.StopListening("PlayerAttackAnimEnd", On_PlayerAttackAnimEnd);
+        EventManager.StopListening("EnemyAttack", On_EnemyAttack);
+        EventManager.StopListening("EnemyAttackAnimEnd", On_EnemyAttackAnimEnd);
+        EventManager.StopListening("EnemyDefendAnimEnd", On_EnemyDefendAnimEnd);
+    }
+
+    void Start() {
         try {
             _infoPanel = FindObjectOfType<EnemyInfoPanel>();
         } catch {
             Debug.LogError("Enemy Info Panel cannot be found!");
         }
         
-    }
-
-    private void OnDestroy() {
-        EventManager.StopListening("PlayerAttack", On_PlayerAttack);
-        EventManager.StopListening("PlayerAttackEnd", On_PlayerAttackAnimEnd);
-        EventManager.StopListening("EnemyAttack", On_EnemyAttack);
-        EventManager.StopListening("EnemyAttackAnimEnd", On_EnemyAttackAnimEnd);
     }
 
     #region Functions
@@ -86,7 +84,9 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         rig.transform.SetParent(transform);
         rig.transform.localScale = new Vector3(2, 2, 2);
         rig.transform.localPosition = new Vector3(0, 0, 0);
-        rig.transform.localRotation = Quaternion.Euler(0, 0, 0);    
+        rig.transform.localRotation = Quaternion.Euler(0, 0, 0);   
+
+        _entityAnimator = rig.gameObject.GetComponent<EnemyEntityAnimator>();
     }
 
     public void SetAttacking(bool _bool) {
@@ -124,31 +124,28 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     // Fires when the damage has been calculated, only the selected enemy will be operated on ( 4/24/2020 5:29pm )
     private void On_PlayerAttackAnimEnd(EventParams _eventParams) {
-            int _damage = _eventParams.intParam1;
+        int _damage = _eventParams.intParam1;
 
-            if (_isDefending) {
-                StartCoroutine(_infoPanel.GetComponent<EnemyInfoPanel>().hpBar.GetComponent<HPBar>().AnimateDamage(MaxHP, HPCache, CurrentHP));
-                    
-                HPCache = 0;
+        if (_isDefending) {
+            StartCoroutine(_infoPanel.GetComponent<EnemyInfoPanel>().hpBar.GetComponent<HPBar>().AnimateDamage(MaxHP, HPCache, CurrentHP));
+                
+            HPCache = 0;
 
-                // Animations ( 5/1/2020 5:18pm )
-                if (CurrentHP > 0) {
-                    EventManager.TriggerEvent("EnemyDefendAnim", new EventParams("Damaged"));
-                } else {
-                    EventManager.TriggerEvent("EnemyDefendAnim", new EventParams("Died"));
-                }
-
-            
+            // Animations ( 5/1/2020 5:18pm )
+            if (CurrentHP > 0) {
+                _entityAnimator.DoDefendAnim("Damaged");
+            } else {
+                _entityAnimator.DoDefendAnim("Died");
             }
+        }
         
     }   
 
     // Fires when the enemy attacks ( 5/7/2020 2:39pm )
     private void On_EnemyAttack(EventParams _eventParams) {
         if (_isAttacking) {
-            EventManager.TriggerEvent("EnemyAttackAnim", new EventParams("Attack"));
+            _entityAnimator.DoAnim("Attack");
         }
-        
     }
 
     // Called by Enemy Object Animator, fires when the attack animation is over ( 5/7/2020 2:54pm )
