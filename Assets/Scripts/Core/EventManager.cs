@@ -42,33 +42,26 @@ public class EventManager : MonoBehaviour {
         }
     }
 
-    public static void StartListening(string _eventName, Action<EventParams> _listener) {
-        //Action<EventParams> _thisEvent;
-
-        // Checks the key and event exists within the dictionary already ( 5/6/2020 7:54pm )
-        if (instance._eventDictionary.ContainsKey(_eventName)) {
-            //_thisEvent += _listener; // Adds the listener to the existing event ( 5/6/2020 7:54pm )
-            instance._eventDictionary[_eventName] += _listener; // Updates the dictionary ( 5/6/2020 7:55pm )
+    public static void StartListening(string eventName, Action<EventParams> listener) {
+        if (instance._eventDictionary.ContainsKey(eventName)) {
+            instance._eventDictionary[eventName] += listener; // Updates the dictionary ( 5/6/2020 7:55pm )
 
         } else {
-            //_thisEvent += _listener;
-            instance._eventDictionary.Add(_eventName, _listener); // Adds to the dictionary for the first time ( 5/6/2020 7:56pm )
+            instance._eventDictionary.Add(eventName, listener); // Adds to the dictionary for the first time ( 5/6/2020 7:56pm )
         }
     }
 
-    public static void StopListening(string _eventName, Action<EventParams> _listener) {
+    public static void StopListening(string eventName, Action<EventParams> listener) {
         if (_eventManager == null) return; // Checks if the event manager had not been destroyed already ( 5/6/2020 7:58pm )
-        //Action<EventParams> _thisEvent;
-        if (instance._eventDictionary.ContainsKey(_eventName)) {
-            //_thisEvent -= _listener;
-            instance._eventDictionary[_eventName] -= _listener;
+        if (instance._eventDictionary.ContainsKey(eventName)) {
+            instance._eventDictionary[eventName] -= listener;
         }
     }
 
-    public static void TriggerEvent(string _eventName, EventParams _eventParams) {
+    public static void TriggerEvent(string eventName, EventParams eventParams) {
         Action<EventParams> _thisEvent = null;
-        if (instance._eventDictionary.TryGetValue(_eventName, out _thisEvent)) {
-            _thisEvent.Invoke(_eventParams);
+        if (instance._eventDictionary.TryGetValue(eventName, out _thisEvent)) {
+            _thisEvent.Invoke(eventParams);
         }
     }
 }
@@ -85,6 +78,18 @@ public class EventParams {
 
     public EventParams(Bstate _bstateParam) {
         bstateParam = _bstateParam;
+    }
+
+    public Lstate lstateParam = Lstate.none;
+
+    public EventParams(Lstate _lstateParam) {
+        lstateParam = _lstateParam;
+    }
+
+    public Room roomParam = null;
+
+    public EventParams(Room _roomParam) {
+        roomParam = _roomParam;
     }
 
     public ItemType itemTypeParam1, itemTypeParam2 = null;

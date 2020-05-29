@@ -10,7 +10,12 @@ public class Room {
     public Vector2Int position;    // Position for where on the map grid the room is located on ( 5/19/2020 11:26am )
     public RoomType type { get; set; }
     // booleans for whether or not a room has an exit leading to either of the cardinal directions ( 5/19/2020 11:27am )
-    public List<bool> doors = new List<bool> {false, false, false, false};   // North, East, South, West ( 5/20/2020 10:20am )
+    public Dictionary<string, bool> doors = new Dictionary<string, bool> {
+        ["N"] = false, 
+        ["E"] = false, 
+        ["S"] = false, 
+        ["W"] = false
+    };   
 
     public int displacement = 0; // Distance from the center of the map; Used in map generation ( 5/20/2020 1:46pm )
 

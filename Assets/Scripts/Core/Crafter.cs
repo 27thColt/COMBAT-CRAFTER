@@ -100,7 +100,6 @@ public class Crafter : MonoBehaviour {
         if (itemAmt >= 1 && itemAmt <= 2) {
             itemAmt--;
 
-
             UpdateCraftingUI();
         }
         
@@ -137,7 +136,7 @@ public class Crafter : MonoBehaviour {
         }
 
         print(_resultItem.itemType.itemName + " Crafted");
-        FinishCurrentState(Bstate.player_CRAFT);
+        FinishCurrentBState(Bstate.player_CRAFT);
     }
     
     #endregion
@@ -145,8 +144,8 @@ public class Crafter : MonoBehaviour {
     #region Event Listeners
 
     // When the Cancel Craft button is pressed ( 5/16/2020 3:48pm )
-    private void On_CancelCraft(EventParams _eventParams) {
-        if (currentState == Bstate.player_ENEMYSELECTION) {
+    private void On_CancelCraft(EventParams eventParams) {
+        if (currentBState == Bstate.player_ENEMYSELECTION) {
             foreach (Item _item in craftingSlots) {
                 Inventory.instance.AddItem(_item);
             }
@@ -158,21 +157,21 @@ public class Crafter : MonoBehaviour {
     }
 
     // Will set the result item whenever it is updated ( 12/27/2019 12:49pm )
-    private void On_ResultUpdate(EventParams _eventParams) {
-        if (_eventParams.itemParam != null) {
-            _resultItem = _eventParams.itemParam;
+    private void On_ResultUpdate(EventParams eventParams) {
+        if (eventParams.itemParam != null) {
+            _resultItem = eventParams.itemParam;
         } else {
             _resultItem = null;
         }
     }
 
-    private void On_BStateChange(EventParams _eventParams) {
+    private void On_BStateChange(EventParams eventParams) {
         // Resets the crafter values ( 5/18/2020 9:39am )
-        if (_eventParams.bstateParam == Bstate.game_ROUNDRESET) {
+        if (eventParams.bstateParam == Bstate.game_ROUNDRESET) {
             ResetCrafter();
 
         // Does item On Craft action when player attacks ( 5/18/2020 9:50am )
-        } else if (_eventParams.bstateParam == Bstate.player_ATTACK) {
+        } else if (eventParams.bstateParam == Bstate.player_ATTACK) {
             if (!craftingSlots.Contains(_resultItem)) {
                 _resultItem.OnCraft();
             }

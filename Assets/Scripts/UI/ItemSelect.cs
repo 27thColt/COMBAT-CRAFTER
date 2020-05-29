@@ -16,7 +16,7 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler {
 
     // Fires when the item is clicked ( 5/4/2020 2:47pm )
     public void OnPointerClick(PointerEventData eventData) {
-        if (BattleState.currentState == Bstate.player_CRAFT) {
+        if (BattleState.currentBState == Bstate.player_CRAFT) {
             Item _item = GetComponent<ItemObject>().item;
 
             if (_crafter.itemAmt < 2 && !_selected) {
@@ -64,7 +64,7 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler {
 
     // Resets the selection state of the item ( 5/4/2020 2:56pm )
     private void On_BStateChange(EventParams _eventParams) {
-        if (BattleState.lastState == Bstate.player_CRAFT && _selected == true) {
+        if (BattleState.lastBState == Bstate.player_CRAFT && _selected == true) {
             UpdateSelection(false);
         }
 

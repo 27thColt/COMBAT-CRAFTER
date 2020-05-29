@@ -64,7 +64,7 @@ public class Inventory : MonoBehaviour {
 
         // Check through the inventory and if Item does exist in list and will add one to it ( 5/4/2020 5:56pm )
         foreach (Item item in itemInv) {
-            if (item.itemType == _item.itemType && !(item is Weapon)) {
+            if (item.itemType == _item.itemType && item.UID == _item.UID) {
                 Debug.Log("Adding " + _item.number + " to " + _item.itemType.itemName + " in inventory. UID: " + _item.UID);
 
                 item.AddInstance();

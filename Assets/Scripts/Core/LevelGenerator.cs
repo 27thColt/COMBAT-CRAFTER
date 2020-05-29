@@ -163,7 +163,7 @@ public class LevelGenerator : MonoBehaviour {
 
                 int _numOfDoors = 0;
 
-                foreach (bool _bool in map[_cachedVector.x, _cachedVector.y].doors)
+                foreach (bool _bool in map[_cachedVector.x, _cachedVector.y].doors.Values)
                     if (_bool) _numOfDoors++;
 
 
@@ -175,12 +175,12 @@ public class LevelGenerator : MonoBehaviour {
                         The following two if statements try to prevent long straight chains of rooms ( 5/22/2020 2:24pm )
                     */
                     // If the cached room already contains a door to its east or west ( 5/22/2020 2:20pm )
-                    if (_numOfDoors == 1 && (map[_cachedVector.x, _cachedVector.y].doors[1] || map[_cachedVector.x, _cachedVector.y].doors[3])) {
+                    if (_numOfDoors == 1 && (map[_cachedVector.x, _cachedVector.y].doors["E"] || map[_cachedVector.x, _cachedVector.y].doors["W"])) {
                         _roomCoords.x = _cachedVector.x;
                         _roomCoords.y = _cachedVector.y + _rnd.Next(-1, 2);
 
                     // If the cached room already contains a door to its north or south ( 5/22/2020 2:21pm )
-                    } else if (_numOfDoors == 1 && (map[_cachedVector.x, _cachedVector.y].doors[0] || map[_cachedVector.x, _cachedVector.y].doors[2])) {
+                    } else if (_numOfDoors == 1 && (map[_cachedVector.x, _cachedVector.y].doors["N"] || map[_cachedVector.x, _cachedVector.y].doors["S"])) {
                         _roomCoords.x = _cachedVector.x + _rnd.Next(-1, 2);
                         _roomCoords.y = _cachedVector.y;
 
@@ -209,25 +209,47 @@ public class LevelGenerator : MonoBehaviour {
 
             // if new room is to the north of cached room ( 5/20/2020 10:24am )
             if (_roomCoords.y == _cachedVector.y - 1) {
-                map[_cachedVector.x, _cachedVector.y].doors[0] = true;
-                map[_roomCoords.x, _roomCoords.y].doors[2] = true;
+                map[_cachedVector.x, _cachedVector.y].doors["N"] = true;
+                map[_roomCoords.x, _roomCoords.y].doors["S"] = true;
 
             // If new room is to the east of cached room ( 5/20/2020 10:24am )
             } else if (_roomCoords.x == _cachedVector.x - 1) {
-                map[_cachedVector.x, _cachedVector.y].doors[3] = true;
-                map[_roomCoords.x, _roomCoords.y].doors[1] = true;
+                map[_cachedVector.x, _cachedVector.y].doors["W"] = true;
+                map[_roomCoords.x, _roomCoords.y].doors["E"] = true;
             
             // if new room is to the south of cached room ( 5/20/2020 10:24am )
             } else if (_roomCoords.y == _cachedVector.y + 1) {
-                map[_cachedVector.x, _cachedVector.y].doors[2] = true;
-                map[_roomCoords.x, _roomCoords.y].doors[0] = true;
+                map[_cachedVector.x, _cachedVector.y].doors["S"] = true;
+                map[_roomCoords.x, _roomCoords.y].doors["N"] = true;
 
             // If new room is to the west of cached room ( 5/20/2020 10:24am )
             } else if (_roomCoords.x == _cachedVector.x + 1) {
-                map[_cachedVector.x, _cachedVector.y].doors[1] = true;
-                map[_roomCoords.x, _roomCoords.y].doors[3] = true;
+                map[_cachedVector.x, _cachedVector.y].doors["E"] = true;
+                map[_roomCoords.x, _roomCoords.y].doors["W"] = true;
 
             }
         }
     }
+
+    public Room ReturnStartRoom() {
+        Room outputRoom = null;
+
+        for (int i = 0; i < map.GetLength(0); i++) {
+            for (int j = 0; j < map.GetLength(1); j++) {
+                if (map[i, j] != null) {
+                    if (map[i, j].type == RoomType.START) {
+                        outputRoom = map[i, j];
+                    } 
+                }
+            }
+        }
+
+        return outputRoom;
+    }
 }
+
+/*
+
+
+
+*/

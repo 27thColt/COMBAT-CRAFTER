@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static BattleState;
+using static LevelState;
 using static BattleLogic;
 
 /* 12/27/2019 12:47pm - Battle Manager
@@ -27,6 +28,8 @@ public class BattleManager : MonoBehaviour {
 
     #region Awake
     void Awake() {
+        EventManager.StartListening("LStateChange", On_LStateChange);
+
         EventManager.StartListening("BStateFinish", On_BStateFinish);
         EventManager.StartListening("BStateChange", On_BStateChange);
 
@@ -38,6 +41,8 @@ public class BattleManager : MonoBehaviour {
     #endregion
 
     private void OnDestroy() {
+        EventManager.StopListening("LStateChange", On_LStateChange);
+
         EventManager.StopListening("BStateFinish", On_BStateFinish);
         EventManager.StopListening("BStateChange", On_BStateChange);
 
@@ -48,57 +53,72 @@ public class BattleManager : MonoBehaviour {
 
     private void Start() {
         _playerObj = FindObjectOfType<PlayerEntity>();
-
-        // Calls WaveManager.cs ( 5/1/2020 1:11pm )
-        SetCurrentState(Bstate.game_LOADWAVE);
     }
 
     #region Event Listeners
 
+    #region Levelstate
+
+    private void On_LStateChange(EventParams _eventParams) {
+        switch(_eventParams.lstateParam) {
+            case Lstate.EXPLORE:
+                break;
+            case Lstate.BATTLE:
+                // Calls WaveManager.cs ( 5/1/2020 1:11pm )
+                SetCurrentBState(Bstate.game_LOADWAVE);
+
+                break;
+            default:
+                break;
+        }
+    }
+
+    #endregion
 
     #region Battlestate
     // Dictionary Tag "BStateFinish" ( 5/6/2020 11:46pm )
-    private void On_BStateFinish(EventParams _eventParams) {
-        switch (_eventParams.bstateParam) {
+    private void On_BStateFinish(EventParams eventParams) {
+        switch (eventParams.bstateParam) {
             case Bstate.game_LOADWAVE:
-                SetCurrentState(Bstate.player_CRAFT);
+                SetCurrentBState(Bstate.player_CRAFT);
                 break;
 
             case Bstate.player_CRAFT:
                 
                 // In the case that the player crafted a potion ( 5/14/2020 1:58pm )
                 if (_attackingItem is Potion) {
-                   SetCurrentState(Bstate.player_ATTACK);
+                   SetCurrentBState(Bstate.player_ATTACK);
                 // In any other case
                 } else {
-                    SetCurrentState(Bstate.player_ENEMYSELECTION);
+                    SetCurrentBState(Bstate.player_ENEMYSELECTION);
                 }
                 break;
 
             case Bstate.player_ENEMYSELECTION:
-                SetCurrentState(Bstate.player_ATTACK);
+                SetCurrentBState(Bstate.player_ATTACK);
                 break;
 
             case Bstate.player_ATTACK:
                 if (WaveManager.instance.enemyList.Count > 0) {
-                    SetCurrentState(Bstate.enemy_ATTACK);   // BattleManager.cs ( 5/1/2020 1:46pm )
+                    SetCurrentBState(Bstate.enemy_ATTACK);   // BattleManager.cs ( 5/1/2020 1:46pm )
 
                 } else {
                     // Fires if all enemies in the wavee have been defeated ( 5/1/2020 5:29pm )
+                    SetCurrentBState(Bstate.none);
+                    FinishCurrentLState(Lstate.BATTLE);
                     Debug.Break();
                 }
                 break;
 
             case Bstate.enemy_ATTACK:
-                SetCurrentState(Bstate.game_ROUNDRESET);
+                SetCurrentBState(Bstate.game_ROUNDRESET);
                 break;
 
             case Bstate.game_ROUNDRESET:
-                SetCurrentState(Bstate.player_CRAFT);
+                SetCurrentBState(Bstate.player_CRAFT);
                 break;
 
             default:
-                Debug.LogError("EventParams with non-default bstateParam expected.");
                 break;
         }
     }
@@ -124,18 +144,16 @@ public class BattleManager : MonoBehaviour {
                 _defendingEnemy = null;
                 _attackingItem = null;
 
-                FinishCurrentState(Bstate.game_ROUNDRESET);
+                FinishCurrentBState(Bstate.game_ROUNDRESET);
                 
             }
-        } else {
-            Debug.LogError("EventParams with non-default bstateParam expected.");
         }
     }
 
     #endregion
 
     private void On_CancelCraft(EventParams _eventParams) {
-        SetCurrentState(Bstate.player_CRAFT);
+        SetCurrentBState(Bstate.player_CRAFT);
     }
 
     // Updates the Attacking Item when it is crafted ( 5/7/2020 11:35pm )
@@ -156,7 +174,7 @@ public class BattleManager : MonoBehaviour {
                 _defendingEnemy = _enemy.enemyType;
 
                 // Current state should be Bstate.player_ENEMYSELECTION ( 5/1/2020 1:27pm )
-                FinishCurrentState(Bstate.player_ENEMYSELECTION);
+                FinishCurrentBState(Bstate.player_ENEMYSELECTION);
             }
             
         } else {

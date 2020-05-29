@@ -8,22 +8,22 @@ using UnityEngine;
  * Contains the last and current battlestate, as well as a function and event for when it is changed 
  */
 public static class BattleState {
-    public static Bstate lastState;
-    public static Bstate currentState;
+    public static Bstate lastBState;
+    public static Bstate currentBState;
 
-    public static void SetCurrentState(Bstate _state) {
-        lastState = currentState;
-        currentState = _state;
+    public static void SetCurrentBState(Bstate state) {
+        lastBState = currentBState;
+        currentBState = state;
 
-        Debug.Log("LAST STATE: " + lastState + " | CURRENT STATE: " + currentState);
+        Debug.Log("LAST BATTLE STATE: " + lastBState + " | CURRENT BATTLE STATE: " + currentBState);
 
 
-        EventManager.TriggerEvent("BStateChange", new EventParams(_state));
+        EventManager.TriggerEvent("BStateChange", new EventParams(state));
     }
 
     // Called when a Bstate is finished ( 5/1/2020 1:17pm )
-    public static void FinishCurrentState(Bstate _state) {
-        EventManager.TriggerEvent("BStateFinish", new EventParams(_state));
+    public static void FinishCurrentBState(Bstate state) {
+        EventManager.TriggerEvent("BStateFinish", new EventParams(state));
     }
 }
 

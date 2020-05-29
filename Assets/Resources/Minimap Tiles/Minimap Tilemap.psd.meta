@@ -4,55 +4,55 @@ TextureImporter:
   internalIDToNameTable:
   - first:
       213: 9213482537432129805
-    second: Minimap Tilemap_0
+    second: Minimap Tilemap_null
   - first:
       213: 5224429950713742926
-    second: Minimap Tilemap_1
+    second: Minimap Tilemap_O
   - first:
       213: 8930123256990135024
-    second: Minimap Tilemap_2
+    second: Minimap Tilemap_N
   - first:
       213: -4025604421792531714
-    second: Minimap Tilemap_3
+    second: Minimap Tilemap_E
   - first:
       213: -6078132867204347359
-    second: Minimap Tilemap_4
+    second: Minimap Tilemap_S
   - first:
       213: -5155378676237887501
-    second: Minimap Tilemap_5
+    second: Minimap Tilemap_W
   - first:
       213: -5471187269943363837
-    second: Minimap Tilemap_6
+    second: Minimap Tilemap_NS
   - first:
       213: 6393698798866124837
-    second: Minimap Tilemap_7
+    second: Minimap Tilemap_EW
   - first:
       213: 4017705821110293409
-    second: Minimap Tilemap_8
+    second: Minimap Tilemap_SW
   - first:
       213: -5004346014201012039
-    second: Minimap Tilemap_9
+    second: Minimap Tilemap_NW
   - first:
       213: -478177782599360163
-    second: Minimap Tilemap_10
+    second: Minimap Tilemap_NE
   - first:
       213: -1337320219802229968
-    second: Minimap Tilemap_11
+    second: Minimap Tilemap_SE
   - first:
       213: -7719820762005595295
-    second: Minimap Tilemap_12
+    second: Minimap Tilemap_TN
   - first:
       213: 7947139543988537640
-    second: Minimap Tilemap_13
+    second: Minimap Tilemap_TE
   - first:
       213: -4575986345781905243
-    second: Minimap Tilemap_14
+    second: Minimap Tilemap_TS
   - first:
       213: 1051272507213062107
-    second: Minimap Tilemap_15
+    second: Minimap Tilemap_TW
   - first:
       213: 2608460079213710299
-    second: Minimap Tilemap_16
+    second: Minimap Tilemap_X
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -138,7 +138,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Minimap Tilemap_0
+      name: Minimap Tilemap_null
       rect:
         serializedVersion: 2
         x: 0
@@ -146,7 +146,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -159,7 +159,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_1
+      name: Minimap Tilemap_O
       rect:
         serializedVersion: 2
         x: 16
@@ -167,7 +167,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -180,7 +180,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_2
+      name: Minimap Tilemap_N
       rect:
         serializedVersion: 2
         x: 32
@@ -188,7 +188,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -201,7 +201,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_3
+      name: Minimap Tilemap_E
       rect:
         serializedVersion: 2
         x: 48
@@ -209,7 +209,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -222,7 +222,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_4
+      name: Minimap Tilemap_S
       rect:
         serializedVersion: 2
         x: 64
@@ -230,7 +230,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -243,7 +243,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_5
+      name: Minimap Tilemap_W
       rect:
         serializedVersion: 2
         x: 80
@@ -251,7 +251,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -264,7 +264,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_6
+      name: Minimap Tilemap_NS
       rect:
         serializedVersion: 2
         x: 96
@@ -272,7 +272,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -285,7 +285,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_7
+      name: Minimap Tilemap_EW
       rect:
         serializedVersion: 2
         x: 112
@@ -293,7 +293,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -306,7 +306,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_8
+      name: Minimap Tilemap_SW
       rect:
         serializedVersion: 2
         x: 128
@@ -314,7 +314,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -327,7 +327,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_9
+      name: Minimap Tilemap_NW
       rect:
         serializedVersion: 2
         x: 0
@@ -335,7 +335,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -348,7 +348,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_10
+      name: Minimap Tilemap_NE
       rect:
         serializedVersion: 2
         x: 16
@@ -356,7 +356,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -369,7 +369,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_11
+      name: Minimap Tilemap_SE
       rect:
         serializedVersion: 2
         x: 32
@@ -377,7 +377,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -390,7 +390,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_12
+      name: Minimap Tilemap_TN
       rect:
         serializedVersion: 2
         x: 48
@@ -398,7 +398,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -411,7 +411,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_13
+      name: Minimap Tilemap_TE
       rect:
         serializedVersion: 2
         x: 64
@@ -419,7 +419,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -432,7 +432,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_14
+      name: Minimap Tilemap_TS
       rect:
         serializedVersion: 2
         x: 80
@@ -440,7 +440,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -453,7 +453,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_15
+      name: Minimap Tilemap_TW
       rect:
         serializedVersion: 2
         x: 96
@@ -461,7 +461,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -474,7 +474,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Minimap Tilemap_16
+      name: Minimap Tilemap_X
       rect:
         serializedVersion: 2
         x: 112
@@ -482,7 +482,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

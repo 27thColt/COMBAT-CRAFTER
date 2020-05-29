@@ -39,7 +39,11 @@ public class CancelCraftButton : MonoBehaviour {
         if (_eventParams.bstateParam == Bstate.player_ENEMYSELECTION) {
             ActivateButton();
         } else {
-            DeactivateButton();
+            try {
+                DeactivateButton();
+            } catch {
+                
+            }
         }
     }
     #endregion

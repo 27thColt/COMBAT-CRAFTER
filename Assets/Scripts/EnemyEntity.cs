@@ -105,7 +105,7 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     // Will select an enemy WHEN it is enemy selection phase ( 2/29/2020 3:39pm )
     public void OnMouseDown() {
-        if (currentState == Bstate.player_ENEMYSELECTION) {
+        if (currentBState == Bstate.player_ENEMYSELECTION) {
             _isDefending = true;
 
             EventManager.TriggerEvent("EnemySelect", new EventParams(GetComponent<EnemyEntity>()));
@@ -152,7 +152,7 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private void On_EnemyAttackAnimEnd(EventParams _eventParams) {
         if (_isAttacking) {
             SetAttacking(false);
-            FinishCurrentState(Bstate.enemy_ATTACK);
+            FinishCurrentBState(Bstate.enemy_ATTACK);
         }
         
     }
@@ -169,7 +169,7 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
             _isDefending = false;
 
-            FinishCurrentState(Bstate.player_ATTACK);
+            FinishCurrentBState(Bstate.player_ATTACK);
         }
     }
 

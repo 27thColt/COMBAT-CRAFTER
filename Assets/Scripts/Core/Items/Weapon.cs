@@ -26,15 +26,19 @@ public class Weapon : Item {
         atk = atk - weaponType.atkDecayRate * (maxDurability - currentDurability);
     }
 
-    override public void AddInstance(int _amt = 1) {
-        Debug.LogError(weaponType.itemName + " is not stackable!");
+    override public void AddInstance(int amt = 1) {
+        if (currentDurability < maxDurability) {
+            currentDurability += amt;
+            atk = atk + weaponType.atkDecayRate * (maxDurability - currentDurability);
+            Debug.Log("Attack of " + itemType.itemName + " is " + atk);
+        }
     }
     // Removes the durability ( 5/11/2020 10:46am )
-    override public bool RemoveInstance(int _amt = 1) {
+    override public bool RemoveInstance(int amt = 1) {
         if (currentDurability == 1) {
             return false;
         } else {
-            currentDurability -= _amt;
+            currentDurability -= amt;
             atk = atk - weaponType.atkDecayRate * (maxDurability - currentDurability);
             Debug.Log("Attack of " + itemType.itemName + " is " + atk);
             return true;
