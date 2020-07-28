@@ -41,6 +41,7 @@ public class MapDrawer : MonoBehaviour {
 
     void Awake() {
         EventManager.StartListening("SetCurrentRoom", On_SetCurentRoom);
+        LoadTilemap();
     }
 
     void OnDestroy() {
@@ -82,137 +83,142 @@ public class MapDrawer : MonoBehaviour {
     }   
 
     // Returns a tiles position on the map with ( 5/29/2020 1:21pm )
-    private Vector2 ReturnPositionOnMap(int x, int y) {
+    private Vector2 ReturnPositionOnMap(int x, int y, Level level) {
         // Sets some temporary component variables for ease ( 5/19/2020 11:32pm )
-        LevelGenerator LG = LevelGenerator.instance;
         RectTransform RT = GetComponent<RectTransform>();
         RectTransform parentRT = transform.parent.gameObject.GetComponent<RectTransform>();
 
         // Determines the size of each cell ( 5/19/2020 11:32pm )
-        Vector2 cellSize = new Vector2(parentRT.sizeDelta.x / LG.map.GetLength(0), parentRT.sizeDelta.x / LG.map.GetLength(0));
+        Vector2 cellSize = new Vector2(parentRT.sizeDelta.x / level.rooms.GetLength(0), parentRT.sizeDelta.x / level.rooms.GetLength(0));
 
         // Following code sets the position of the middle cell and recenters it to fit the middle of the map ( 5/26/2020 9:58pm )
         Vector2 middlePos = new Vector2(RT.sizeDelta.x / 2, -RT.sizeDelta.y / 2);
 
-        Vector2 outputVector = new Vector2(middlePos.x - ((LG.map.GetLength(0) / 2) - x) * cellSize.x, middlePos.y + ((LG.map.GetLength(0) / 2) - y) * cellSize.y);
+        Vector2 outputVector = new Vector2(middlePos.x - ((level.rooms.GetLength(0) / 2) - x) * cellSize.x, middlePos.y + ((level.rooms.GetLength(0) / 2) - y) * cellSize.y);
         return outputVector;
     }
 
+    // Draws one single Room ( 6/3/2020 9:52pm )
+    private GameObject DrawRoom(Vector2Int coords, Vector2 cellSize, Level level) {
+        Vector2 cellPosition = ReturnPositionOnMap(coords.x, coords.y, level);
+        
+        GameObject room = Instantiate(_minimapTile);
+
+        room.AddComponent<RoomSelect>();
+        room.GetComponent<RoomSelect>().containedRoom = level.rooms[coords.x, coords.y];
+
+        room.name = "Room "  + (new Vector2Int(coords.x, coords.y));
+        room.transform.SetParent(transform);
+        room.GetComponent<RectTransform>().sizeDelta = cellSize;
+        
+        if (level.rooms[coords.x, coords.y].type == RoomType.START) 
+            room.GetComponent<RectTransform>().anchoredPosition = cellPosition;
+        else
+            room.GetComponent<RectTransform>().anchoredPosition = cellPosition;
+
+        // Sets the sprite ( 5/26/2020 9:31pm )
+        #region sprite stuff
+        // 1 door sprites ( 5/26/2020 9:33pm )
+        if (level.rooms[coords.x, coords.y].doors["N"] && !level.rooms[coords.x, coords.y].doors["E"] && !level.rooms[coords.x, coords.y].doors["S"] && !level.rooms[coords.x, coords.y].doors["W"]) {
+            room.GetComponent<Image>().sprite = _tiles["N"];
+
+        } else if (level.rooms[coords.x, coords.y].doors["E"] && !level.rooms[coords.x, coords.y].doors["N"] && !level.rooms[coords.x, coords.y].doors["S"] && !level.rooms[coords.x, coords.y].doors["W"]) {
+            room.GetComponent<Image>().sprite = _tiles["E"];
+
+        } else if (level.rooms[coords.x, coords.y].doors["S"] && !level.rooms[coords.x, coords.y].doors["N"] && !level.rooms[coords.x, coords.y].doors["E"] && !level.rooms[coords.x, coords.y].doors["W"]) {
+            room.GetComponent<Image>().sprite = _tiles["S"];
+
+        } else if (level.rooms[coords.x, coords.y].doors["W"] && !level.rooms[coords.x, coords.y].doors["N"] && !level.rooms[coords.x, coords.y].doors["E"] && !level.rooms[coords.x, coords.y].doors["S"]) {
+            room.GetComponent<Image>().sprite = _tiles["W"];
+
+        }
+        
+        // 2 Door sprites ( 5/26/2020 9:33pm )
+        if (level.rooms[coords.x, coords.y].doors["N"]) {
+            if (level.rooms[coords.x, coords.y].doors["E"] && !level.rooms[coords.x, coords.y].doors["S"] && !level.rooms[coords.x, coords.y].doors["W"]) {
+                room.GetComponent<Image>().sprite = _tiles["NE"];
+
+            } else if (level.rooms[coords.x, coords.y].doors["W"] && !level.rooms[coords.x, coords.y].doors["E"] && !level.rooms[coords.x, coords.y].doors["S"]) {
+                room.GetComponent<Image>().sprite = _tiles["NW"];
+
+            }
+
+        } else if (level.rooms[coords.x, coords.y].doors["S"]) {
+            if (level.rooms[coords.x, coords.y].doors["E"] && !level.rooms[coords.x, coords.y].doors["N"] && !level.rooms[coords.x, coords.y].doors["W"]) {
+                room.GetComponent<Image>().sprite = _tiles["SE"];
+
+            } else if (level.rooms[coords.x, coords.y].doors["W"] && !level.rooms[coords.x, coords.y].doors["N"] && !level.rooms[coords.x, coords.y].doors["E"]) {
+                room.GetComponent<Image>().sprite = _tiles["SW"];
+            }
+        }
+
+        // 3 Door sprites ( 5/26/2020 9:33pm )
+        if (level.rooms[coords.x, coords.y].doors["N"] && level.rooms[coords.x, coords.y].doors["E"] && level.rooms[coords.x, coords.y].doors["W"] && !level.rooms[coords.x, coords.y].doors["S"]) {
+            room.GetComponent<Image>().sprite = _tiles["TN"];
+
+        } else if (level.rooms[coords.x, coords.y].doors["E"] && level.rooms[coords.x, coords.y].doors["N"] && level.rooms[coords.x, coords.y].doors["S"] && !level.rooms[coords.x, coords.y].doors["W"]) {
+            room.GetComponent<Image>().sprite = _tiles["TE"];
+
+        } else if (level.rooms[coords.x, coords.y].doors["S"] && level.rooms[coords.x, coords.y].doors["E"] && level.rooms[coords.x, coords.y].doors["W"] && !level.rooms[coords.x, coords.y].doors["N"]) {
+            room.GetComponent<Image>().sprite = _tiles["TS"];
+
+        } else if (level.rooms[coords.x, coords.y].doors["W"] && level.rooms[coords.x, coords.y].doors["N"] && level.rooms[coords.x, coords.y].doors["S"] && !level.rooms[coords.x, coords.y].doors["E"]) {
+            room.GetComponent<Image>().sprite = _tiles["TW"];
+
+        }
+
+        // Other cases ( 5/26/2020 9:38pm )
+        if (level.rooms[coords.x, coords.y].doors["N"] && level.rooms[coords.x, coords.y].doors["E"] && level.rooms[coords.x, coords.y].doors["S"] && level.rooms[coords.x, coords.y].doors["W"]) {
+            room.GetComponent<Image>().sprite = _tiles["X"];
+
+        } else if (!level.rooms[coords.x, coords.y].doors["N"] && !level.rooms[coords.x, coords.y].doors["E"] && !level.rooms[coords.x, coords.y].doors["S"] && !level.rooms[coords.x, coords.y].doors["W"]) {
+            room.GetComponent<Image>().sprite = _tiles["O"];
+        }
+
+        #endregion
+    
+        return room;
+    }
+
     // Draws the map taken straight from the LevelGenerator script ( 5/19/2020 11:31pm )
-    public void DrawMap() {
+    public void DrawMap(Level level) {
         // Prepared with some error messages ( 5/26/2020 8:53pm )
-        if (LevelGenerator.instance.map == null) {
+        if (level.rooms == null) {
             Debug.LogError("Map has not been generated. Cannot draw map.");
             return;
         }
 
-        // Sets some temporary component variables for ease ( 5/19/2020 11:32pm )
-        LevelGenerator LG = LevelGenerator.instance;
         RectTransform RT = GetComponent<RectTransform>();
         RectTransform parentRT = transform.parent.gameObject.GetComponent<RectTransform>();
 
-        LoadTilemap();
         DeleteMap();
 
         RT.sizeDelta = new Vector2(parentRT.sizeDelta.x * 2, parentRT.sizeDelta.y * 2);
 
         // Sets the size for the tile highlight ( 5/29/2020 1:06pm )
-        _tileHighlight.GetComponent<RectTransform>().sizeDelta = new Vector2(parentRT.sizeDelta.x / LevelGenerator.instance.map.GetLength(0), parentRT.sizeDelta.x / LevelGenerator.instance.map.GetLength(0));
+        _tileHighlight.GetComponent<RectTransform>().sizeDelta = new Vector2(parentRT.sizeDelta.x / level.rooms.GetLength(0), parentRT.sizeDelta.x / level.rooms.GetLength(0));
 
         // Determines the size of each cell ( 5/19/2020 11:32pm )
-        Vector2 cellSize = new Vector2(parentRT.sizeDelta.x / LG.map.GetLength(0), parentRT.sizeDelta.x / LG.map.GetLength(0));
+        Vector2 cellSize = new Vector2(parentRT.sizeDelta.x / level.rooms.GetLength(0), parentRT.sizeDelta.x / level.rooms.GetLength(0));
 
-        for (int i = 0; i < LG.map.GetLength(0); i++) {
-            for (int j = 0; j < LG.map.GetLength(1); j++) {
-                if (LG.map[i, j] != null) {
-                    Vector2 cellPosition = ReturnPositionOnMap(i, j);
-                    
-                    GameObject room = Instantiate(_minimapTile);
-                    room.name = "Room "  + (new Vector2Int(i, j));
-                    room.transform.SetParent(transform);
-                    room.GetComponent<RectTransform>().sizeDelta = cellSize;
-                    
-                    if (LG.map[i, j].type == RoomType.START) 
-                        room.GetComponent<RectTransform>().anchoredPosition = cellPosition;
-                    else
-                        room.GetComponent<RectTransform>().anchoredPosition = cellPosition;
+        for (int i = 0; i < level.rooms.GetLength(0); i++) {
+            for (int j = 0; j < level.rooms.GetLength(1); j++) {
+                if (level.rooms[i, j] != null && level.rooms[i, j].known) {
+                    DrawRoom(new Vector2Int(i, j), cellSize, level);
 
-                    // Sets the sprite ( 5/26/2020 9:31pm )
-                    #region sprite stuff
-                    // 1 door sprites ( 5/26/2020 9:33pm )
-                    if (LG.map[i, j].doors["N"] && !LG.map[i, j].doors["E"] && !LG.map[i, j].doors["S"] && !LG.map[i, j].doors["W"]) {
-                        room.GetComponent<Image>().sprite = _tiles["N"];
+                    List<Room> adjacentRooms = level.ReturnAdjacentRooms(new Vector2Int(i, j));
 
-                    } else if (LG.map[i, j].doors["E"] && !LG.map[i, j].doors["N"] && !LG.map[i, j].doors["S"] && !LG.map[i, j].doors["W"]) {
-                        room.GetComponent<Image>().sprite = _tiles["E"];
-
-                    } else if (LG.map[i, j].doors["S"] && !LG.map[i, j].doors["N"] && !LG.map[i, j].doors["E"] && !LG.map[i, j].doors["W"]) {
-                        room.GetComponent<Image>().sprite = _tiles["S"];
-
-                    } else if (LG.map[i, j].doors["W"] && !LG.map[i, j].doors["N"] && !LG.map[i, j].doors["E"] && !LG.map[i, j].doors["S"]) {
-                        room.GetComponent<Image>().sprite = _tiles["W"];
-
-                    }
-                    
-                    // 2 Door sprites ( 5/26/2020 9:33pm )
-                    if (LG.map[i, j].doors["N"]) {
-                        if (LG.map[i, j].doors["E"] && !LG.map[i, j].doors["S"] && !LG.map[i, j].doors["W"]) {
-                            room.GetComponent<Image>().sprite = _tiles["NE"];
-
-                        } else if (LG.map[i, j].doors["W"] && !LG.map[i, j].doors["E"] && !LG.map[i, j].doors["S"]) {
-                            room.GetComponent<Image>().sprite = _tiles["NW"];
-
-                        }
-
-                    } else if (LG.map[i, j].doors["S"]) {
-                        if (LG.map[i, j].doors["E"] && !LG.map[i, j].doors["N"] && !LG.map[i, j].doors["W"]) {
-                            room.GetComponent<Image>().sprite = _tiles["SE"];
-
-                        } else if (LG.map[i, j].doors["W"] && !LG.map[i, j].doors["N"] && !LG.map[i, j].doors["E"]) {
-                            room.GetComponent<Image>().sprite = _tiles["SW"];
+                    foreach (Room room in adjacentRooms) {  
+                        if (!room.known) {
+                            var cell = DrawRoom(room.position, cellSize, level);
+                            cell.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
                         }
                     }
-
-                    // 3 Door sprites ( 5/26/2020 9:33pm )
-                    if (LG.map[i, j].doors["N"] && LG.map[i, j].doors["E"] && LG.map[i, j].doors["W"] && !LG.map[i, j].doors["S"]) {
-                        room.GetComponent<Image>().sprite = _tiles["TN"];
-
-                    } else if (LG.map[i, j].doors["E"] && LG.map[i, j].doors["N"] && LG.map[i, j].doors["S"] && !LG.map[i, j].doors["W"]) {
-                        room.GetComponent<Image>().sprite = _tiles["TE"];
-
-                    } else if (LG.map[i, j].doors["S"] && LG.map[i, j].doors["E"] && LG.map[i, j].doors["W"] && !LG.map[i, j].doors["N"]) {
-                        room.GetComponent<Image>().sprite = _tiles["TS"];
-
-                    } else if (LG.map[i, j].doors["W"] && LG.map[i, j].doors["N"] && LG.map[i, j].doors["S"] && !LG.map[i, j].doors["E"]) {
-                        room.GetComponent<Image>().sprite = _tiles["TW"];
-
-                    }
-
-                    // Other cases ( 5/26/2020 9:38pm )
-                    if (LG.map[i, j].doors["N"] && LG.map[i, j].doors["E"] && LG.map[i, j].doors["S"] && LG.map[i, j].doors["W"]) {
-                        room.GetComponent<Image>().sprite = _tiles["X"];
-
-                    } else if (!LG.map[i, j].doors["N"] && !LG.map[i, j].doors["E"] && !LG.map[i, j].doors["S"] && !LG.map[i, j].doors["W"]) {
-                        room.GetComponent<Image>().sprite = _tiles["O"];
-                    }
-
-                    #endregion
-                
                 }
             }
         }
 
         _tileHighlight.transform.SetAsLastSibling();
-    }
-
-    public void On_SetCurentRoom(EventParams eventParams) {
-        if (eventParams.roomParam != null) {
-
-            _selectedVector = eventParams.roomParam.position;
-            _tileHighlight.GetComponent<RectTransform>().anchoredPosition = ReturnPositionOnMap(_selectedVector.x, _selectedVector.y);
-        } else {
-            Debug.LogError("Eventparams with non-null room param expected.");
-        }
     }
 
     private void DeleteMap() {
@@ -223,4 +229,15 @@ public class MapDrawer : MonoBehaviour {
             
         }
     }
+
+    private void On_SetCurentRoom(EventParams eventParams) {
+        if (eventParams.roomParam != null) {
+
+            _selectedVector = eventParams.roomParam.position;
+            _tileHighlight.GetComponent<RectTransform>().anchoredPosition = ReturnPositionOnMap(_selectedVector.x, _selectedVector.y, LevelManager.instance.currentLevel);
+        } else {
+            Debug.LogError("Eventparams with non-null room param expected.");
+        }
+    }
+
 }

@@ -19,10 +19,22 @@ public class Room {
 
     public int displacement = 0; // Distance from the center of the map; Used in map generation ( 5/20/2020 1:46pm )
 
+    public bool known = false; // Boolean that determines whether or not the player has been inside before ( 5/29/2020 1:52pm )
     public Room(RoomType _type, Vector2Int _position, int _displacement = 0) {
         type = _type;
         position = _position;
         displacement = _displacement;
+    }
+
+    public bool IsAdjacentTo(Vector2Int refCoords) {
+        if (doors["N"] && (position.x == refCoords.x && position.y == refCoords.y + 1) ||
+            doors["E"] && (position.x == refCoords.x - 1 && position.y == refCoords.y) ||
+            doors["S"] && (position.x == refCoords.x && position.y == refCoords.y - 1) ||
+            doors["W"] && (position.x == refCoords.x + 1 && position.y == refCoords.y)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 

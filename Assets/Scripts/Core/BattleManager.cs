@@ -61,8 +61,6 @@ public class BattleManager : MonoBehaviour {
 
     private void On_LStateChange(EventParams _eventParams) {
         switch(_eventParams.lstateParam) {
-            case Lstate.EXPLORE:
-                break;
             case Lstate.BATTLE:
                 // Calls WaveManager.cs ( 5/1/2020 1:11pm )
                 SetCurrentBState(Bstate.game_LOADWAVE);
@@ -106,7 +104,6 @@ public class BattleManager : MonoBehaviour {
                     // Fires if all enemies in the wavee have been defeated ( 5/1/2020 5:29pm )
                     SetCurrentBState(Bstate.none);
                     FinishCurrentLState(Lstate.BATTLE);
-                    Debug.Break();
                 }
                 break;
 
@@ -123,9 +120,9 @@ public class BattleManager : MonoBehaviour {
         }
     }
 
-    private void On_BStateChange(EventParams _eventParams) {
-        if (_eventParams.bstateParam != Bstate.none) {
-            Bstate _state = _eventParams.bstateParam;
+    private void On_BStateChange(EventParams eventParams) {
+        if (eventParams.bstateParam != Bstate.none) {
+            Bstate _state = eventParams.bstateParam;
             if (_state == Bstate.player_ATTACK) {
                 PlayerAttackState();
 
