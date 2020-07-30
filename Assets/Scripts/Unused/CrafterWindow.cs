@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static BattleState;
+using static BattleStateMachine;
 
 /* 5/31/2019 3:56pm - Crafting Pool Script
  * The 'collider' which detects when items have been dropped back again into the inventory

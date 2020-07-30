@@ -16,7 +16,7 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler {
 
     // Fires when the item is clicked ( 5/4/2020 2:47pm )
     public void OnPointerClick(PointerEventData eventData) {
-        if (BattleState.currentBState == Bstate.player_CRAFT) {
+        if (_crafter.craftingEnabled) {
             Item _item = GetComponent<ItemObject>().item;
 
             if (_crafter.itemAmt < 2 && !_selected) {
@@ -31,7 +31,6 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler {
                 _crafter.RemoveItem(_item);
             }
         }
-        
     }
 
     #endregion
@@ -44,11 +43,11 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler {
     private bool _selected;
 
     void Awake() {
-        EventManager.StartListening("BStateChange", On_BStateChange);
+        EventManager.StartListening("ResetCrafter", On_ResetCrafter);
     }
 
     void OnDestroy() {
-        EventManager.StopListening("BStateChange", On_BStateChange);
+        EventManager.StopListening("ResetCrafter", On_ResetCrafter);
     }
 
     void Start() {
@@ -63,10 +62,9 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler {
     }
 
     // Resets the selection state of the item ( 5/4/2020 2:56pm )
-    private void On_BStateChange(EventParams _eventParams) {
-        if (BattleState.lastBState == Bstate.player_CRAFT && _selected == true) {
+    private void On_ResetCrafter(EventParams _eventParams) {
+        if (_selected == true) {
             UpdateSelection(false);
         }
-
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static BattleState;
+using static BattleStateMachine;
 
 /* 10/24/2019 9:57pm - Wave Manager
  * Handles everything to do with enemy wave logic and all that
@@ -47,7 +47,7 @@ public class WaveManager : MonoBehaviour {
     // NOTE: Maximum number of spawnpoints should be 5, thus 5 enemies should only appear at any given moment ( 12/27/2019 10:52am )
     
     private void Awake() {
-        EventManager.StartListening("BStateChange", On_BStateChange);
+        //EventManager.StartListening("BStateChange", On_BStateChange);
 
         waveList = Resources.LoadAll<EnemyWave>("Enemy Waves");
 
@@ -57,7 +57,7 @@ public class WaveManager : MonoBehaviour {
 
 
     private void OnDestroy() {
-        EventManager.StopListening("BStateChange", On_BStateChange);
+        //EventManager.StopListening("BStateChange", On_BStateChange);
     }
 
     #region Functions
@@ -99,21 +99,11 @@ public class WaveManager : MonoBehaviour {
         return _list;
     }
 
-    #endregion
+    public void LoadWave() {
+        loadedWave = waveList[currentWave];
+        EnemyInventory.instance.LoadEnemyDefs();
 
-    #region Event Listeners
-
-    // Fires when the gamestate has been changed ( 12/27/2019 1:14pm )
-    public void On_BStateChange(EventParams _eventParams) {
-        if (_eventParams.bstateParam == Bstate.game_LOADWAVE) {
-            loadedWave = waveList[currentWave];
-            EnemyInventory.instance.LoadEnemyDefs();
-
-            AddAllEnemiesInWave(waveList[currentWave]);
-
-
-            EventManager.TriggerEvent("BStateFinish", new EventParams(Bstate.game_LOADWAVE));
-        }
+        AddAllEnemiesInWave(waveList[currentWave]);
     }
 
     #endregion

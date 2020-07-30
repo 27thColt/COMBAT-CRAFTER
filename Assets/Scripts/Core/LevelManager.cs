@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static LevelState;
+using static LevelStateMachine;
 
 public class LevelManager : MonoBehaviour {
     #region Singleton
@@ -31,14 +31,10 @@ public class LevelManager : MonoBehaviour {
     public Level currentLevel;
 
     void Awake() {
-        //EventManager.StartListening("LStateChange", On_LStateFinish);
-        EventManager.StartListening("LStateFinish", On_LStateFinish);
         EventManager.StartListening("RoomSelect", On_RoomSelect);
     }
 
     void OnDestroy() {
-        //EventManager.StopListening("LStateChange", On_LStateChange);
-        EventManager.StopListening("LStateFinish", On_LStateFinish);
         EventManager.StopListening("RoomSelect", On_RoomSelect);
     }
 
@@ -47,7 +43,7 @@ public class LevelManager : MonoBehaviour {
         
 
         LoadLevel();
-        SetCurrentLState(Lstate.BATTLE);
+        SetCurrentLState(new LevelBattle());
     }
 
     private void LoadLevel() {
@@ -69,21 +65,6 @@ public class LevelManager : MonoBehaviour {
 
         } else {
             Debug.LogError("Event Params of non-null room param expected.");
-        }
-    }
-
-    private void On_LStateFinish(EventParams eventParams) {
-        switch (eventParams.lstateParam) {
-            case Lstate.BATTLE:
-                SetCurrentLState(Lstate.EXPLORE);
-                break;
-
-            case Lstate.EXPLORE:
-                SetCurrentLState(Lstate.BATTLE);    // Calls BattleManager.cs ( 5/29/2020 1:29pm )
-                break;
-
-            default:  
-                break;
         }
     }
 

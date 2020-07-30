@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static BattleState;
+using static BattleStateMachine;
 using TMPro;
 
 /* 5/31/2019 1:37pm - Inventory Pool Script

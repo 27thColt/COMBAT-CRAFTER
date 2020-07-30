@@ -11,7 +11,7 @@ public class RoomSelect : MonoBehaviour, IPointerClickHandler {
     #region IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData) {
-        if (LevelState.currentLstate == Lstate.EXPLORE) {
+        if (LevelStateMachine.currentLState is LevelExplore) {
             EventManager.TriggerEvent("RoomSelect", new EventParams(containedRoom));
         }
     }

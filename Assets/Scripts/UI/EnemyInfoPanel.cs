@@ -71,24 +71,22 @@ public class EnemyInfoPanel : MonoBehaviour {
 
     #region Event Listeners
 
-    private void On_EnemySelect(EventParams _eventParams) {
-        if (_eventParams.componentParams != null) {
-            if (_eventParams.componentParams is EnemyEntity) {
-                if (!gameObject.activeSelf) {
-                    SetInfo(_eventParams.componentParams as EnemyEntity);
-                    gameObject.GetComponent<RectTransform>().anchoredPosition = _onPos;
-                }
-                
+    private void On_EnemySelect(EventParams eventParams) {
+        if (eventParams.componentParams == null) { Debug.LogError("Eventparams containing non-null componentParams expected!"); return; }
 
-                _autoDisable = false;
-                
-            }
-        } else {
-            Debug.LogError("Eventparams containing non-null componentParams expected!");
+        if (!(eventParams.componentParams is EnemyEntity)) return;
+
+
+        if (!gameObject.activeSelf) {
+            SetInfo(eventParams.componentParams as EnemyEntity);
+            gameObject.GetComponent<RectTransform>().anchoredPosition = _onPos;
         }
+        
+        _autoDisable = false;
+            
     }
 
-    private void On_EnemyDefendAnimEnd(EventParams _eventParams) {
+    private void On_EnemyDefendAnimEnd(EventParams eventParams) {;
         _autoDisable = true;
 
         if (!_mouseOn) {
@@ -97,22 +95,21 @@ public class EnemyInfoPanel : MonoBehaviour {
     }
 
     // The following 2 functions are for when the mouse hovers over an enemy ( 5/10/2020 1:22pm )
-    private void On_EnemyHoverEnter(EventParams _eventParams) {
-        if (_eventParams.componentParams != null) {
-            if (_eventParams.componentParams is EnemyEntity) {
-                if (!_mouseOn) {
-                    SetInfo(_eventParams.componentParams as EnemyEntity);
-                    gameObject.GetComponent<RectTransform>().anchoredPosition = _onPos;
+    private void On_EnemyHoverEnter(EventParams eventParams) {
+        if (eventParams.componentParams == null) { Debug.LogError("Eventparams containing non-null componentParams expected!"); return; }
 
-                    _mouseOn = true;
-                }
-            }
-        } else {
-            Debug.LogError("Eventparams containing non-null componentParams expected!");
+        if (!(eventParams.componentParams is EnemyEntity)) return;
+
+        if (!_mouseOn) {
+            SetInfo(eventParams.componentParams as EnemyEntity);
+            gameObject.GetComponent<RectTransform>().anchoredPosition = _onPos;
+
+            _mouseOn = true;
         }
+        
     }
 
-    private void On_EnemyHoverExit(EventParams _eventParams) {
+    private void On_EnemyHoverExit(EventParams eventParams) {
         if (_autoDisable) {
             DisablePanel();
             

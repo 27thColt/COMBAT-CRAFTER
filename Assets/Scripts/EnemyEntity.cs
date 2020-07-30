@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
-using static BattleState;
+using static BattleStateMachine;
 
 
 /* 12/26/2019 10:48pm - Enemy Display
@@ -105,18 +105,19 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     // Will select an enemy WHEN it is enemy selection phase ( 2/29/2020 3:39pm )
     public void OnMouseDown() {
-        if (currentBState == Bstate.player_ENEMYSELECTION) {
+        if (currentBState is EnemySelect) {
             _isDefending = true;
-
+            
             EventManager.TriggerEvent("EnemySelect", new EventParams(GetComponent<EnemyEntity>()));
+            currentBState.End(new EventParams(GetComponent<EnemyEntity>()), "EnemySelect");
         }
     }
     
     #region Event Listeners
 
-    private void On_PlayerAttack(EventParams _eventParams) {
-        if (_eventParams.intParam1 != 0) {
-            if (_isDefending) TakeDamage(_eventParams.intParam1);
+    private void On_PlayerAttack(EventParams eventParams) {
+        if (eventParams.intParam1 != 0) {
+            if (_isDefending) TakeDamage(eventParams.intParam1);
         } else {
             Debug.LogError("EventParams with non-zero intParam1 expected.");
         }
@@ -152,7 +153,8 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private void On_EnemyAttackAnimEnd(EventParams _eventParams) {
         if (_isAttacking) {
             SetAttacking(false);
-            FinishCurrentBState(Bstate.enemy_ATTACK);
+
+            currentBState.End(new EventParams(), "EnemyAttack");
         }
         
     }
@@ -169,7 +171,8 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
             _isDefending = false;
 
-            FinishCurrentBState(Bstate.player_ATTACK);
+            // End of Player Attack Battle State if the player ATTACKED ( 7/28/2020 10:23pm )
+            currentBState.End(new EventParams(), "PlayerAttack");
         }
     }
 

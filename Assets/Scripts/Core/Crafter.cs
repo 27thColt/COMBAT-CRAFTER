@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using static BattleState;
+using static BattleStateMachine;
 
 /* 5/31/2019 3:52pm - Crafter Script
  * Manages crafting system
@@ -10,6 +10,8 @@ using static BattleState;
 public class Crafter : MonoBehaviour {
     #region Singleton
     private static Crafter _crafter;
+
+    public bool craftingEnabled = false;
 
     public static Crafter instance {
         get {
@@ -34,14 +36,10 @@ public class Crafter : MonoBehaviour {
 
     private void Awake() {
         EventManager.StartListening("ResultUpdate", On_ResultUpdate);
-        EventManager.StartListening("BStateChange", On_BStateChange);
-        EventManager.StartListening("CancelCraft", On_CancelCraft);
     }
 
     private void OnDestroy() {
         EventManager.StopListening("ResultUpdate", On_ResultUpdate);
-        EventManager.StopListening("BStateChange", On_BStateChange);
-        EventManager.StopListening("CancelCraft", On_CancelCraft);
     }
 
     void Start() {
@@ -121,6 +119,23 @@ public class Crafter : MonoBehaviour {
         }
 
         _resultItem = null;
+
+        EventManager.TriggerEvent("ResetCrafter", new EventParams());
+    }
+
+    public void UncraftItems() {
+        foreach (Item _item in craftingSlots) {
+            Inventory.instance.AddItem(_item);
+        }
+
+        print(_resultItem.itemType.itemName + " uncrafted.");
+    }
+
+    // If an item may be added to the inventory (aka, added to the inventory, not consumed immediately), it will ( 7/28/2020 10:20pm )
+    public void CraftResultItem() {
+        if (!craftingSlots.Contains(_resultItem)) {
+            _resultItem.OnCraft();
+        }
     }
 
     #endregion
@@ -129,32 +144,23 @@ public class Crafter : MonoBehaviour {
 
     // Will be called uppon button press of the crafter button-- referenced through unity on the button component ( 12/27/2019 11:49am )
     public void OnCrafterButtonPressed() {
-        EventManager.TriggerEvent("ItemCraft", new EventParams(_resultItem));
+        //EventManager.TriggerEvent("ItemCraft", new EventParams(_resultItem));
 
         foreach (Item _item in craftingSlots) {
             Inventory.instance.RemoveItem(_item);
         }
 
         print(_resultItem.itemType.itemName + " Crafted");
-        FinishCurrentBState(Bstate.player_CRAFT);
+
+        Debug.Log("Crafter: " + _resultItem.itemType.itemName);
+
+        // END OF PlayerCraft Battle State ( 7/28/2020 9:24pm )
+        BattleStateMachine.currentBState.End(new EventParams(_resultItem), "PlayerCraft");
     }
     
     #endregion
 
     #region Event Listeners
-
-    // When the Cancel Craft button is pressed ( 5/16/2020 3:48pm )
-    private void On_CancelCraft(EventParams eventParams) {
-        if (currentBState == Bstate.player_ENEMYSELECTION) {
-            foreach (Item _item in craftingSlots) {
-                Inventory.instance.AddItem(_item);
-            }
-
-            print(_resultItem.itemType.itemName + " uncrafted.");
-
-            ResetCrafter();
-        }
-    }
 
     // Will set the result item whenever it is updated ( 12/27/2019 12:49pm )
     private void On_ResultUpdate(EventParams eventParams) {
@@ -162,19 +168,6 @@ public class Crafter : MonoBehaviour {
             _resultItem = eventParams.itemParam;
         } else {
             _resultItem = null;
-        }
-    }
-
-    private void On_BStateChange(EventParams eventParams) {
-        // Resets the crafter values ( 5/18/2020 9:39am )
-        if (eventParams.bstateParam == Bstate.game_ROUNDRESET) {
-            ResetCrafter();
-
-        // Does item On Craft action when player attacks ( 5/18/2020 9:50am )
-        } else if (eventParams.bstateParam == Bstate.player_ATTACK) {
-            if (!craftingSlots.Contains(_resultItem)) {
-                _resultItem.OnCraft();
-            }
         }
     }
 

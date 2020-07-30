@@ -74,17 +74,6 @@ public class EventParams {
     public EventParams() {
         // sets everything to default (null) ( 5/7/2020 10:56am )
     }
-    public Bstate bstateParam = Bstate.none;
-
-    public EventParams(Bstate _bstateParam) {
-        bstateParam = _bstateParam;
-    }
-
-    public Lstate lstateParam = Lstate.none;
-
-    public EventParams(Lstate _lstateParam) {
-        lstateParam = _lstateParam;
-    }
 
     public Room roomParam = null;
 

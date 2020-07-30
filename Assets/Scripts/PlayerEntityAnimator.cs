@@ -34,7 +34,8 @@ public class PlayerEntityAnimator : MonoBehaviour, IEntityAnimator {
             StartCoroutine(DoAfterAnim(_animName, _anim, () => {    }));
         } else if (_animName == "Heal") {
             StartCoroutine(DoAfterAnim(_animName, _anim, () => {
-                BattleState.FinishCurrentBState(Bstate.player_ATTACK);
+                // End of Player Attack Battle State if the player HEALED ( 7/28/2020 10:23pm )
+                BattleStateMachine.currentBState.End(new EventParams(), "PlayerAttack");
             }));
         }
     }

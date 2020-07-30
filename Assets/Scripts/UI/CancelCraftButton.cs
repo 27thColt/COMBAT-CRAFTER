@@ -19,6 +19,8 @@ public class CancelCraftButton : MonoBehaviour {
 
 
     public void OnCancelCraftButton() {
+        BattleStateMachine.SetCurrentBState(new PlayerCraft(), new EventParams("UNCRAFT"));
+        
         EventManager.TriggerEvent("CancelCraft", new EventParams());
         DeactivateButton();
     }
@@ -36,7 +38,7 @@ public class CancelCraftButton : MonoBehaviour {
     #region Event Listeners
 
     private void On_BStateChange(EventParams _eventParams) {
-        if (_eventParams.bstateParam == Bstate.player_ENEMYSELECTION) {
+        if (BattleStateMachine.currentBState is EnemySelect) {
             ActivateButton();
         } else {
             try {

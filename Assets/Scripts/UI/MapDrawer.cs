@@ -104,7 +104,7 @@ public class MapDrawer : MonoBehaviour {
         
         GameObject room = Instantiate(_minimapTile);
 
-        room.AddComponent<RoomSelect>();
+        RoomSelect roomSelect = room.AddComponent<RoomSelect>();
         room.GetComponent<RoomSelect>().containedRoom = level.rooms[coords.x, coords.y];
 
         room.name = "Room "  + (new Vector2Int(coords.x, coords.y));

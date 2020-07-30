@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static BattleState;
+using static BattleStateMachine;
 
 /* 4/26/2020 1:43am - Player Object 
  * Oh my god I can already tell this will be good for me
