@@ -21,37 +21,21 @@ using static BattleLogic;
     It will also initiate the battle once called from the LevelManager (that's probably... more important lmao)
  */
 public class BattleManager : MonoBehaviour {
-    #region Singleton
-
-    private static BattleManager _battleManager;
-
-    public static BattleManager instance {
-        get {
-            if (!_battleManager) {
-                _battleManager = FindObjectOfType(typeof(BattleManager)) as BattleManager;
-
-                if (!_battleManager) {
-                    Debug.LogError("There needs to be one active WaveBattleManagerManager script on a GameObject in your scene.");
-                }
-            }
-
-            return _battleManager;
-        }
-    }
-    
-    #endregion
-
     // Item used to attack (comes from resultItem in the Crafter) ( 12/27/2019 12:50pm )
     public Item attackingItem = null;
     public EnemyType defendingEnemy = null;
 
-    // [SerializeField]
-    // private PlayerEntity _playerObj;
+    // Referenced values in editor.
+    [SerializeField]
+    private WaveManager _waveManager = null;
+    [SerializeField]
+    private Crafter _crafter = null;
 
     #region Awake
     void Awake() {
         EventManager.StartListening("LStateChange", On_LStateChange);
         EventManager.StartListening("BStateChange", On_BStateChange);
+        EventManager.StartListening("CancelCraft", On_CancelCraft);
     }
 
     #endregion
@@ -59,25 +43,14 @@ public class BattleManager : MonoBehaviour {
     private void OnDestroy() {
         EventManager.StopListening("LStateChange", On_LStateChange);
         EventManager.StopListening("BStateChange", On_BStateChange);
+        EventManager.StopListening("CancelCraft", On_CancelCraft);
     }
 
     private void Start() {
-        // _playerObj = FindObjectOfType<PlayerEntity>();
+
     }
 
-    #region Event Listeners
-
-    private void On_LStateChange(EventParams eventParams) {
-        if (currentLState is LevelBattle)
-            SetCurrentBState(new LoadWave());
-    }
-
-    private void On_BStateChange(EventParams eventParams) {
-        if (currentBState is null)
-            currentLState.End(new EventParams(), "LevelBattle");
-    }
-    
-    #endregion
+    #region Functions
 
     public void SetAttackingItem(Item item) {
         attackingItem = item;
@@ -91,4 +64,24 @@ public class BattleManager : MonoBehaviour {
         attackingItem = null;
         defendingEnemy = null;
     }
+
+    #endregion
+    
+    #region Event Listeners
+
+    private void On_LStateChange(EventParams eventParams) {
+        if (currentLState is LevelBattle)
+            SetCurrentBState(new LoadWave(GetComponent<BattleManager>(), _waveManager, _crafter));
+    }
+
+    private void On_BStateChange(EventParams eventParams) {
+        if (currentBState is null)
+            currentLState.End(new EventParams(), "LevelBattle");
+    }
+
+    private void On_CancelCraft(EventParams eventParams) {
+        BattleStateMachine.SetCurrentBState(new PlayerCraft(GetComponent<BattleManager>(), _waveManager, _crafter), new EventParams("UNCRAFT"));
+    }
+    
+    #endregion
 }

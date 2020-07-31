@@ -8,26 +8,8 @@ using static BattleStateMachine;
  * Manages crafting system
  */
 public class Crafter : MonoBehaviour {
-    #region Singleton
-    private static Crafter _crafter;
-
     public bool craftingEnabled = false;
-
-    public static Crafter instance {
-        get {
-            if (!_crafter) {
-                _crafter = FindObjectOfType(typeof(Crafter)) as Crafter;
-
-                if (!_crafter) {
-                    Debug.LogError("There needs to be one active EventManager script on a GameObject in your scene.");
-                }
-            }
-
-            return _crafter;
-        }
-    }
-
-    #endregion
+    
     private Item _resultItem;
     public Recipe[] recipeList;
     public int itemAmt;

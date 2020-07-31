@@ -43,6 +43,7 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private EntityAnimator.IEntityAnimator _entityAnimator = null;
 
     private EnemyInfoPanel _infoPanel = null;
+    private WaveManager _waveManager = null;
 
     // Values for if the enemy object is attacking / defending ( 5/1/2020 7:11pm )
     private bool _isDefending = false;
@@ -65,12 +66,11 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     }
 
     void Start() {
-        try {
-            _infoPanel = FindObjectOfType<EnemyInfoPanel>();
-        } catch {
-            Debug.LogError("Enemy Info Panel cannot be found!");
-        }
-        
+        _infoPanel = FindObjectOfType<EnemyInfoPanel>();
+        _waveManager = FindObjectOfType<WaveManager>();
+
+        if (_infoPanel == null) Debug.LogError("Enemy Info Panel cannot be found.");
+        if (_waveManager == null) Debug.LogError("Wave Manager game object cannot be found.");
     }
 
     #region Functions
@@ -164,7 +164,7 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         if (_isDefending) {
             // If the enemy fucking DIED ( 5/1/2020 1:59pm )
             if (CurrentHP <= 0) {
-                WaveManager.instance.enemyList.Remove(GetComponent<EnemyEntity>());
+                _waveManager.enemyList.Remove(GetComponent<EnemyEntity>());
                 Debug.Log("Enemy died at " + Time.time);
                 Die();
             }

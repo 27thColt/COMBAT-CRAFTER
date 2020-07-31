@@ -16,20 +16,22 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler {
 
     // Fires when the item is clicked ( 5/4/2020 2:47pm )
     public void OnPointerClick(PointerEventData eventData) {
-        if (_crafter.craftingEnabled) {
-            Item _item = GetComponent<ItemObject>().item;
+        if (_crafter == null) return;
 
-            if (_crafter.itemAmt < 2 && !_selected) {
-                _crafter.itemAmt++;
+        if (!_crafter.craftingEnabled) return;
+        
+        Item item = GetComponent<ItemObject>().item;
 
-                UpdateSelection(true);
-                // Add the actual item to the crafting slot ( 6/3/2019 6:32pm )
-                
-                _crafter.AddItem(_item);
-            } else if (_selected) {
-                UpdateSelection(false);
-                _crafter.RemoveItem(_item);
-            }
+        if (_crafter.itemAmt < 2 && !_selected) {
+            _crafter.itemAmt++;
+
+            UpdateSelection(true);
+            // Add the actual item to the crafting slot ( 6/3/2019 6:32pm )
+            
+            _crafter.AddItem(item);
+        } else if (_selected) {
+            UpdateSelection(false);
+            _crafter.RemoveItem(item);
         }
     }
 
@@ -52,7 +54,8 @@ public class ItemSelect : MonoBehaviour, IPointerClickHandler {
 
     void Start() {
         _selected = false;
-        _crafter = Crafter.instance;
+
+        _crafter = FindObjectOfType<Crafter>();
     }
 
     // Updates the selected status of the item ( 5/4/2020 2:58pm )

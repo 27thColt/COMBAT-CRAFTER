@@ -10,6 +10,16 @@ using UnityEngine;
 */
 [System.Serializable]
 public abstract class BattleState {
+    protected BattleManager _battleManager = null;
+    protected WaveManager _waveManager = null;
+    protected Crafter _crafter = null;
+
+    public BattleState(BattleManager battleManager, WaveManager waveManager, Crafter crafter) {
+        _battleManager = battleManager;
+        _waveManager = waveManager;
+        _crafter = crafter;
+
+    }
     // Code for when the state starts ( 7/28/2020 2:18pm )
     virtual public void Start(EventParams eventParams) {
 

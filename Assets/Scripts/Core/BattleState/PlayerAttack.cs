@@ -10,6 +10,10 @@ using static BattleLogic;
 public class PlayerAttack : BattleState {
     private System.Random _rnd = new System.Random();
 
+    public PlayerAttack(BattleManager battleManager, WaveManager waveManager, Crafter crafter) : base (battleManager, waveManager, crafter) {
+        if (_waveManager == null) Debug.Log("Wave Manager game object cannot be found");
+    }
+
     override public void Start(EventParams eventParams) {
         Debug.Log("PLAYER ATTACK STATE INITIALIZED");
 
@@ -21,8 +25,8 @@ public class PlayerAttack : BattleState {
     }
 
     override public void End(EventParams eventParams, string stateName) {
-        if (WaveManager.instance.enemyList.Count > 0) {
-            BattleStateMachine.SetCurrentBState(new EnemyAttack());
+        if (_waveManager.enemyList.Count > 0) {
+            BattleStateMachine.SetCurrentBState(new EnemyAttack(_battleManager, _waveManager, _crafter));
 
         } else {
             // Fires if all enemies in the wavee have been defeated ( 5/1/2020 5:29pm )

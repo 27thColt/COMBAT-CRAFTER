@@ -19,8 +19,6 @@ public class CancelCraftButton : MonoBehaviour {
 
 
     public void OnCancelCraftButton() {
-        BattleStateMachine.SetCurrentBState(new PlayerCraft(), new EventParams("UNCRAFT"));
-        
         EventManager.TriggerEvent("CancelCraft", new EventParams());
         DeactivateButton();
     }

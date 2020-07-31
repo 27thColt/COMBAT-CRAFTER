@@ -43,7 +43,13 @@ public class LevelManager : MonoBehaviour {
         
 
         LoadLevel();
-        SetCurrentLState(new LevelBattle());
+        SetCurrentLState(new LevelExplore());
+    }
+
+    void Update() {
+        if (Input.GetKeyUp(KeyCode.Space)) {
+            currentLState.End(new EventParams(), "Explore or Battle");
+        }
     }
 
     private void LoadLevel() {
@@ -66,10 +72,6 @@ public class LevelManager : MonoBehaviour {
         } else {
             Debug.LogError("Event Params of non-null room param expected.");
         }
-    }
-
-    private void On_LStateChange(EventParams eventParams) {
-
     }
 
     public void SetCurrentRoom(Room room) {

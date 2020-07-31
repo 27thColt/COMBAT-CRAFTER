@@ -242,7 +242,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &131053791
 GameObject:
@@ -559,7 +559,7 @@ RectTransform:
   - {fileID: 670287916}
   - {fileID: 654190510}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -710,9 +710,9 @@ RectTransform:
   m_Father: {fileID: 654190510}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -4.19, y: 3.13}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -228, y: 3.13}
   m_SizeDelta: {x: 414.1093, y: 170.45616}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &411067570
@@ -875,7 +875,7 @@ Transform:
   m_Children:
   - {fileID: 812367084}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &421622163
 GameObject:
@@ -992,7 +992,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &491190745
 GameObject:
@@ -1483,7 +1483,7 @@ Transform:
   m_LocalScale: {x: 4, y: 4, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &654190509
 GameObject:
@@ -1520,8 +1520,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -230, y: 109.86}
-  m_SizeDelta: {x: 445.17688, y: 197.91528}
+  m_AnchoredPosition: {x: -233.24, y: 108.2}
+  m_SizeDelta: {x: 445.1769, y: 201.24078}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &654190512
 MonoBehaviour:
@@ -2394,6 +2394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e98b7bfc4468d14a9f8198b8f007517, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  craftingEnabled: 0
   recipeList: []
   itemAmt: 0
 --- !u!1 &941295290
@@ -2531,7 +2532,7 @@ Transform:
   m_Children:
   - {fileID: 1185543537}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &1037123550 stripped
 GameObject:
@@ -3563,6 +3564,7 @@ MonoBehaviour:
   currentRoom:
     position: {x: 0, y: 0}
     displacement: 0
+    known: 0
 --- !u!4 &1490013086
 Transform:
   m_ObjectHideFlags: 0
@@ -4709,7 +4711,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8287572b598884743918058c68cd2800, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerObj: {fileID: 0}
+  attackingItem:
+    itemType: {fileID: 0}
+    number: 0
+    UID: 0
+    atk: 0
+  defendingEnemy: {fileID: 0}
+  _waveManager: {fileID: 941295291}
+  _crafter: {fileID: 917681442}
 --- !u!4 &1978903096
 Transform:
   m_ObjectHideFlags: 0
@@ -4738,7 +4747,7 @@ GameObject:
   - component: {fileID: 2083739033}
   - component: {fileID: 2083739032}
   m_Layer: 5
-  m_Name: Inventory Window
+  m_Name: Inventory Panel
   m_TagString: InventoryWindow
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4844,36 +4853,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &2084063561
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2084063562}
-  m_Layer: 0
-  m_Name: Dungeon Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2084063562
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2084063561}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 787.8243, y: 101.678665, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &7255053338316752164
 PrefabInstance:
   m_ObjectHideFlags: 0

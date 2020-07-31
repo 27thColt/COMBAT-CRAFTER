@@ -12,26 +12,6 @@ using static BattleStateMachine;
  * This script initialize everything; ever since the fall of Mr. GameStateManager (rip) ( 12/27/2019 4:00pm )
  */ 
 public class WaveManager : MonoBehaviour {
-    #region Singleton
-
-    private static WaveManager _waveManager;
-
-    public static WaveManager instance {
-        get {
-            if (!_waveManager) {
-                _waveManager = FindObjectOfType(typeof(WaveManager)) as WaveManager;
-
-                if (!_waveManager) {
-                    Debug.LogError("There needs to be one active WaveManager script on a GameObject in your scene.");
-                }
-            }
-
-            return _waveManager;
-        }
-    }
-    
-    #endregion
-
     public EnemyWave[] waveList;
     public int currentWave;
     public EnemyWave loadedWave; // loadedWave is the enemy wave itself of ID currentWave ( 10/28/2019 2:06pm )

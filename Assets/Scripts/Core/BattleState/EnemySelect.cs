@@ -9,16 +9,20 @@ using UnityEngine;
 */
 
 public class EnemySelect : BattleState {
+    public EnemySelect(BattleManager battleManager, WaveManager waveManager, Crafter crafter) : base (battleManager, waveManager, crafter) {
+        if (_battleManager == null) Debug.LogError("Battle Manager object cannot be found.");
+    }
+
     override public void Start(EventParams eventParams) {
         Debug.Log("ENEMY SELECT STATE INITIALIZED");
     }
 
     override public void End(EventParams eventParams, string stateName) {
         EnemyEntity enemy = eventParams.componentParams as EnemyEntity;
-        BattleManager.instance.SetDefendingEnemy(enemy);
+        _battleManager.SetDefendingEnemy(enemy);
         
-        BattleStateMachine.SetCurrentBState(new PlayerAttack(), new EventParams() {
-            itemParam = BattleManager.instance.attackingItem,
+        BattleStateMachine.SetCurrentBState(new PlayerAttack(_battleManager, _waveManager, _crafter), new EventParams() {
+            itemParam = _battleManager.attackingItem,
             enemyTypeParam1 = enemy.enemyType
         });
     }

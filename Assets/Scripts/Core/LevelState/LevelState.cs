@@ -9,6 +9,7 @@ using UnityEngine;
     Each level state is now it's own class, inherited from this one.
     And with that, all of the primary logic needed for each class will be contained in them
 */
+[System.Serializable]
 public abstract class LevelState {
     virtual public void Start(EventParams eventParams) {
 
