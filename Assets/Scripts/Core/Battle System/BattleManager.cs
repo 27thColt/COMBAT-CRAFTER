@@ -33,7 +33,6 @@ public class BattleManager : MonoBehaviour {
 
     #region Awake
     void Awake() {
-        EventManager.StartListening("LStateChange", On_LStateChange);
         EventManager.StartListening("BStateChange", On_BStateChange);
         EventManager.StartListening("CancelCraft", On_CancelCraft);
     }
@@ -41,13 +40,13 @@ public class BattleManager : MonoBehaviour {
     #endregion
 
     private void OnDestroy() {
-        EventManager.StopListening("LStateChange", On_LStateChange);
         EventManager.StopListening("BStateChange", On_BStateChange);
         EventManager.StopListening("CancelCraft", On_CancelCraft);
     }
 
     private void Start() {
-
+        if (currentLState is LevelBattle)
+            SetCurrentBState(new LoadWave(GetComponent<BattleManager>(), _waveManager, _crafter));
     }
 
     #region Functions
@@ -68,11 +67,6 @@ public class BattleManager : MonoBehaviour {
     #endregion
     
     #region Event Listeners
-
-    private void On_LStateChange(EventParams eventParams) {
-        if (currentLState is LevelBattle)
-            SetCurrentBState(new LoadWave(GetComponent<BattleManager>(), _waveManager, _crafter));
-    }
 
     private void On_BStateChange(EventParams eventParams) {
         if (currentBState is null)

@@ -35,6 +35,12 @@ public class EventManager : MonoBehaviour {
 
     private Dictionary<string, Action<EventParams>> _eventDictionary;
 
+    void Awake() {
+        DontDestroyOnLoad(gameObject);
+    }
+
+    #region Functions
+
     // Creates the event dictionary ( 5/6/2020 7:51pm )
     void Init() {
         if (_eventDictionary == null) {
@@ -64,6 +70,8 @@ public class EventManager : MonoBehaviour {
             _thisEvent.Invoke(eventParams);
         }
     }
+    
+    #endregion
 }
 
 /* 5/6/2020 7:49pm - EventParams Struct
@@ -75,51 +83,63 @@ public class EventParams {
         // sets everything to default (null) ( 5/7/2020 10:56am )
     }
 
+    #region Special Objects
+
     public Room roomParam = null;
 
-    public EventParams(Room _roomParam) {
-        roomParam = _roomParam;
+    public EventParams(Room roomParam) {
+        this.roomParam = roomParam;
     }
 
     public ItemType itemTypeParam1, itemTypeParam2 = null;
 
-    public EventParams(ItemType _itemTypeParam1, ItemType _itemTypeParam2 = null) {
-        itemTypeParam1 = _itemTypeParam1;
-        itemTypeParam2 = _itemTypeParam2;
+    public EventParams(ItemType itemTypeParam1, ItemType itemTypeParam2 = null) {
+        this.itemTypeParam1 = itemTypeParam1;
+        this.itemTypeParam2 = itemTypeParam2;
     }
 
     public Item itemParam = null;
 
-    public EventParams(Item _itemParams) {
-        itemParam = _itemParams;
-    }
-
-    public int intParam1 = 0;
-
-    public EventParams(int _intParam1) {
-        intParam1 = _intParam1;
+    public EventParams(Item itemParam) {
+        this.itemParam = itemParam;
     }
 
     public EnemyType enemyTypeParam1 = null;
 
-    public EventParams(EnemyType _enemyTypeParam1) {
-        enemyTypeParam1 = _enemyTypeParam1;
+    public EventParams(EnemyType enemyTypeParam1) {
+        this.enemyTypeParam1 = enemyTypeParam1;
     }
 
-    public String stringParam1 = null;
+    #endregion
 
-    public EventParams(String _stringParam1) {
-        stringParam1 = _stringParam1;
+    #region Basic Variable Types
+
+    public int intParam1 = 0;
+    public int intParam2 = 0;
+    public int intParam3 = 0;
+ 
+    public EventParams(int intParam1, int intParam2 = 0, int intParam3 = 0) {
+        this.intParam1 = intParam1;
+        this.intParam2 = intParam2;
+        this.intParam3 = intParam3;
+    }
+
+    public String stringParam = null;
+
+    public EventParams(String stringParam) {
+        this.stringParam = stringParam;
     }
     
     public bool boolParam = false;
 
-    public EventParams(bool _boolParam) {
-        boolParam = _boolParam;
+    public EventParams(bool boolParam) {
+        this.boolParam = boolParam;
     }
     public MonoBehaviour componentParams = null;
 
-    public EventParams(MonoBehaviour _componentParams) {
-        componentParams = _componentParams;
+    public EventParams(MonoBehaviour componentParams) {
+        this.componentParams = componentParams;
     }
+
+    #endregion
 } 

@@ -32,6 +32,10 @@ public class EnemyInventory : MonoBehaviour {
 
     public List<EnemyDefinition> enemyInventory = new List<EnemyDefinition>();
 
+    void Awake() {
+        DontDestroyOnLoad(gameObject);
+    }
+    
     public void LoadEnemyDefs() {
         if (IO_EnemyInv.LoadEnemyInv() != null) {
             enemyInventory = IO_EnemyInv.LoadEnemyInv();

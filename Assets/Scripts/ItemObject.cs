@@ -26,14 +26,14 @@ public class ItemObject : MonoBehaviour {
 
     #endregion
 
-    public void SetItem(Item _item) {
-        item = _item;
-        _textMesh.text = _item.itemType.itemName;
-        _displayImage.sprite = _item.itemType.sprite;
+    public void SetItem(Item item) {
+        this.item = item;
+        _textMesh.text = item.itemType.itemName;
+        _displayImage.sprite = item.itemType.sprite;
 
         // Weapon Item Clause ( 5/11/2020 1:33pm )
-        if (_item is Weapon) {
-            Weapon _weapon = _item as Weapon;
+        if (item is Weapon) {
+            Weapon _weapon = item as Weapon;
             
             _number.gameObject.SetActive(false);
 
@@ -42,13 +42,13 @@ public class ItemObject : MonoBehaviour {
 
             _durabilityBar.fillAmount = (float) _weapon.currentDurability / (float)_weapon.maxDurability;
         // Generic Item Clause ( 5/11/2020 1:33pm )
-        } else if (_item is Potion) { 
+        } else if (item is Potion) { 
             _number.gameObject.SetActive(false);
 
             _durabilityBar.gameObject.SetActive(false);
             _durabilityBG.gameObject.SetActive(false);
         } else {
-            _number.text = _item.number.ToString();
+            _number.text = item.number.ToString();
 
             _durabilityBar.gameObject.SetActive(false);
             _durabilityBG.gameObject.SetActive(false);
@@ -56,13 +56,14 @@ public class ItemObject : MonoBehaviour {
         
     }
 
-    public void UpdateItemInfo(Item _item) {
-        item = _item;
-        _number.text = _item.number.ToString();
+    public void UpdateItemInfo(Item item) {
+        this.item = item;
+        _number.text = item.number.ToString();
 
-        if (_item is Weapon) {
-            Weapon _weapon = _item as Weapon;
-            _durabilityBar.fillAmount = (float) _weapon.currentDurability / (float)_weapon.maxDurability;
+        if (item is Weapon) {
+            Weapon weapon = item as Weapon;
+            
+            _durabilityBar.fillAmount = (float) weapon.currentDurability / (float)weapon.maxDurability;
         }
     }
 

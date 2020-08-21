@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static LevelStateMachine;
 
 public class LevelManager : MonoBehaviour {
@@ -24,53 +25,58 @@ public class LevelManager : MonoBehaviour {
 
     #endregion
 
-
-    [SerializeField]
-    private PlayerEntity _playerObj;
+    [SerializeField] private bool _levelGenerated = false; // Will be assigned true once the level has been generated. Workaround for Start() and OnSceneLoaded not being consistent)
     public Room currentRoom;
     public Level currentLevel;
 
+    // THE FOLLOWING CODE WILL INITIATE THE ENTIRE GAME LOOP PROPER ( 7/31/2020 1:18pm )
     void Awake() {
+        DontDestroyOnLoad(gameObject);
+
         EventManager.StartListening("RoomSelect", On_RoomSelect);
+        SceneManager.sceneLoaded += On_SceneLoaded; 
     }
+
 
     void OnDestroy() {
         EventManager.StopListening("RoomSelect", On_RoomSelect);
+        SceneManager.sceneLoaded -= On_SceneLoaded;
     }
 
-    void Start() {
-        _playerObj = FindObjectOfType<PlayerEntity>();
-        
+    #region Functions
 
+    public void Init() {
         LoadLevel();
-        SetCurrentLState(new LevelExplore());
-    }
-
-    void Update() {
-        if (Input.GetKeyUp(KeyCode.Space)) {
-            currentLState.End(new EventParams(), "Explore or Battle");
-        }
+        
+        currentRoom = currentLevel.ReturnStartRoom();
+        
+        currentRoom.known = true;
+        currentLevel.rooms[currentRoom.position.x, currentRoom.position.y].known = true;
     }
 
     private void LoadLevel() {
+        Debug.Log("Generating Rooms.");
         currentLevel = new Level(10, 10, 7);
         currentLevel.GenerateRooms();
-
-        MapDrawer.instance.DrawMap(currentLevel);
-
-        SetCurrentRoom(currentLevel.ReturnStartRoom());
     }
+
+    #endregion
 
     #region Event Listeners
 
-    private void On_RoomSelect(EventParams eventParams) {
-        if (eventParams.roomParam != null) {
-            if (eventParams.roomParam != currentRoom && currentRoom.IsAdjacentTo(eventParams.roomParam.position)) { 
-                SetCurrentRoom(eventParams.roomParam);
-            }
+    private void On_SceneLoaded(Scene scene, LoadSceneMode sceneMode) {
+        if (currentLevel == null) return;
 
-        } else {
-            Debug.LogError("Event Params of non-null room param expected.");
+        MapDrawer.instance.DrawMap(currentLevel);
+        EventManager.TriggerEvent("SetCurrentRoom", new EventParams(currentRoom)); 
+    }
+
+    private void On_RoomSelect(EventParams eventParams) {
+        if (eventParams.roomParam == null) { Debug.LogError("Event Params of non-null room param expected."); return; }
+
+        if (eventParams.roomParam != currentRoom && currentRoom.IsAdjacentTo(eventParams.roomParam.position)) { 
+            SetCurrentRoom(eventParams.roomParam);
+            currentLState.End(new EventParams(), "LevelExplore");
         }
     }
 

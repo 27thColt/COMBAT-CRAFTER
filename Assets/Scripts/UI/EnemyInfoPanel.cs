@@ -10,14 +10,11 @@ using TMPro;
 
 */
 public class EnemyInfoPanel : MonoBehaviour {
-    [SerializeField]
-    private TextMeshProUGUI _nameText = null;
+    [SerializeField] private TextMeshProUGUI _nameText = null;
 
-    [SerializeField]
-    private GameObject _iconsGrid = null;
+    [SerializeField] private GameObject _iconsGrid = null;
 
-    [SerializeField]
-    private GameObject _iconPrefab = null;
+    [SerializeField] private GameObject _iconPrefab = null;
 
     public GameObject hpBar = null; // Referenced through Unity Editor ( 5/9/2020 3:58pm )
     private bool _autoDisable = true; // Will automatically disable the panel if set to true ( 5/10/2020 1:44pm )
@@ -27,6 +24,8 @@ public class EnemyInfoPanel : MonoBehaviour {
     // Positions for when the enemy info panel is enabled and disabled ( 5/10/2020 5:02pm )
     private Vector2 _onPos = new Vector2(-140.5f, -77.29f);
     private Vector2 _offPos = new Vector2(142, -77.29f);
+
+    #region Unity Functions
 
     void Awake() {
         EventManager.StartListening("EnemySelect", On_EnemySelect);
@@ -44,7 +43,10 @@ public class EnemyInfoPanel : MonoBehaviour {
         EventManager.StopListening("EnemyDefendAnimEnd", On_EnemyDefendAnimEnd);
     }
 
+    #endregion
     
+    #region Functions
+ 
     private void SetInfo(EnemyEntity _enemy) {
         _nameText.text = _enemy.enemyType.enemyName;
         hpBar = GetComponentInChildren<HPBar>().gameObject;
@@ -69,13 +71,14 @@ public class EnemyInfoPanel : MonoBehaviour {
         gameObject.GetComponent<RectTransform>().anchoredPosition = _offPos;
     }
 
+    #endregion
+
     #region Event Listeners
 
     private void On_EnemySelect(EventParams eventParams) {
         if (eventParams.componentParams == null) { Debug.LogError("Eventparams containing non-null componentParams expected!"); return; }
 
         if (!(eventParams.componentParams is EnemyEntity)) return;
-
 
         if (!gameObject.activeSelf) {
             SetInfo(eventParams.componentParams as EnemyEntity);

@@ -9,6 +9,7 @@ using UnityEngine;
     5/11/2020 1:22pm - Honestly really dont feel like my current method for implementing this Weapon subclass is efficient so yeah
 
 */
+[System.Serializable]
 public class Weapon : Item {
     public WeaponType weaponType;
     public int maxDurability;

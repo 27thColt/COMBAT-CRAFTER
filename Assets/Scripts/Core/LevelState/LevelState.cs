@@ -11,6 +11,12 @@ using UnityEngine;
 */
 [System.Serializable]
 public abstract class LevelState {
+    protected LevelManager _levelManager;
+
+    public LevelState(LevelManager _levelManager = null) {
+        this._levelManager = _levelManager;
+    }
+
     virtual public void Start(EventParams eventParams) {
 
     }

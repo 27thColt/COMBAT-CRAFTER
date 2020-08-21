@@ -8,44 +8,38 @@ using UnityEngine.UI;
  * 
  */
 public class HPBar : MonoBehaviour {
-    [SerializeField]
-    private Image _hpBar = null;
+    [SerializeField] private Image _hpBar = null;
 
     // The following are sprites referenced in the editor ( 5/13/2020 5:50pm )
-    [SerializeField]
-    private Sprite _full = null;
-    [SerializeField]
-    private Sprite _damaged = null;
-    [SerializeField]
-    private Sprite _critical = null;
+    [SerializeField] private Sprite _full = null;
+    [SerializeField] private Sprite _damaged = null;
+    [SerializeField] private Sprite _critical = null;
 
+    #region Functions
 
     // Sets the focused object ( 4/27/2020 2:02pm )
-    public void SetObject(GameObject _obj) {
-        // Error if the object does not contain a component which implements IHealthPoints ( 4/27/2020 1:55pm )
-        if (_obj.GetComponent(typeof(IHealthPoints)) != null) {
-            IHealthPoints _health = _obj.GetComponent(typeof(IHealthPoints)) as IHealthPoints;
+    public void SetObject(GameObject obj) {
+        if (obj.GetComponent(typeof(IHealthPoints)) == null) { Debug.LogError(obj.name + " does not implement IHealthPoints!"); return; }
 
-             _hpBar.fillAmount = (float)_health.CurrentHP / (float)_health.MaxHP;
+        IHealthPoints health = obj.GetComponent(typeof(IHealthPoints)) as IHealthPoints;
 
-            UpdateBarGraphic();
+        _hpBar.fillAmount = (float)health.CurrentHP / (float)health.MaxHP;
+
+        UpdateBarGraphic();
             
-        } else {
-            Debug.LogError(_obj.name + " does not implement IHealthPoints!");
-        }
     }
 
     // Coroutine which animates the HP Bar ( 5/9/2020 3:31pm )
-    public IEnumerator AnimateDamage(int _maxHP, int _startHP, int _endHP) {
-        int _currentHP = _startHP;
+    public IEnumerator AnimateDamage(int maxHP, int startHP, int endHP) {
+        int currentHP = startHP;
 
         yield return new WaitForSeconds(0.4f);
 
-        if (_currentHP > _endHP) {
-            while (_currentHP > _endHP) {
+        if (currentHP > endHP) {
+            while (currentHP > endHP) {
                 
-                _currentHP -= 1;
-                _hpBar.fillAmount = (float)_currentHP / _maxHP;    
+                currentHP -= 1;
+                _hpBar.fillAmount = (float)currentHP / maxHP;    
 
                 UpdateBarGraphic();
 
@@ -53,11 +47,11 @@ public class HPBar : MonoBehaviour {
             }
 
         // In the case that the player is healing ( 5/14/2020 3:49pm )
-        } else if (_currentHP < _endHP) {
-            while (_currentHP < _endHP) {
+        } else if (currentHP < endHP) {
+            while (currentHP < endHP) {
                 
-                _currentHP += 1;
-                _hpBar.fillAmount = (float)_currentHP / _maxHP;    
+                currentHP += 1;
+                _hpBar.fillAmount = (float)currentHP / maxHP;    
 
                 UpdateBarGraphic();
 
@@ -81,4 +75,6 @@ public class HPBar : MonoBehaviour {
             _hpBar.sprite = _critical;
         }
     }
+
+    #endregion
 }

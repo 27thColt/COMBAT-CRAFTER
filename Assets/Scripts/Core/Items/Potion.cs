@@ -7,6 +7,7 @@ using UnityEngine;
 
 
 */
+[System.Serializable]
 public class Potion : Item {
     public PotionType potionType;
 
@@ -15,7 +16,8 @@ public class Potion : Item {
     }
 
     override public void AddInstance(int _amt = 1) {
-        Debug.LogError(potionType.itemName + " is not stackable!");
+        // Potions are not stackable ( 8/1/2020 2:34pm )
+        // Debug.LogError(potionType.itemName + " is not stackable!");
     }
 
     override public bool RemoveInstance(int _amt = 1) {

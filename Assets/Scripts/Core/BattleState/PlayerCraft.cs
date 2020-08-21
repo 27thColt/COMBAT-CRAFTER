@@ -18,7 +18,7 @@ public class PlayerCraft : BattleState {
 
         if (_crafter == null) { Debug.Log("Crafter Gameobject cannot be found. Stoppping at PlayerCraft state."); return; }
 
-        if (eventParams.stringParam1 == "UNCRAFT") {
+        if (eventParams.stringParam == "UNCRAFT") {
             _crafter.UncraftItems();
         }
 
@@ -30,11 +30,7 @@ public class PlayerCraft : BattleState {
     override public void End(EventParams eventParams, string stateName) {
         if (eventParams.itemParam == null) { Debug.LogError("No ItemParam passed. Pausing at PlayerCraft State."); return;}
 
-        _crafter.craftingEnabled = false;
-
         _battleManager.SetAttackingItem(eventParams.itemParam);
-
-        Debug.Log("PlayerCraft: " + eventParams.itemParam.itemType.itemName);
 
         if (eventParams.itemParam is Potion) {
             BattleStateMachine.SetCurrentBState(new PlayerAttack(_battleManager, _waveManager, _crafter), eventParams);

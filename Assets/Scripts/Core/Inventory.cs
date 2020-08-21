@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /* 5/30/2019 7:55pm - Inventory script
@@ -37,14 +38,25 @@ public class Inventory : MonoBehaviour {
     public List<ItemType> startingInv; // ngl im not sure if I could've done without this but thsi straight from brackeys ( 5/30/2019 9:06pm )
     // Starting item list should be explicitly stated
 
-    void Start() {
-        LoadItems();
+    void Awake() {
+        DontDestroyOnLoad(gameObject);
+
+        SceneManager.sceneLoaded += On_SceneLoaded;
+    }
+
+    void OnDestroy() {
+        SceneManager.sceneLoaded -= On_SceneLoaded;
     }
 
     #region Functions
 
+    // Initializes everything. Called in LevelLoad ( 8/5/2020 7:50pm )
+    public void Init() {
+        LoadInventory();
+    }
+
     // Will Load all of the items from a File onto the actual inventory ( 12/29/2019 1:33pm )
-    public void LoadItems() {
+    public void LoadInventory() {
         Debug.Log("Loading Items");
         if (IO_Inventory.LoadInventory() != null) {
             List<Item> _itemList = IO_Inventory.LoadInventory();
@@ -58,51 +70,78 @@ public class Inventory : MonoBehaviour {
         }
     }
 
-    public void AddItem(Item _item) {
+    public void AddItem(Item item) {
         // Will create the list if it does not exist ( 5/4/2020 7:46pm )
         if (itemInv == null) itemInv = new List<Item>(); 
 
         // Check through the inventory and if Item does exist in list and will add one to it ( 5/4/2020 5:56pm )
-        foreach (Item item in itemInv) {
-            if (item.itemType == _item.itemType && item.UID == _item.UID) {
-                Debug.Log("Adding " + _item.number + " to " + _item.itemType.itemName + " in inventory. UID: " + _item.UID);
+        foreach (Item jtem in itemInv) {
+            if (jtem.itemType == item.itemType && jtem.UID == item.UID) {
+                // Debug.Log("Adding " + item.number + " to " + item.itemType.itemName + " in inventory. UID: " + item.UID);
 
-                item.AddInstance();
-                ReturnItemFromList(_item).GetComponent<ItemObject>().UpdateItemInfo(_item);
+                jtem.AddInstance();
+                //ReturnItemFromList(item).GetComponent<ItemObject>().UpdateItemInfo(item);
                 
                 return;
             }
         }
         
         // Item does not exist and will create a new instance in the list ( 5/4/2020 5:56pm )
-        Debug.Log("Creating " + _item.number + " " + _item.itemType.itemName + ". UID: " + _item.UID);
+        // Debug.Log("Creating " + item.number + " " + item.itemType.itemName + ". UID: " + item.UID);
 
-        itemInv.Add(_item);
-        CreateItemObj(_item);
+        itemInv.Add(item);
+        //CreateItemObj(item);
 
         return;
               
     }
 
-    public void RemoveItem(Item _item) {
+    // Will return true if the item was deleted, will return false if not ( or if it didn't exist at all ) ( 8/1/2020 4:36pm )
+    public bool RemoveItem(Item _item) {
         for (int i = 0; i < itemInv.Count; i++) {
             if (itemInv[i].UID == _item.UID && itemInv[i].itemType == _item.itemType) {
                 // Clause for when there are still more instance of the item being usable ( 5/11/2020 2:52pm )
                 if (itemInv[i].RemoveInstance()) {
                     ReturnItemFromList(_item).GetComponent<ItemObject>().UpdateItemInfo(itemInv[i]);
 
+                    return false;
+
                 // Clause for when the item can no longer be used and must be destroyed ( 5/11/2020 2:52pm )
                 } else {        
                     Destroy(ReturnItemFromList(_item));
                     itemInv.Remove(itemInv[i]);
+
+                    return true;
                 }
             }
         }
+
+        Debug.LogError("Item does not exist in the inventory. Cannot remove");
+
+        return false;
     }
 
-    public bool HasItem(ItemType _itemType) {
+    public void RenderInventory() {
+        Debug.Log("Rendering Inventory");
+
+        foreach (Item item in itemInv) {
+            
+            if (ReturnItemFromList(item) != null && ReturnItemFromList(item).GetComponent<ItemObject>().item.UID == item.UID) {
+                ReturnItemFromList(item).GetComponent<ItemObject>().UpdateItemInfo(item);
+                
+            } else {
+                CreateItemObj(item);
+            }   
+               
+        }
+    
+        return;
+        
+    }
+
+    public bool HasItem(Item item) {
         foreach (Item _item in itemInv) {
-            if (_item.itemType == _itemType)
+            if (_item.itemType == item.itemType && _item.UID == item.UID)
                 return true;
         }
 
@@ -133,35 +172,32 @@ public class Inventory : MonoBehaviour {
 
     // Returns the array of ItemObjs in the inventory Panel ( 5/5/2020 10:45am )
     public static List<GameObject> ReturnItemObjArray() {
-        try {
-            List<GameObject> _list = new List<GameObject>(); 
+        GameObject inventoryWindow = GameObject.FindGameObjectWithTag("InventoryWindow");
+;
+        List<GameObject> list = new List<GameObject>(); 
 
-            foreach (Transform _child in GameObject.FindGameObjectWithTag("InventoryWindow").GetComponentInChildren<GridLayoutGroup>().gameObject.transform) {
-                if (_child.gameObject.GetComponent<ItemObject>() != null) {
-                    _list.Add(_child.gameObject);
-                }
-            }
-
-            return _list;
-        } catch {
-            Debug.Log("Object with 'InventoryWindow' tag does not exist!");
-
-            return null;
+        foreach (Transform child in inventoryWindow.GetComponentInChildren<GridLayoutGroup>().gameObject.transform) {
+            if (child.gameObject.GetComponent<ItemObject>() != null) {
+                list.Add(child.gameObject);
+            }   
         }
+
+        return list;
     }
 
     // Returns the specific item object from the array ( 5/5/2020 10:47pm )
-    public static GameObject ReturnItemFromList(Item _item) {
-        List<GameObject> _list = ReturnItemObjArray();
+    public static GameObject ReturnItemFromList(Item item) {
+        List<GameObject> list = ReturnItemObjArray();
 
-        foreach (GameObject _listItem in _list) {
-            if (_listItem.GetComponent<ItemObject>().item.itemType == _item.itemType) {
-                if (_listItem.GetComponent<ItemObject>().item.UID == _item.UID) {
-                    return _listItem;
+        foreach (GameObject listItem in list) {
+            if (listItem.GetComponent<ItemObject>().item.itemType == item.itemType) {
+                if (listItem.GetComponent<ItemObject>().item.UID == item.UID) {
+                    return listItem;
                 }
-                Debug.Log(_listItem.GetComponent<ItemObject>().item.itemType.itemName + " found but with different UID ( " + _listItem.GetComponent<ItemObject>().item.UID + " ). Input UID of " + _item.UID);
+                // Debug.Log(listItem.GetComponent<ItemObject>().item.itemType.itemName + " found but with different UID ( " + listItem.GetComponent<ItemObject>().item.UID + " ). Input UID of " + item.UID);
             }
         }
+
 
         return null;
     }
@@ -185,4 +221,12 @@ public class Inventory : MonoBehaviour {
 
     #endregion
 
+    #region Event Listeners
+
+    private void On_SceneLoaded(Scene scene, LoadSceneMode sceneMode) {
+        if (GameObject.FindGameObjectWithTag("InventoryWindow") != null)
+            RenderInventory();
+    }
+
+    #endregion
 }

@@ -107,14 +107,22 @@ public class Crafter : MonoBehaviour {
 
     public void UncraftItems() {
         foreach (Item _item in craftingSlots) {
-            Inventory.instance.AddItem(_item);
+            if (Inventory.instance.HasItem(_item)) {   
+                Inventory.instance.AddItem(_item);
+            } else {
+                if (_item is Weapon)
+                    Inventory.instance.AddItem(new Weapon(_item.itemType, _item.UID, 1, 1));
+                else
+                    Inventory.instance.AddItem(new Item(_item.itemType, _item.UID));    
+            }
         }
 
+        Inventory.instance.RenderInventory();
         print(_resultItem.itemType.itemName + " uncrafted.");
     }
 
     // If an item may be added to the inventory (aka, added to the inventory, not consumed immediately), it will ( 7/28/2020 10:20pm )
-    public void CraftResultItem() {
+    public void PerformItemFunction() {
         if (!craftingSlots.Contains(_resultItem)) {
             _resultItem.OnCraft();
         }
@@ -126,15 +134,17 @@ public class Crafter : MonoBehaviour {
 
     // Will be called uppon button press of the crafter button-- referenced through unity on the button component ( 12/27/2019 11:49am )
     public void OnCrafterButtonPressed() {
-        //EventManager.TriggerEvent("ItemCraft", new EventParams(_resultItem));
 
         foreach (Item _item in craftingSlots) {
             Inventory.instance.RemoveItem(_item);
         }
 
         print(_resultItem.itemType.itemName + " Crafted");
+        PerformItemFunction();
+        Inventory.instance.RenderInventory();
 
-        Debug.Log("Crafter: " + _resultItem.itemType.itemName);
+        craftingEnabled = false;
+        
 
         // END OF PlayerCraft Battle State ( 7/28/2020 9:24pm )
         BattleStateMachine.currentBState.End(new EventParams(_resultItem), "PlayerCraft");
@@ -146,11 +156,10 @@ public class Crafter : MonoBehaviour {
 
     // Will set the result item whenever it is updated ( 12/27/2019 12:49pm )
     private void On_ResultUpdate(EventParams eventParams) {
-        if (eventParams.itemParam != null) {
+        if (eventParams.itemParam != null)
             _resultItem = eventParams.itemParam;
-        } else {
+        else
             _resultItem = null;
-        }
     }
 
     #endregion

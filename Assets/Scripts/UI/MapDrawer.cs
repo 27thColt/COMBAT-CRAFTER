@@ -188,6 +188,8 @@ public class MapDrawer : MonoBehaviour {
             return;
         }
 
+        Debug.Log("Rendering Map.");
+
         RectTransform RT = GetComponent<RectTransform>();
         RectTransform parentRT = transform.parent.gameObject.GetComponent<RectTransform>();
 
@@ -231,13 +233,10 @@ public class MapDrawer : MonoBehaviour {
     }
 
     private void On_SetCurentRoom(EventParams eventParams) {
-        if (eventParams.roomParam != null) {
+        if (eventParams.roomParam == null) { Debug.LogError("Eventparams with non-null room param expected."); return; }
 
-            _selectedVector = eventParams.roomParam.position;
-            _tileHighlight.GetComponent<RectTransform>().anchoredPosition = ReturnPositionOnMap(_selectedVector.x, _selectedVector.y, LevelManager.instance.currentLevel);
-        } else {
-            Debug.LogError("Eventparams with non-null room param expected.");
-        }
+        _selectedVector = eventParams.roomParam.position;
+        _tileHighlight.GetComponent<RectTransform>().anchoredPosition = ReturnPositionOnMap(_selectedVector.x, _selectedVector.y, LevelManager.instance.currentLevel);
     }
 
 }
