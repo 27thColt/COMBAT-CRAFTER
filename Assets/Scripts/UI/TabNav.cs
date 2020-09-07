@@ -11,6 +11,10 @@ using UnityEngine.Events;
 public class TabNav : MonoBehaviour {
     public List<Tabpanel> tabs;
 
+    void Awake() {
+        EventManager.StartListening("TriggerMessage", On_TriggerMessage);
+    }
+
     void Start() {
         foreach(Tabpanel tp in tabs) {
             tp.button.onClick.AddListener(() => SwitchPanels(tp)); // I keep forgetting this so I would like to remind you. this is called a LAMBDA EXPRESSION ( 8/19/2020 3:57pm )
@@ -18,6 +22,10 @@ public class TabNav : MonoBehaviour {
         }
 
         SwitchPanels(tabs[0]); // Switches to the first panel/button on the list ( 8/19/2020 5:00pm )
+    }
+
+    void OnDestroy() {
+        EventManager.StopListening("TriggerMessage", On_TriggerMessage);
     }
 
     public void SwitchPanels(Tabpanel tabToOpen) {
@@ -29,6 +37,15 @@ public class TabNav : MonoBehaviour {
 
         tabToOpen.ActivatePanel();
     }
+
+    #region Event Listeners
+
+    private void On_TriggerMessage(EventParams eventParams) {
+        if (eventParams.messageParam.forceChat)
+            SwitchPanels(Tabpanel.ReturnTabFromKey(tabs, "log"));
+    }
+
+    #endregion
 }
 
 // Holds a button and a panel which correspond to each other. The button will be used to open the panel ( 8/19/2020 2:54pm )
@@ -37,11 +54,14 @@ public class Tabpanel {
     public Button button;
     public GameObject panel;
 
+    public string key;
+
     public bool isActive = false;
 
-    public Tabpanel(Button button, GameObject panel) {
+    public Tabpanel(Button button, GameObject panel, string key) {
         this.button = button;
         this.panel = panel;
+        this.key = key;
     }
 
     public void ActivatePanel() {
@@ -56,5 +76,16 @@ public class Tabpanel {
 
         panel.SetActive(false);
         button.interactable = true;      
+    }
+
+    public static Tabpanel ReturnTabFromKey(List<Tabpanel> tablist, string key) {
+        foreach (Tabpanel tab in tablist) {
+            if (tab.key == key) {
+                return tab;
+            }
+        }
+
+        Debug.LogError("No such key, " + key + " exists in list of tabs, " + tablist);
+        return null;
     }
 }

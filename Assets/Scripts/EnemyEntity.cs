@@ -165,7 +165,8 @@ public class EnemyEntity : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
             // If the enemy fucking DIED ( 5/1/2020 1:59pm )
             if (CurrentHP <= 0) {
                 _waveManager.enemyList.Remove(GetComponent<EnemyEntity>());
-                Debug.Log("Enemy died at " + Time.time);
+
+                EventManager.TriggerMessage(Message.EnemyDeafeated(enemyType.enemyName));
                 Die();
             }
 
