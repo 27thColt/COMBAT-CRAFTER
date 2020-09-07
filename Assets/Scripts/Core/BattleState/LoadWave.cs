@@ -18,8 +18,9 @@ public class LoadWave : BattleState {
 
         // Following code is in WaveManager.cs ( 7/28/2020 8:35pm )
         _waveManager.LoadWave();
-        
 
+        EventManager.TriggerMessage(Message.EnemyEncounter(_waveManager.loadedWave.enemies[0].enemyName));
+        
         End(new EventParams(), "LoadWave");
     }
 

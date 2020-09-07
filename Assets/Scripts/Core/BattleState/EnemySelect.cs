@@ -21,6 +21,8 @@ public class EnemySelect : BattleState {
         EnemyEntity enemy = eventParams.componentParams as EnemyEntity;
         _battleManager.SetDefendingEnemy(enemy);
         
+        EventManager.TriggerMessage(Message.ItemCraft(_battleManager.attackingItem.itemType.itemName));
+
         BattleStateMachine.SetCurrentBState(new PlayerAttack(_battleManager, _waveManager, _crafter), new EventParams() {
             itemParam = _battleManager.attackingItem,
             enemyTypeParam1 = enemy.enemyType
