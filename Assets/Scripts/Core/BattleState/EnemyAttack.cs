@@ -32,7 +32,7 @@ public class EnemyAttack : BattleState {
 
         int i = _rnd.Next(0, _count);
 
-        Debug.Log("PICKING ENEMY OF " + i);
+        // Debug.Log("PICKING ENEMY OF " + i);
         _waveManager.enemyList[i].SetAttacking(true);
         EventManager.TriggerEvent("EnemyAttack", new EventParams(BattleLogic.CalculateAttackDamage(_waveManager.enemyList[i].enemyType.baseAtk, 1, true, _rnd)));
     }

@@ -27,17 +27,10 @@ public class WaveManager : MonoBehaviour {
     // NOTE: Maximum number of spawnpoints should be 5, thus 5 enemies should only appear at any given moment ( 12/27/2019 10:52am )
     
     private void Awake() {
-        //EventManager.StartListening("BStateChange", On_BStateChange);
-
         waveList = Resources.LoadAll<EnemyWave>("Enemy Waves");
 
         waveList = SortWaveList(waveList);
         currentWave = 0;
-    }
-
-
-    private void OnDestroy() {
-        //EventManager.StopListening("BStateChange", On_BStateChange);
     }
 
     #region Functions
@@ -83,7 +76,7 @@ public class WaveManager : MonoBehaviour {
         loadedWave = waveList[currentWave];
         EnemyInventory.instance.LoadEnemyDefs();
 
-        AddAllEnemiesInWave(waveList[currentWave]);
+        AddAllEnemiesInWave(loadedWave);
     }
 
     #endregion

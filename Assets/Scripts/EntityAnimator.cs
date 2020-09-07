@@ -21,7 +21,7 @@ public static class EntityAnimator {
             _time = 1.0f;
         }
 
-        Debug.Log("Finishing " + _anim.GetCurrentAnimatorClipInfo(0)[0].clip.name + " animation. Waiting for " + _time + " seconds.");
+        // Debug.Log("Finishing " + _anim.GetCurrentAnimatorClipInfo(0)[0].clip.name + " animation. Waiting for " + _time + " seconds.");
         yield return new WaitForSeconds(_time - 0.4f);
 
         _action?.Invoke();

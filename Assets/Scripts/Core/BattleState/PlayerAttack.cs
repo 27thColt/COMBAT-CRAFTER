@@ -30,6 +30,7 @@ public class PlayerAttack : BattleState {
 
         } else {
             // Fires if all enemies in the wavee have been defeated ( 5/1/2020 5:29pm )
+            
             BattleStateMachine.SetCurrentBState(null);
         }
     }
