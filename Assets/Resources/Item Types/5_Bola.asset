@@ -16,5 +16,6 @@ MonoBehaviour:
   ID: 5
   sprite: {fileID: 21300000, guid: 26f1dd5a44bc30c40bb2e513c0f6489d, type: 3}
   baseAtk: 4
+  rarity: 2
   maxDurability: 3
   atkDecayRate: 1
