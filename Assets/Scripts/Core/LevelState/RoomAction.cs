@@ -28,7 +28,25 @@ public class RoomAction : LevelState {
         if (i > 49) {
             LevelStateMachine.SetCurrentLState(new LevelBattle()); 
         } else {
-            LevelStateMachine.SetCurrentLState(new LevelExplore());
+            // Chance for randomly picking up an item in a new room ( 9/7/2020 2:08pm )
+            ItemType itemType = _levelManager.lootTable.GenerateFromTable();
+            
+
+            if (itemType != null) {
+                Item item = Inventory.instance.ReturnItem(itemType);
+
+                if (item == null) {
+                    Inventory.instance.AddItem(new Item(itemType, System.Guid.NewGuid()));
+                } else {
+                    item.AddInstance();
+                }
+               
+                Inventory.instance.RenderInventory();
+                EventManager.TriggerMessage(Message.ItemFound(itemType.itemName));
+            } 
+
+
+            LevelStateMachine.SetCurrentLState(new LevelExplore(_levelManager));
         }
     }
 }

@@ -21,6 +21,6 @@ public class LevelBattle : LevelState {
     }
 
     override public void End(EventParams eventParams, string stateName) {
-        LevelStateMachine.SetCurrentLState(new LevelExplore(), eventParams);
+        LevelStateMachine.SetCurrentLState(new LevelExplore(_levelManager), eventParams);
     }
 }

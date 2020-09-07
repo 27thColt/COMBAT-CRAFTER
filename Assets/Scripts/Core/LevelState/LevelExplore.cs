@@ -18,11 +18,10 @@ public class LevelExplore : LevelState {
 
         if (SceneManager.GetActiveScene().name != "DungeonScene") 
             SceneManager.LoadScene("DungeonScene", LoadSceneMode.Single);
-
     }
 
     override public void End(EventParams eventParams, string stateName) {
-        LevelStateMachine.SetCurrentLState(new RoomAction(), eventParams);
+        LevelStateMachine.SetCurrentLState(new RoomAction(_levelManager), eventParams);
     }
 }
      

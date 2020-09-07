@@ -18,6 +18,6 @@ public class LevelLoad : MonoBehaviour {
         _playerData.Init();
         _levelManager.Init();
         
-        LevelStateMachine.SetCurrentLState(new LevelExplore()); 
+        LevelStateMachine.SetCurrentLState(new LevelExplore(_levelManager)); 
     }
 }
