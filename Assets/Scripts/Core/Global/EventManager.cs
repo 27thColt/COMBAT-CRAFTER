@@ -65,9 +65,20 @@ public class EventManager : MonoBehaviour {
     }
 
     public static void TriggerEvent(string eventName, EventParams eventParams) {
-        Action<EventParams> _thisEvent = null;
-        if (instance._eventDictionary.TryGetValue(eventName, out _thisEvent)) {
-            _thisEvent.Invoke(eventParams);
+        Action<EventParams> thisEvent = null;
+        if (instance._eventDictionary.TryGetValue(eventName, out thisEvent)) {
+            thisEvent.Invoke(eventParams);
+        }
+    }
+
+    // Specific trigger event action meant for messages, for ease of access. Usees the "TriggerMessage" key ( 9/5/2020 5:47pm )
+    public static void TriggerMessage(Message message) {
+        Action <EventParams> thisEvent = null;
+
+        EventParams eventParams = new EventParams(message);
+
+        if (instance._eventDictionary.TryGetValue("TriggerMessage", out thisEvent)) {
+            thisEvent.Invoke(eventParams);
         }
     }
     
@@ -91,13 +102,6 @@ public class EventParams {
         this.roomParam = roomParam;
     }
 
-    public ItemType itemTypeParam1, itemTypeParam2 = null;
-
-    public EventParams(ItemType itemTypeParam1, ItemType itemTypeParam2 = null) {
-        this.itemTypeParam1 = itemTypeParam1;
-        this.itemTypeParam2 = itemTypeParam2;
-    }
-
     public Item itemParam = null;
 
     public EventParams(Item itemParam) {
@@ -110,13 +114,17 @@ public class EventParams {
         this.enemyTypeParam1 = enemyTypeParam1;
     }
 
+    public Message messageParam = null;
+
+    public EventParams(Message messageParam) {
+        this.messageParam = messageParam;
+    }
+
     #endregion
 
     #region Basic Variable Types
 
-    public int intParam1 = 0;
-    public int intParam2 = 0;
-    public int intParam3 = 0;
+    public int intParam1, intParam2, intParam3 = 0;
  
     public EventParams(int intParam1, int intParam2 = 0, int intParam3 = 0) {
         this.intParam1 = intParam1;
@@ -130,11 +138,6 @@ public class EventParams {
         this.stringParam = stringParam;
     }
     
-    public bool boolParam = false;
-
-    public EventParams(bool boolParam) {
-        this.boolParam = boolParam;
-    }
     public MonoBehaviour componentParams = null;
 
     public EventParams(MonoBehaviour componentParams) {

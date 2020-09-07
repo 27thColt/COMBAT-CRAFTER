@@ -4,6 +4,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using static LevelStateMachine;
 
+/* 8/23/2020 2:33pm - Level Manager Script
+    Forgot to write a description about this lmao
+    Handles all the level specific information
+
+
+*/
 public class LevelManager : MonoBehaviour {
     #region Singleton
 
@@ -25,9 +31,12 @@ public class LevelManager : MonoBehaviour {
 
     #endregion
 
-    [SerializeField] private bool _levelGenerated = false; // Will be assigned true once the level has been generated. Workaround for Start() and OnSceneLoaded not being consistent)
     public Room currentRoom;
     public Level currentLevel;
+
+    public List<Message> messageLog;
+
+    public LootTable lootTable;
 
     // THE FOLLOWING CODE WILL INITIATE THE ENTIRE GAME LOOP PROPER ( 7/31/2020 1:18pm )
     void Awake() {
@@ -48,16 +57,22 @@ public class LevelManager : MonoBehaviour {
     public void Init() {
         LoadLevel();
         
-        currentRoom = currentLevel.ReturnStartRoom();
-        
-        currentRoom.known = true;
-        currentLevel.rooms[currentRoom.position.x, currentRoom.position.y].known = true;
+        LoadChatLog();
     }
 
     private void LoadLevel() {
         Debug.Log("Generating Rooms.");
         currentLevel = new Level(10, 10, 7);
         currentLevel.GenerateRooms();
+
+        currentRoom = currentLevel.ReturnStartRoom();
+        
+        currentRoom.known = true;
+        currentLevel.rooms[currentRoom.position.x, currentRoom.position.y].known = true;
+    }
+
+    private void LoadChatLog() {
+        messageLog = new List<Message>();
     }
 
     #endregion

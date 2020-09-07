@@ -67,7 +67,7 @@ public class PlayerData : MonoBehaviour, IHealthPoints {
     private void On_SceneUnloaded(Scene scene) {
         EventManager.StopListening("EnemyAttackAnimEnd", On_EnemyAttackAnimEnd);
         EventManager.StopListening("EnemyAttack", On_EnemyAttack);
-        EventManager.StartListening("PlayerHeal", On_PlayerHeal);
+        EventManager.StopListening("PlayerHeal", On_PlayerHeal);
     }
 
     private void On_PlayerHeal(EventParams eventParams) {

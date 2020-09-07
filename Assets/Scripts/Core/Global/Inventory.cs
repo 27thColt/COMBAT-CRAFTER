@@ -87,14 +87,14 @@ public class Inventory : MonoBehaviour {
         }
         
         // Item does not exist and will create a new instance in the list ( 5/4/2020 5:56pm )
-        // Debug.Log("Creating " + item.number + " " + item.itemType.itemName + ". UID: " + item.UID);
+        Debug.Log("Creating " + item.number + " " + item.itemType.itemName + ". UID: " + item.UID);
 
         itemInv.Add(item);
         //CreateItemObj(item);
 
-        return;
-              
+        return; 
     }
+
 
     // Will return true if the item was deleted, will return false if not ( or if it didn't exist at all ) ( 8/1/2020 4:36pm )
     public bool RemoveItem(Item _item) {
@@ -132,21 +132,33 @@ public class Inventory : MonoBehaviour {
             } else {
                 CreateItemObj(item);
             }   
-               
         }
     
         return;
         
     }
 
-    public bool HasItem(Item item) {
+    #region ReturnItem
+
+    public Item ReturnItem(Item item) {
         foreach (Item _item in itemInv) {
             if (_item.itemType == item.itemType && _item.UID == item.UID)
-                return true;
+                return _item;
         }
 
-        return false;
+        return null;
     }
+
+    public Item ReturnItem(ItemType itemType) {
+        foreach (Item _item in itemInv) {
+            if (_item.itemType == itemType)
+                return _item;
+        }
+
+        return null;      
+    }
+
+    #endregion
 
 
     #endregion
