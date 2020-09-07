@@ -11,8 +11,8 @@ using UnityEngine;
 public class Potion : Item {
     public PotionType potionType;
 
-    public Potion(ItemType _itemType, int _UID, int _number) : base(_itemType, _UID, _number) {
-        potionType = _itemType as PotionType;
+    public Potion(ItemType itemType, System.Guid UID, int number) : base(itemType, UID, number) {
+        potionType = itemType as PotionType;
     }
 
     override public void AddInstance(int _amt = 1) {
@@ -23,9 +23,5 @@ public class Potion : Item {
     override public bool RemoveInstance(int _amt = 1) {
         // Potions are not stackable so there will always be one of a certain item ( 5/14/2020 1:52pm )
         return false;
-    }
-
-    override public void OnCraft() {
-        Debug.LogError("Potion types are not craftable!");
     }
 }

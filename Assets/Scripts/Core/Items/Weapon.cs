@@ -16,15 +16,15 @@ public class Weapon : Item {
     public int currentDurability;
 
 
-    public Weapon(ItemType _itemType, int _UID, int _number = 1, int _currentDurability = 0) : base(_itemType, _UID, _number) {
-        weaponType = _itemType as WeaponType;
+    public Weapon(ItemType itemType, System.Guid UID, int number = 1, int currentDurability = 0) : base(itemType, UID, number) {
+        weaponType = itemType as WeaponType;
 
         maxDurability = weaponType.maxDurability;
-        if (_currentDurability == 0) currentDurability = maxDurability; // When no durability given, just use the max ( 5/11/2020 1:30pm )
-        else currentDurability = _currentDurability;
+        if (currentDurability == 0) this.currentDurability = maxDurability; // When no durability given, just use the max ( 5/11/2020 1:30pm )
+        else this.currentDurability = currentDurability;
 
         // Updates the attack stat ( 5/13/2020 12:37pm )
-        atk = atk - weaponType.atkDecayRate * (maxDurability - currentDurability);
+        atk = atk - weaponType.atkDecayRate * (maxDurability - this.currentDurability);
     }
 
     override public void AddInstance(int amt = 1) {
@@ -44,9 +44,5 @@ public class Weapon : Item {
             Debug.Log("Attack of " + itemType.itemName + " is " + atk);
             return true;
         }
-    }
-
-    override public void OnCraft() {
-        Inventory.instance.AddItem(this);
     }
 }

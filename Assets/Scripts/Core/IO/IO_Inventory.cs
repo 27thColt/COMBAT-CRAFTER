@@ -29,11 +29,11 @@ public static class IO_Inventory {
                 ItemType _itemType = Inventory.ReturnItemFromID(_json["Inventory"].AsArray[i]["ID"].AsInt);
 
                 if (_itemType is WeaponType) {
-                    _outputList.Add(new Weapon(_itemType as WeaponType, i, 1,  _json["Inventory"].AsArray[i]["Durability"].AsInt));
+                    _outputList.Add(new Weapon(_itemType as WeaponType, System.Guid.NewGuid(), 1,  _json["Inventory"].AsArray[i]["Durability"].AsInt));
                 } else if (_itemType is PotionType) {
-                    _outputList.Add(new Potion(_itemType, i, 1));
+                    _outputList.Add(new Potion(_itemType,  System.Guid.NewGuid(), 1));
                 } else { 
-                    _outputList.Add(new Item(_itemType, i, _json["Inventory"].AsArray[i]["Number"].AsInt));
+                    _outputList.Add(new Item(_itemType,  System.Guid.NewGuid(), _json["Inventory"].AsArray[i]["Number"].AsInt));
                 }
             }
 

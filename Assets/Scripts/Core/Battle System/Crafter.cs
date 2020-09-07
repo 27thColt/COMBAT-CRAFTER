@@ -51,9 +51,9 @@ public class Crafter : MonoBehaviour {
                 Recipe _recipe = CheckRecipe(craftingSlots[0].itemType, craftingSlots[1].itemType);
                 
                 if (_recipe.result is WeaponType) {
-                    EventManager.TriggerEvent("ResultUpdate", new EventParams(new Weapon(_recipe.result, Inventory.instance.itemInv.Count)));
+                    EventManager.TriggerEvent("ResultUpdate", new EventParams(new Weapon(_recipe.result, System.Guid.NewGuid())));
                 } else {
-                    EventManager.TriggerEvent("ResultUpdate", new EventParams(new Item(_recipe.result, Inventory.instance.itemInv.Count)));
+                    EventManager.TriggerEvent("ResultUpdate", new EventParams(new Item(_recipe.result, System.Guid.NewGuid())));
                 }
                 
             } else {
@@ -107,7 +107,7 @@ public class Crafter : MonoBehaviour {
 
     public void UncraftItems() {
         foreach (Item _item in craftingSlots) {
-            if (Inventory.instance.HasItem(_item)) {   
+            if (Inventory.instance.ReturnItem(_item) != null) {   
                 Inventory.instance.AddItem(_item);
             } else {
                 if (_item is Weapon)
@@ -121,13 +121,6 @@ public class Crafter : MonoBehaviour {
         print(_resultItem.itemType.itemName + " uncrafted.");
     }
 
-    // If an item may be added to the inventory (aka, added to the inventory, not consumed immediately), it will ( 7/28/2020 10:20pm )
-    public void PerformItemFunction() {
-        if (!craftingSlots.Contains(_resultItem)) {
-            _resultItem.OnCraft();
-        }
-    }
-
     #endregion
 
     #region Button Listeners
@@ -139,8 +132,12 @@ public class Crafter : MonoBehaviour {
             Inventory.instance.RemoveItem(_item);
         }
 
-        print(_resultItem.itemType.itemName + " Crafted");
-        PerformItemFunction();
+        // print(_resultItem.itemType.itemName + " Crafted");
+
+        if (!craftingSlots.Contains(_resultItem))
+            Inventory.instance.AddItem(_resultItem);
+            // _resultItem.OnCraft();
+
         Inventory.instance.RenderInventory();
 
         craftingEnabled = false;
